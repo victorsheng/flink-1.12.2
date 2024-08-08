@@ -41,18 +41,16 @@ public class IntermediateResult {
     private final IntermediateResultPartition[] partitions;
 
     /**
-     * 将中间结果分区ID映射到分区索引。
-     * 这用于中间结果的ID查找。
-     * 我不敢在其他地方更改分区连接逻辑，因为它与作为数组保存的分区紧密耦合。
+     * 将中间结果分区ID映射到分区索引。 这用于中间结果的ID查找。 我不敢在其他地方更改分区连接逻辑，因为它与作为数组保存的分区紧密耦合。
      *
-     * Maps intermediate result partition IDs to a partition index.
-     * This is used for ID lookups of intermediate results.
-     * I didn't dare to change the partition connect logic in other places
+     * <p>Maps intermediate result partition IDs to a partition index. This is used for ID lookups
+     * of intermediate results. I didn't dare to change the partition connect logic in other places
      * that is tightly coupled to the partitions being held as an array.
      */
-    private final HashMap<IntermediateResultPartitionID, Integer> partitionLookupHelper =  new HashMap<>();
+    private final HashMap<IntermediateResultPartitionID, Integer> partitionLookupHelper =
+            new HashMap<>();
 
-    //并行生产者数量
+    // 并行生产者数量
     private final int numParallelProducers;
 
     // 生产者的数量

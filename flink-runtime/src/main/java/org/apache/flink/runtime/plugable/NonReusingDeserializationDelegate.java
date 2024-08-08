@@ -25,11 +25,12 @@ import org.apache.flink.core.memory.DataOutputView;
 import java.io.IOException;
 
 /**
- * NonReusingDeserializationDelegate 包含一个 serializer，
- * 依据是否需要发射水印区分为 MultiplexingStreamRecordSerializer 和 StreamRecordSerializer，
- * 这两个 serializer 只是在 TypeSerializer 上做了一层封装
+ * NonReusingDeserializationDelegate 包含一个 serializer， 依据是否需要发射水印区分为
+ * MultiplexingStreamRecordSerializer 和 StreamRecordSerializer， 这两个 serializer 只是在 TypeSerializer
+ * 上做了一层封装
  *
- * A {@link DeserializationDelegate} that always creates a new instance upon deserialization. */
+ * <p>A {@link DeserializationDelegate} that always creates a new instance upon deserialization.
+ */
 public class NonReusingDeserializationDelegate<T> implements DeserializationDelegate<T> {
 
     private T instance;

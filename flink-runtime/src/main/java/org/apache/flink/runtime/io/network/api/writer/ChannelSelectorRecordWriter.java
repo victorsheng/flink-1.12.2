@@ -26,12 +26,9 @@ import java.nio.ByteBuffer;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * ChannelSelectorRecordWriter: 通过channelSelector对象判断数据需要发往下游的哪个channel。 keyBy算子用的正是这个RecordWriter。
  *
- * ChannelSelectorRecordWriter:
- *      通过channelSelector对象判断数据需要发往下游的哪个channel。
- *      keyBy算子用的正是这个RecordWriter。
- *
- * A regular record-oriented runtime result writer.
+ * <p>A regular record-oriented runtime result writer.
  *
  * <p>The ChannelSelectorRecordWriter extends the {@link RecordWriter} and emits records to the
  * channel selected by the {@link ChannelSelector} for regular {@link #emit(IOReadableWritable)}.
@@ -41,10 +38,12 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 public final class ChannelSelectorRecordWriter<T extends IOReadableWritable>
         extends RecordWriter<T> {
 
-    //决定一条记录应该写入哪一个channel， 即 sub-partition
+    // 决定一条记录应该写入哪一个channel， 即 sub-partition
     private final ChannelSelector<T> channelSelector;
 
-    //    writer = {PipelinedResultPartition@6639} "PipelinedResultPartition db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+    //    writer = {PipelinedResultPartition@6639} "PipelinedResultPartition
+    // db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4
+    // subpartitions, 4 pending consumptions]"
     //            releaseLock = {Object@6643}
     //            consumedSubpartitions = {boolean[4]@6644} [false, false, false, false]
     //            numUnconsumedSubpartitions = 4
@@ -54,13 +53,16 @@ public final class ChannelSelectorRecordWriter<T extends IOReadableWritable>
     //            idleTimeMsPerSecond = {MeterView@6647}
     //            owningTaskName = "Flat Map (1/4)#0 (eb44184ef213a1ddc71dc739d2f1edee)"
     //            partitionIndex = 0
-    //            partitionId = {ResultPartitionID@6649} "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
+    //            partitionId = {ResultPartitionID@6649}
+    // "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
     //            partitionType = {ResultPartitionType@6650} "PIPELINED_BOUNDED"
     //            partitionManager = {ResultPartitionManager@6651}
     //            numSubpartitions = 4
     //            numTargetKeyGroups = 128
     //            isReleased = {AtomicBoolean@6652} "false"
-    //            bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1, available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10, destroyed: false]"
+    //            bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1,
+    // available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10, destroyed:
+    // false]"
     //            isFinished = false
     //            cause = null
     //            bufferPoolFactory = {ResultPartitionFactory$lambda@6654}
@@ -95,7 +97,7 @@ public final class ChannelSelectorRecordWriter<T extends IOReadableWritable>
         //        nextChannelToSendTo = 1
         //        numberOfChannels = 4
 
-        //channelSelector确定目标子分区
+        // channelSelector确定目标子分区
         emit(record, channelSelector.selectChannel(record));
     }
 

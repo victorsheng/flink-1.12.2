@@ -65,7 +65,6 @@ public class StreamContextEnvironment extends StreamExecutionEnvironment {
             final boolean enforceSingleJobExecution,
             final boolean suppressSysout) {
 
-
         super(executorServiceLoader, configuration, userCodeClassLoader);
 
         // false
@@ -169,7 +168,8 @@ public class StreamContextEnvironment extends StreamExecutionEnvironment {
                     mergedConfiguration.addAll(configuration);
                     mergedConfiguration.addAll(conf);
 
-                    //    "env.java.opts.client" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
+                    //    "env.java.opts.client" ->
+                    // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
                     //    "jobmanager.webapp.authentication.type" -> "simple"
                     //    "taskmanager.memory.process.size" -> "1728m"
                     //    "jobmanager.execution.failover-strategy" -> "region"
@@ -178,10 +178,12 @@ public class StreamContextEnvironment extends StreamExecutionEnvironment {
                     //    "jobmanager.memory.process.size" -> "1600m"
                     //    "security.kerberos.login.use-ticket-cache" -> "true"
                     //    "jobmanager.rpc.port" -> "6123"
-                    //    "jobmanager.webapp.authentication.kerberos.keytab" -> "/opt/keytab/HTTP.keytab"
+                    //    "jobmanager.webapp.authentication.kerberos.keytab" ->
+                    // "/opt/keytab/HTTP.keytab"
                     //    "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
                     //    "sun.security.krb5.debug" -> "true"
-                    //    "jobmanager.webapp.authentication.kerberos.principal" -> "HTTP/henghe-030@HENGHE.COM"
+                    //    "jobmanager.webapp.authentication.kerberos.principal" ->
+                    // "HTTP/henghe-030@HENGHE.COM"
                     //    "execution.savepoint.ignore-unclaimed-state" -> {Boolean@3223} false
                     //    "execution.attached" -> {Boolean@3225} true
                     //    "execution.shutdown-on-attached-exit" -> {Boolean@3223} false

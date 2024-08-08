@@ -376,10 +376,8 @@ public final class Utils {
      * @return The launch context for the TaskManager processes.
      * @throws Exception Thrown if the launch context could not be created, for example if the
      *     resources could not be copied.
-     *
-     *
-     *     构建TaskExecutor 启动上下文信息
-     *     org.apache.flink.yarn.YarnResourceManagerDriver # createTaskExecutorLaunchContext
+     *     <p>构建TaskExecutor 启动上下文信息 org.apache.flink.yarn.YarnResourceManagerDriver #
+     *     createTaskExecutorLaunchContext
      */
     static ContainerLaunchContext createTaskExecutorContext(
             org.apache.flink.configuration.Configuration flinkConfig,
@@ -509,7 +507,6 @@ public final class Utils {
                         taskManagerDynamicProperties);
 
         if (log.isDebugEnabled()) {
-
 
             // Starting TaskManagers with command:
             // $JAVA_HOME/bin/java

@@ -54,7 +54,6 @@ public class ZooKeeperModule implements SecurityModule {
         //  获取zookeeper.sasl.client系统变量值，用于在卸载module的时候恢复
         priorSaslEnable = System.getProperty(ZK_ENABLE_CLIENT_SASL, null);
 
-
         // 读取Flink配置项zookeeper.sasl.disable的值，根据其语义（取反）设置为zookeeper.sasl.client系统变量
         System.setProperty(
                 ZK_ENABLE_CLIENT_SASL, String.valueOf(!securityConfig.isZkSaslDisable()));

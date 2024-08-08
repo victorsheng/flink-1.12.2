@@ -357,17 +357,26 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
             final List<ExecutionVertexDeploymentOption> executionVertexDeploymentOptions) {
         validateDeploymentOptions(executionVertexDeploymentOptions);
 
-
-        //    {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0" -> {ExecutionVertexDeploymentOption@7484}
-        //    {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1" -> {ExecutionVertexDeploymentOption@7485}
-        //    {ExecutionVertexID@7445} "0a448493b4782967b150582570326227_2" -> {ExecutionVertexDeploymentOption@7486}
-        //    {ExecutionVertexID@7451} "ea632d67b7d595e5b851708ae9ad79d6_0" -> {ExecutionVertexDeploymentOption@7487}
-        //    {ExecutionVertexID@7448} "0a448493b4782967b150582570326227_3" -> {ExecutionVertexDeploymentOption@7488}
-        //    {ExecutionVertexID@7460} "6d2677a0ecc3fd8df0b72ec675edf8f4_0" -> {ExecutionVertexDeploymentOption@7489}
-        //    {ExecutionVertexID@7457} "ea632d67b7d595e5b851708ae9ad79d6_3" -> {ExecutionVertexDeploymentOption@7490}
-        //    {ExecutionVertexID@7441} "0a448493b4782967b150582570326227_0" -> {ExecutionVertexDeploymentOption@7491}
-        //    {ExecutionVertexID@7455} "ea632d67b7d595e5b851708ae9ad79d6_2" -> {ExecutionVertexDeploymentOption@7492}
-        //    {ExecutionVertexID@7443} "0a448493b4782967b150582570326227_1" -> {ExecutionVertexDeploymentOption@7493}
+        //    {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0" ->
+        // {ExecutionVertexDeploymentOption@7484}
+        //    {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1" ->
+        // {ExecutionVertexDeploymentOption@7485}
+        //    {ExecutionVertexID@7445} "0a448493b4782967b150582570326227_2" ->
+        // {ExecutionVertexDeploymentOption@7486}
+        //    {ExecutionVertexID@7451} "ea632d67b7d595e5b851708ae9ad79d6_0" ->
+        // {ExecutionVertexDeploymentOption@7487}
+        //    {ExecutionVertexID@7448} "0a448493b4782967b150582570326227_3" ->
+        // {ExecutionVertexDeploymentOption@7488}
+        //    {ExecutionVertexID@7460} "6d2677a0ecc3fd8df0b72ec675edf8f4_0" ->
+        // {ExecutionVertexDeploymentOption@7489}
+        //    {ExecutionVertexID@7457} "ea632d67b7d595e5b851708ae9ad79d6_3" ->
+        // {ExecutionVertexDeploymentOption@7490}
+        //    {ExecutionVertexID@7441} "0a448493b4782967b150582570326227_0" ->
+        // {ExecutionVertexDeploymentOption@7491}
+        //    {ExecutionVertexID@7455} "ea632d67b7d595e5b851708ae9ad79d6_2" ->
+        // {ExecutionVertexDeploymentOption@7492}
+        //    {ExecutionVertexID@7443} "0a448493b4782967b150582570326227_1" ->
+        // {ExecutionVertexDeploymentOption@7493}
         final Map<ExecutionVertexID, ExecutionVertexDeploymentOption> deploymentOptionsByVertex =
                 groupDeploymentOptionsByVertexId(executionVertexDeploymentOptions);
 
@@ -386,25 +395,36 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
                         .map(ExecutionVertexDeploymentOption::getExecutionVertexId)
                         .collect(Collectors.toList());
 
-
-        //    {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0" -> {ExecutionVertexVersion@7566}
+        //    {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0" ->
+        // {ExecutionVertexVersion@7566}
         //          key = {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0"
         //          value = {ExecutionVertexVersion@7566}
-        //              executionVertexId = {ExecutionVertexID@7434} "bc764cd8ddf7a0cff126f51c16239658_0"
+        //              executionVertexId = {ExecutionVertexID@7434}
+        // "bc764cd8ddf7a0cff126f51c16239658_0"
         //              version = 1
-        //    {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1" -> {ExecutionVertexVersion@7567}
+        //    {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1" ->
+        // {ExecutionVertexVersion@7567}
         //          key = {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1"
         //          value = {ExecutionVertexVersion@7567}
-        //                executionVertexId = {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1"
+        //                executionVertexId = {ExecutionVertexID@7453}
+        // "ea632d67b7d595e5b851708ae9ad79d6_1"
         //                version = 1
-        //    {ExecutionVertexID@7445} "0a448493b4782967b150582570326227_2" -> {ExecutionVertexVersion@7568}
-        //    {ExecutionVertexID@7451} "ea632d67b7d595e5b851708ae9ad79d6_0" -> {ExecutionVertexVersion@7569}
-        //    {ExecutionVertexID@7448} "0a448493b4782967b150582570326227_3" -> {ExecutionVertexVersion@7570}
-        //    {ExecutionVertexID@7460} "6d2677a0ecc3fd8df0b72ec675edf8f4_0" -> {ExecutionVertexVersion@7571}
-        //    {ExecutionVertexID@7457} "ea632d67b7d595e5b851708ae9ad79d6_3" -> {ExecutionVertexVersion@7572}
-        //    {ExecutionVertexID@7441} "0a448493b4782967b150582570326227_0" -> {ExecutionVertexVersion@7573}
-        //    {ExecutionVertexID@7455} "ea632d67b7d595e5b851708ae9ad79d6_2" -> {ExecutionVertexVersion@7574}
-        //    {ExecutionVertexID@7443} "0a448493b4782967b150582570326227_1" -> {ExecutionVertexVersion@7575}
+        //    {ExecutionVertexID@7445} "0a448493b4782967b150582570326227_2" ->
+        // {ExecutionVertexVersion@7568}
+        //    {ExecutionVertexID@7451} "ea632d67b7d595e5b851708ae9ad79d6_0" ->
+        // {ExecutionVertexVersion@7569}
+        //    {ExecutionVertexID@7448} "0a448493b4782967b150582570326227_3" ->
+        // {ExecutionVertexVersion@7570}
+        //    {ExecutionVertexID@7460} "6d2677a0ecc3fd8df0b72ec675edf8f4_0" ->
+        // {ExecutionVertexVersion@7571}
+        //    {ExecutionVertexID@7457} "ea632d67b7d595e5b851708ae9ad79d6_3" ->
+        // {ExecutionVertexVersion@7572}
+        //    {ExecutionVertexID@7441} "0a448493b4782967b150582570326227_0" ->
+        // {ExecutionVertexVersion@7573}
+        //    {ExecutionVertexID@7455} "ea632d67b7d595e5b851708ae9ad79d6_2" ->
+        // {ExecutionVertexVersion@7574}
+        //    {ExecutionVertexID@7443} "0a448493b4782967b150582570326227_1" ->
+        // {ExecutionVertexVersion@7575}
         final Map<ExecutionVertexID, ExecutionVertexVersion> requiredVersionByVertex =
                 executionVertexVersioner.recordVertexModifications(verticesToDeploy);
 
@@ -531,7 +551,6 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 
     private BiFunction<Void, Throwable, Void> deployAll(
             final List<DeploymentHandle> deploymentHandles) {
-
 
         return (ignored, throwable) -> {
             propagateIfNonNull(throwable);

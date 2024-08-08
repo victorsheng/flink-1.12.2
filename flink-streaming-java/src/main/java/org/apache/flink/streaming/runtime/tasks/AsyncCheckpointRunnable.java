@@ -118,7 +118,6 @@ final class AsyncCheckpointRunnable implements Runnable, Closeable {
             TaskStateSnapshot localTaskOperatorSubtaskStates =
                     new TaskStateSnapshot(operatorSnapshotsInProgress.size());
 
-
             long bytesPersistedDuringAlignment = 0;
 
             // 完成每一个 operator 的状态写入

@@ -48,7 +48,6 @@ public class PartitionTransformationTranslator<OUT>
         return translateInternal(transformation, context);
     }
 
-
     //  逻辑转换（partition、 union 等）的处理
     @Override
     protected Collection<Integer> translateForStreamingInternal(

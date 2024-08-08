@@ -138,7 +138,6 @@ public class MiniClusterPipelineExecutorServiceLoader implements PipelineExecuto
             // 获取JobGraph
             final JobGraph jobGraph = PipelineExecutorUtils.getJobGraph(pipeline, configuration);
 
-
             if (jobGraph.getSavepointRestoreSettings() == SavepointRestoreSettings.none()
                     && pipeline instanceof StreamGraph) {
                 jobGraph.setSavepointRestoreSettings(

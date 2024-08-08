@@ -39,10 +39,9 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
- * NetworkBuffer是MemorySegment的包装类。
- * 该类提供了大量的写入和获取buffer中原生类型数据的方法。除此之外还提供了缓存的复制和回收等功能
+ * NetworkBuffer是MemorySegment的包装类。 该类提供了大量的写入和获取buffer中原生类型数据的方法。除此之外还提供了缓存的复制和回收等功能
  *
- * Wrapper for pooled {@link MemorySegment} instances.
+ * <p>Wrapper for pooled {@link MemorySegment} instances.
  *
  * <p><strong>NOTE:</strong> before using this buffer in the netty stack, a buffer allocator must be
  * set via {@link #setAllocator(ByteBufAllocator)}!
@@ -112,20 +111,10 @@ public class NetworkBuffer extends AbstractReferenceCountedByteBuf implements Bu
      * the <tt>readerIndex</tt> and <tt>size</tt> as <tt>writerIndex</tt>.
      *
      * @param memorySegment backing memory segment (defines {@link #maxCapacity})
-     *
-     *
-     * NetworkBuffer是一个MemorySegment的封装，
-     * 创建的时候需要指定他们的回收器recycler。
-     * Recycler需要实现BufferRecycler接口，
-     * 该接口仅有一个方法recycle，
-     * 存放了MemorySegment的回收逻辑。
-
-     * NetworkBuffer是一个MemorySegment的封装，
-     * 创建的时候需要指定他们的回收器recycler。
-     *
-     * 通过在创建NetworkBuffer的时候，指定它们对应的recycler，上层使用的这些缓存的时候无需再知道具体的缓存类型和回收方式。
-     *
-     *
+     *     <p>NetworkBuffer是一个MemorySegment的封装， 创建的时候需要指定他们的回收器recycler。
+     *     Recycler需要实现BufferRecycler接口， 该接口仅有一个方法recycle， 存放了MemorySegment的回收逻辑。
+     *     <p>NetworkBuffer是一个MemorySegment的封装， 创建的时候需要指定他们的回收器recycler。
+     *     <p>通过在创建NetworkBuffer的时候，指定它们对应的recycler，上层使用的这些缓存的时候无需再知道具体的缓存类型和回收方式。
      * @param recycler will be called to recycle this buffer once the reference count is <tt>0</tt>
      * @param dataType the {@link DataType} this buffer represents
      * @param size current size of data in the buffer, i.e. the writer index to set
@@ -196,7 +185,6 @@ public class NetworkBuffer extends AbstractReferenceCountedByteBuf implements Bu
         checkState(!isCompressed, "Unable to slice a compressed buffer.");
         return new ReadOnlySlicedNetworkBuffer(this, index, length);
     }
-
 
     //
     @Override

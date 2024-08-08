@@ -93,12 +93,10 @@ import java.util.stream.Collectors;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * ResourceManager实现。 resource manager 负责资源的分配和记账。
  *
- * ResourceManager实现。 resource manager  负责资源的分配和记账。
- *
- *
- * ResourceManager implementation. The resource manager is responsible for resource de-/allocation
- * and bookkeeping.
+ * <p>ResourceManager implementation. The resource manager is responsible for resource
+ * de-/allocation and bookkeeping.
  *
  * <p>It offers the following methods as part of its rpc interface to interact with him remotely:
  *
@@ -431,12 +429,10 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
                 ioExecutor);
     }
 
-
     // 向ResouceManager 注册 TaskExecutor
     @Override
     public CompletableFuture<RegistrationResponse> registerTaskExecutor(
             final TaskExecutorRegistration taskExecutorRegistration, final Time timeout) {
-
 
         // 1. 连接taskExecutor
         CompletableFuture<TaskExecutorGateway> taskExecutorGatewayFuture =
@@ -445,7 +441,6 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
                                 taskExecutorRegistration.getTaskExecutorAddress(),
                                 TaskExecutorGateway.class);
 
-
         // 2. 加入缓存
         taskExecutorGatewayFutures.put(
                 taskExecutorRegistration.getResourceId(), taskExecutorGatewayFuture);
@@ -453,8 +448,6 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
         //
         return taskExecutorGatewayFuture.handleAsync(
                 (TaskExecutorGateway taskExecutorGateway, Throwable throwable) -> {
-
-
                     final ResourceID resourceId = taskExecutorRegistration.getResourceId();
                     if (taskExecutorGatewayFuture == taskExecutorGatewayFutures.get(resourceId)) {
 
@@ -463,7 +456,6 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
 
                             return new RegistrationResponse.Decline(throwable.getMessage());
                         } else {
-
 
                             // 开始注册TaskExecutor
                             return registerTaskExecutorInternal(
@@ -478,8 +470,6 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
                         return new RegistrationResponse.Decline(
                                 "Decline outdated task executor registration.");
                     }
-
-
                 },
                 getMainThreadExecutor());
     }
@@ -491,9 +481,9 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
             SlotReport slotReport,
             Time timeout) {
 
-
         // 获取 worker 的注册信息
-        final WorkerRegistration<WorkerType> workerTypeWorkerRegistration = taskExecutors.get(taskManagerResourceId);
+        final WorkerRegistration<WorkerType> workerTypeWorkerRegistration =
+                taskExecutors.get(taskManagerResourceId);
 
         if (workerTypeWorkerRegistration.getInstanceID().equals(taskManagerRegistrationId)) {
 
@@ -505,9 +495,7 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
                 onWorkerRegistered(workerTypeWorkerRegistration.getWorker());
             }
 
-
             return CompletableFuture.completedFuture(Acknowledge.get());
-
 
         } else {
             return FutureUtils.completedExceptionally(
@@ -542,7 +530,6 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
     public void disconnectJobManager(final JobID jobId, final Exception cause) {
         closeJobManagerConnection(jobId, cause);
     }
-
 
     // 进入到远程调用....
     // SlotPoolImpl 向RM 请求获取slot..
@@ -948,8 +935,7 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
     }
 
     /**
-     * 注册 TaskExecutor
-     * Registers a new TaskExecutor.
+     * 注册 TaskExecutor Registers a new TaskExecutor.
      *
      * @param taskExecutorRegistration task executor registration parameters
      * @return RegistrationResponse
@@ -958,19 +944,15 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
             TaskExecutorGateway taskExecutorGateway,
             TaskExecutorRegistration taskExecutorRegistration) {
 
-
         // 获取 taskExecutorResourceId
         ResourceID taskExecutorResourceId = taskExecutorRegistration.getResourceId();
 
-
         // 移除缓存信息
-        WorkerRegistration<WorkerType> oldRegistration =  taskExecutors.remove(taskExecutorResourceId);
-
-
+        WorkerRegistration<WorkerType> oldRegistration =
+                taskExecutors.remove(taskExecutorResourceId);
 
         if (oldRegistration != null) {
             // 清理就的注册操作....
-
 
             // TODO :: suggest old taskExecutor to stop itself
             log.debug(
@@ -1016,10 +998,8 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
                     taskExecutorResourceId.getStringWithMetadata(),
                     taskExecutorAddress);
 
-
             // 加入缓存
             taskExecutors.put(taskExecutorResourceId, registration);
-
 
             // 监控&心跳相关
             taskManagerHeartbeatManager.monitorTarget(
@@ -1221,16 +1201,12 @@ public abstract class ResourceManager<WorkerType extends ResourceIDRetrievable>
     @Override
     public void grantLeadership(final UUID newLeaderSessionID) {
 
-
-
         // 重点在这里 : tryAcceptLeadership
         // 尝试接收 Leadership
         final CompletableFuture<Boolean> acceptLeadershipFuture =
                 clearStateFuture.thenComposeAsync(
                         (ignored) -> tryAcceptLeadership(newLeaderSessionID),
                         getUnfencedMainThreadExecutor());
-
-
 
         final CompletableFuture<Void> confirmationFuture =
                 acceptLeadershipFuture.thenAcceptAsync(

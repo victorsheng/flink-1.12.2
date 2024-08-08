@@ -47,16 +47,12 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
- *
- * 一个数据处理流程(Task)对应着一个ResultPartition，
- * ResultPartition的数据需要发送数据到多个下游Channel(对应着下游多个Task)，
+ * 一个数据处理流程(Task)对应着一个ResultPartition， ResultPartition的数据需要发送数据到多个下游Channel(对应着下游多个Task)，
  * ResultPartition中的数据专门为下游不同的接收者做了分组，这个分组叫做ResultSubpartition。
  *
-
- * 此类是逻辑{@link IntermediateResultPartition}的运行时部分。实际上，结果分区是{@link Buffer}实例的集合。
+ * <p>此类是逻辑{@link IntermediateResultPartition}的运行时部分。实际上，结果分区是{@link Buffer}实例的集合。
  *
- *
- * A result partition for data produced by a single task.
+ * <p>A result partition for data produced by a single task.
  *
  * <p>This class is the runtime part of a logical {@link IntermediateResultPartition}. Essentially,
  * a result partition is a collection of {@link Buffer} instances. The buffers are organized in one
@@ -92,21 +88,22 @@ public abstract class ResultPartition implements ResultPartitionWriter {
     private final int partitionIndex;
 
     // ResultPartitionID
-    //    partitionId = {ResultPartitionID@6979} "3abe615ae9be22f64d8e5af582df91ed#0@b2490d6207a4eaa9f285fb307bd31782"
-    //          partitionId = {IntermediateResultPartitionID@6988} "3abe615ae9be22f64d8e5af582df91ed#0"
+    //    partitionId = {ResultPartitionID@6979}
+    // "3abe615ae9be22f64d8e5af582df91ed#0@b2490d6207a4eaa9f285fb307bd31782"
+    //          partitionId = {IntermediateResultPartitionID@6988}
+    // "3abe615ae9be22f64d8e5af582df91ed#0"
     //          producerId = {ExecutionAttemptID@6468} "b2490d6207a4eaa9f285fb307bd31782"
     protected final ResultPartitionID partitionId;
 
-
     /**
-     * 分区类型
-     * partitionType = {ResultPartitionType@6929} "PIPELINED_BOUNDED"
+     * 分区类型 partitionType = {ResultPartitionType@6929} "PIPELINED_BOUNDED"
      *
-     * Type of this partition. Defines the concrete subpartition implementation to use. */
+     * <p>Type of this partition. Defines the concrete subpartition implementation to use.
+     */
     protected final ResultPartitionType partitionType;
 
     //
-    //ResultPartitionManager 管理当前 TaskManager 所有的 ResultPartition
+    // ResultPartitionManager 管理当前 TaskManager 所有的 ResultPartition
     protected final ResultPartitionManager partitionManager;
 
     // 子分区的数量

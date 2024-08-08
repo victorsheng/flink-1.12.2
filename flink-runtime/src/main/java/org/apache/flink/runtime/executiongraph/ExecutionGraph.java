@@ -117,78 +117,59 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
+ * execution graph 是协调数据流的分布式执行的中心数据结构。 它保存每个并行任务、每个中间流以及它们之间的通信的表示。
  *
- * execution graph 是协调数据流的分布式执行的中心数据结构。
- * 它保存每个并行任务、每个中间流以及它们之间的通信的表示。
+ * <p>执行图由以下结构组成： > {@link ExecutionJobVertex}表示执行期间JobGraph中的一个顶点（通常是一个操作，如“map”或“join”）。
+ * 它保存所有并行子任务的聚合状态。 ExecutionJobVertex在图中由{@link JobVertexID}标识，它从JobGraph对应的JobVertex获取。
  *
- * 执行图由以下结构组成：
- * > {@link ExecutionJobVertex}表示执行期间JobGraph中的一个顶点（通常是一个操作，如“map”或“join”）。
- *   它保存所有并行子任务的聚合状态。
- *   ExecutionJobVertex在图中由{@link JobVertexID}标识，它从JobGraph对应的JobVertex获取。
+ * <p>> {@link ExecutionVertex}表示一个并行子任务。 对于每个ExecutionJobVertex，executionvertex的数量与并行性的数量相同。
+ * ExecutionVertex由ExecutionJobVertex和并行子任务的索引标识
  *
- * > {@link ExecutionVertex}表示一个并行子任务。
- *   对于每个ExecutionJobVertex，executionvertex的数量与并行性的数量相同。
- *   ExecutionVertex由ExecutionJobVertex和并行子任务的索引标识
+ * <p>> {@link Execution}是执行ExecutionVertex的一种尝试。
+ * ExecutionVertex可能会有多个执行，以防出现故障，或者需要重新计算某些数据，因为这些数据在以后的操作请求时不再可用。 Execution是由{@link
+ * ExecutionAttemptID}标识的。
  *
- * > {@link Execution}是执行ExecutionVertex的一种尝试。
- *   ExecutionVertex可能会有多个执行，以防出现故障，或者需要重新计算某些数据，因为这些数据在以后的操作请求时不再可用。
- *   Execution是由{@link ExecutionAttemptID}标识的。
+ * <p>JobManager和TaskManager之间关于任务部署和任务状态更新的所有消息始终使用ExecutionAttemptID来寻址消息接收方。
  *
- *   JobManager和TaskManager之间关于任务部署和任务状态更新的所有消息始终使用ExecutionAttemptID来寻址消息接收方。
+ * <p>全局和本地故障切换 Execution Graph 有两种故障转移模式：全局故障转移 和 本地故障转移
  *
- * 全局和本地故障切换
- * Execution Graph  有两种故障转移模式：全局故障转移 和 本地故障转移
- *
- * 全局故障转移 : 中止所有顶点的任务执行，并从最后一个完成的检查点重新启动整个数据流图。
- * 全局故障转移被认为是“回退策略”，当本地故障转移失败时，
+ * <p>全局故障转移 : 中止所有顶点的任务执行，并从最后一个完成的检查点重新启动整个数据流图。 全局故障转移被认为是“回退策略”，当本地故障转移失败时，
  * 或者当在ExecutionGraph的状态中发现问题时，该问题可能会标记为不一致（由bug引起）。
  *
+ * <p>当单个顶点执行（任务）失败时，将触发本地故障转移。 本地故障转移由{@link FailoverStrategy}协调。 本地故障切换通常尝试尽可能少地重新启动，除非必须重启。
  *
- * <p>当单个顶点执行（任务）失败时，将触发本地故障转移。
- * 本地故障转移由{@link FailoverStrategy}协调。
- * 本地故障切换通常尝试尽可能少地重新启动，除非必须重启。
+ * <p>在本地故障转移和全局故障转移之间，全局故障转移始终优先，因为它是ExecutionGraph恢复一致性所依赖的核心机制。 ExecutionGraph维护一个<i>global
+ * modification version</i>，该版本随着每次全局故障转移（以及其他全局操作，如作业取消或终端故障）而递增。
  *
- * 在本地故障转移和全局故障转移之间，全局故障转移始终优先，因为它是ExecutionGraph恢复一致性所依赖的核心机制。
- * ExecutionGraph维护一个<i>global modification version</i>，该版本随着每次全局故障转移（以及其他全局操作，如作业取消或终端故障）而递增。
+ * <p>本地故障转移始终由触发故障转移时执行图所具有的修改版本确定范围。 如果在本地故障转移期间达到新的全局修改版本（意味着存在并发全局故障转移），则故障转移策略必须在全局故障转移之前让步。
  *
- * 本地故障转移始终由触发故障转移时执行图所具有的修改版本确定范围。
- * 如果在本地故障转移期间达到新的全局修改版本（意味着存在并发全局故障转移），则故障转移策略必须在全局故障转移之前让步。
+ * <p>The execution graph is the central data structure that coordinates the distributed execution
+ * of a data flow.
  *
- *
- * The execution graph is the central data structure that coordinates the distributed execution of a
- * data flow.
- *
- * It keeps representations of each parallel task, each intermediate stream, and the communication between them.
+ * <p>It keeps representations of each parallel task, each intermediate stream, and the
+ * communication between them.
  *
  * <p>The execution graph consists of the following constructs:
  *
  * <ul>
- *   <li>The {@link ExecutionJobVertex} represents one vertex from the JobGraph (usually one operation like "map" or "join") during execution.
- *       It holds the aggregated state of all parallel subtasks.
- *
- *       The ExecutionJobVertex is identified inside the graph by the {@link  JobVertexID}, which it takes from the JobGraph's corresponding JobVertex.
- *
- *
+ *   <li>The {@link ExecutionJobVertex} represents one vertex from the JobGraph (usually one
+ *       operation like "map" or "join") during execution. It holds the aggregated state of all
+ *       parallel subtasks.
+ *       <p>The ExecutionJobVertex is identified inside the graph by the {@link JobVertexID}, which
+ *       it takes from the JobGraph's corresponding JobVertex.
  *   <li>The {@link ExecutionVertex} represents one parallel subtask.
- *
- *       For each ExecutionJobVertex, there are as many ExecutionVertices as the parallelism.
- *
- *       The ExecutionVertex is identified by the ExecutionJobVertex and the index of the parallel subtask
- *
- *   <li>The {@link Execution} is one attempt to execute a ExecutionVertex.
- *       There may be multiple Executions for the ExecutionVertex, in case of a failure, or in the case where some data
+ *       <p>For each ExecutionJobVertex, there are as many ExecutionVertices as the parallelism.
+ *       <p>The ExecutionVertex is identified by the ExecutionJobVertex and the index of the
+ *       parallel subtask
+ *   <li>The {@link Execution} is one attempt to execute a ExecutionVertex. There may be multiple
+ *       Executions for the ExecutionVertex, in case of a failure, or in the case where some data
  *       needs to be recomputed because it is no longer available when requested by later
  *       operations.
- *
- *       An Execution is always identified by an {@link ExecutionAttemptID}.
- *
- *       All messages between the JobManager and the TaskManager about deployment of tasks and updates
- *       in the task status always use the ExecutionAttemptID to address the message receiver.
+ *       <p>An Execution is always identified by an {@link ExecutionAttemptID}.
+ *       <p>All messages between the JobManager and the TaskManager about deployment of tasks and
+ *       updates in the task status always use the ExecutionAttemptID to address the message
+ *       receiver.
  * </ul>
- *
- *
-
- *
  *
  * <h2>Global and local failover</h2>
  *
@@ -197,29 +178,28 @@ import static org.apache.flink.util.Preconditions.checkState;
  * <p>A <b>global failover</b> aborts the task executions for all vertices and restarts whole data
  * flow graph from the last completed checkpoint.
  *
- * Global failover is considered the "fallback
- * strategy" that is used when a local failover is unsuccessful, or when a issue is found in the
- * state of the ExecutionGraph that could mark it as inconsistent (caused by a bug).
+ * <p>Global failover is considered the "fallback strategy" that is used when a local failover is
+ * unsuccessful, or when a issue is found in the state of the ExecutionGraph that could mark it as
+ * inconsistent (caused by a bug).
  *
- * <p>A <b>local failover</b> is triggered when an individual vertex execution (a task) fails.
- * The local failover is coordinated by the {@link FailoverStrategy}.
+ * <p>A <b>local failover</b> is triggered when an individual vertex execution (a task) fails. The
+ * local failover is coordinated by the {@link FailoverStrategy}.
  *
- * A local failover typically attempts to restart as little as possible, but as much as necessary.
+ * <p>A local failover typically attempts to restart as little as possible, but as much as
+ * necessary.
  *
  * <p>Between local- and global failover, the global failover always takes precedence, because it is
  * the core mechanism that the ExecutionGraph relies on to bring back consistency.
  *
- * The guard that, the ExecutionGraph maintains a <i>global modification version</i>, which is incremented with
- * every global failover (and other global actions, like job cancellation, or terminal failure).
+ * <p>The guard that, the ExecutionGraph maintains a <i>global modification version</i>, which is
+ * incremented with every global failover (and other global actions, like job cancellation, or
+ * terminal failure).
  *
+ * <p>Local failover is always scoped by the modification version that the execution graph had when
+ * the failover was triggered.
  *
- * Local failover is always scoped by the modification version that the execution graph had when the
- * failover was triggered.
- *
- * If a new global modification version is reached during local failover
- * (meaning there is a concurrent global failover), the failover strategy has to yield before the global failover.
- *
- *
+ * <p>If a new global modification version is reached during local failover (meaning there is a
+ * concurrent global failover), the failover strategy has to yield before the global failover.
  */
 public class ExecutionGraph implements AccessExecutionGraph {
 
@@ -230,7 +210,8 @@ public class ExecutionGraph implements AccessExecutionGraph {
 
     /** Job specific information like the job id, job name, job configuration, etc. */
 
-    //    jobInformation  = {JobInformation@7350} "JobInformation for 'Socket Window WordCount' (a2bec17fde03465ecffc83019ef023f3)"
+    //    jobInformation  = {JobInformation@7350} "JobInformation for 'Socket Window WordCount'
+    // (a2bec17fde03465ecffc83019ef023f3)"
     //        jobId = {JobID@7389} "a2bec17fde03465ecffc83019ef023f3"
     //        jobName = "Socket Window WordCount"
     //        serializedExecutionConfig = {SerializedValue@7391} "SerializedValue"
@@ -240,43 +221,33 @@ public class ExecutionGraph implements AccessExecutionGraph {
 
     private final JobInformation jobInformation;
 
-
     // jobInformationOrBlobKey = {Either$Left@7351} "Left(SerializedValue)"
     /** Serialized job information or a blob key pointing to the offloaded job information. */
     private final Either<SerializedValue<JobInformation>, PermanentBlobKey> jobInformationOrBlobKey;
 
     /**
      * futureExecutor = {ScheduledThreadPoolExecutor@7352}
-     * "java.util.concurrent.ScheduledThreadPoolExecutor@1bd5a9f5[
-     *      Running,
-     *      pool size = 1,
-     *      active threads = 0,
-     *      queued tasks = 1,
-     *      completed tasks = 0
-     * ]"
+     * "java.util.concurrent.ScheduledThreadPoolExecutor@1bd5a9f5[ Running, pool size = 1, active
+     * threads = 0, queued tasks = 1, completed tasks = 0 ]"
      *
-     * The executor which is used to execute futures.
-     * */
+     * <p>The executor which is used to execute futures.
+     */
     private final ScheduledExecutorService futureExecutor;
 
     /** The executor which is used to execute blocking io operations. */
     private final Executor ioExecutor;
 
     /**
-     * jobMasterMainThreadExecutor = {ComponentMainThreadExecutor$DummyComponentMainThreadExecutor@7353}
-     * Executor that runs tasks in the job manager's main thread.
-     * */
+     * jobMasterMainThreadExecutor =
+     * {ComponentMainThreadExecutor$DummyComponentMainThreadExecutor@7353} Executor that runs tasks
+     * in the job manager's main thread.
+     */
     @Nonnull private ComponentMainThreadExecutor jobMasterMainThreadExecutor;
 
-    /**
-     * {@code true} if all source tasks are stoppable.
-     * */
+    /** {@code true} if all source tasks are stoppable. */
     private boolean isStoppable = true;
 
-    /**
-     *
-     * All job vertices that are part of this graph.
-     * */
+    /** All job vertices that are part of this graph. */
     private final Map<JobVertexID, ExecutionJobVertex> tasks;
 
     /** All vertices, in the order in which they were created. * */
@@ -453,9 +424,11 @@ public class ExecutionGraph implements AccessExecutionGraph {
                 BlobWriter.serializeAndTryOffload(
                         jobInformation, jobInformation.getJobId(), blobWriter);
 
-        // java.util.concurrent.ScheduledThreadPoolExecutor@2e9bf748[Running, pool size = 1, active threads = 0, queued tasks = 1, completed tasks = 0]
+        // java.util.concurrent.ScheduledThreadPoolExecutor@2e9bf748[Running, pool size = 1, active
+        // threads = 0, queued tasks = 1, completed tasks = 0]
         this.futureExecutor = Preconditions.checkNotNull(futureExecutor);
-        // java.util.concurrent.ScheduledThreadPoolExecutor@2e9bf748[Running, pool size = 1, active threads = 0, queued tasks = 1, completed tasks = 0]
+        // java.util.concurrent.ScheduledThreadPoolExecutor@2e9bf748[Running, pool size = 1, active
+        // threads = 0, queued tasks = 1, completed tasks = 0]
         this.ioExecutor = Preconditions.checkNotNull(ioExecutor);
 
         // this.slotProviderStrategy = {SlotProviderStrategy$NormalSlotProviderStrategy@7432}
@@ -463,7 +436,6 @@ public class ExecutionGraph implements AccessExecutionGraph {
         // slotProvider = {ThrowingSlotProvider@7098}
         this.slotProviderStrategy =
                 SlotProviderStrategy.from(scheduleMode, slotProvider, allocationTimeout);
-
 
         //  {FlinkUserCodeClassLoaders$SafetyNetWrapperClassLoader@7099}
         this.userClassLoader = Preconditions.checkNotNull(userClassLoader, "userClassLoader");
@@ -652,11 +624,9 @@ public class ExecutionGraph implements AccessExecutionGraph {
 
         checkpointCoordinator.setCheckpointStatsTracker(checkpointStatsTracker);
 
-
         // ExecutionGroup,在enableCheckpointing方法中
         // 如果chkConfig的CK时间设置不等于Long.MAX_VALUE
         // 则创建一个监听器并注册
-
 
         // interval of max long value indicates disable periodic checkpoint,
         // the CheckpointActivatorDeactivator should be created only if the interval is not max
@@ -736,7 +706,6 @@ public class ExecutionGraph implements AccessExecutionGraph {
     //  Properties and Status of the Execution Graph
     // --------------------------------------------------------------------------------------------
 
-
     //    {
     //        "jid":"1aec85fe629f9f6787f0592497608304",
     //            "name":"Socket Window WordCount",
@@ -764,7 +733,8 @@ public class ExecutionGraph implements AccessExecutionGraph {
     //                "parallelism":4,
     //                "operator":"",
     //                "operator_strategy":"",
-    //                "description":"Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)",
+    //                "description":"Window(TumblingProcessingTimeWindows(5000),
+    // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)",
     //                "inputs":[
     //            {
     //                "num":0,
@@ -808,8 +778,8 @@ public class ExecutionGraph implements AccessExecutionGraph {
     //    ]
     //    }
 
-
-    //完整计划 :  {"jid":"1aec85fe629f9f6787f0592497608304","name":"Socket Window WordCount","nodes":[{"id":"6d2677a0ecc3fd8df0b72ec675edf8f4","parallelism":1,"operator":"","operator_strategy":"","description":"Sink: Print to Std. Out","inputs":[{"num":0,"id":"ea632d67b7d595e5b851708ae9ad79d6","ship_strategy":"REBALANCE","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"ea632d67b7d595e5b851708ae9ad79d6","parallelism":4,"operator":"","operator_strategy":"","description":"Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)","inputs":[{"num":0,"id":"0a448493b4782967b150582570326227","ship_strategy":"HASH","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"0a448493b4782967b150582570326227","parallelism":4,"operator":"","operator_strategy":"","description":"Flat Map","inputs":[{"num":0,"id":"bc764cd8ddf7a0cff126f51c16239658","ship_strategy":"REBALANCE","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"bc764cd8ddf7a0cff126f51c16239658","parallelism":1,"operator":"","operator_strategy":"","description":"Source: Socket Stream","optimizer_properties":{}}]}
+    // 完整计划 :  {"jid":"1aec85fe629f9f6787f0592497608304","name":"Socket Window
+    // WordCount","nodes":[{"id":"6d2677a0ecc3fd8df0b72ec675edf8f4","parallelism":1,"operator":"","operator_strategy":"","description":"Sink: Print to Std. Out","inputs":[{"num":0,"id":"ea632d67b7d595e5b851708ae9ad79d6","ship_strategy":"REBALANCE","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"ea632d67b7d595e5b851708ae9ad79d6","parallelism":4,"operator":"","operator_strategy":"","description":"Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)","inputs":[{"num":0,"id":"0a448493b4782967b150582570326227","ship_strategy":"HASH","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"0a448493b4782967b150582570326227","parallelism":4,"operator":"","operator_strategy":"","description":"Flat Map","inputs":[{"num":0,"id":"bc764cd8ddf7a0cff126f51c16239658","ship_strategy":"REBALANCE","exchange":"pipelined_bounded"}],"optimizer_properties":{}},{"id":"bc764cd8ddf7a0cff126f51c16239658","parallelism":1,"operator":"","operator_strategy":"","description":"Source: Socket Stream","optimizer_properties":{}}]}
     public void setJsonPlan(String jsonPlan) {
         this.jsonPlan = jsonPlan;
     }
@@ -1058,7 +1028,6 @@ public class ExecutionGraph implements AccessExecutionGraph {
             }
             // 创建一个执行节点 添加到图中..
             // create the execution job vertex and attach it to the graph
-
 
             // 实例化执行图节点, 根据每一个jobVertex , 创建对应的 ExecutionJobVertex
             ExecutionJobVertex ejv =

@@ -54,10 +54,7 @@ public enum DefaultJobManagerRunnerFactory implements JobManagerRunnerFactory {
             long initializationTimestamp)
             throws Exception {
 
-
-
         // 构建各种参数
-
 
         final JobMasterConfiguration jobMasterConfiguration =
                 JobMasterConfiguration.fromConfiguration(configuration);
@@ -68,9 +65,6 @@ public enum DefaultJobManagerRunnerFactory implements JobManagerRunnerFactory {
         final ShuffleMaster<?> shuffleMaster =
                 ShuffleServiceLoader.loadShuffleServiceFactory(configuration)
                         .createShuffleMaster(configuration);
-
-
-
 
         final JobMasterServiceFactory jobMasterFactory =
                 new DefaultJobMasterServiceFactory(
@@ -84,7 +78,6 @@ public enum DefaultJobManagerRunnerFactory implements JobManagerRunnerFactory {
                         fatalErrorHandler,
                         schedulerNGFactory,
                         shuffleMaster);
-
 
         // 构建JobManagerRunner 实现 : JobManagerRunnerImpl
         return new JobManagerRunnerImpl(

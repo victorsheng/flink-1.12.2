@@ -73,34 +73,26 @@ public class PipelinedSubpartition extends ResultSubpartition
     // ------------------------------------------------------------------------
 
     /**
+     * 写入的 Buffer 最终被保存在 ResultSubpartition 中维护的一个队列中， 如果需要消费这些 Buffer，就需要依赖 ResultSubpartitionView。
      *
-     * 写入的 Buffer 最终被保存在 ResultSubpartition 中维护的一个队列中，
-     * 如果需要消费这些 Buffer，就需要依赖 ResultSubpartitionView。
+     * <p>当需要消费一个 ResultSubpartition 的结果时，需要创建一个 ResultSubpartitionView 对象， 并关联到 ResultSubpartition
+     * 中；当数据可以被消费时， 会通过对应的回调接口告知 ResultSubpartitionView：
      *
-     * 当需要消费一个 ResultSubpartition 的结果时，需要创建一个 ResultSubpartitionView 对象，
-     * 并关联到 ResultSubpartition 中；当数据可以被消费时，
-     * 会通过对应的回调接口告知 ResultSubpartitionView：
+     * <p>当前 subpartiion 堆积的所有的 Buffer 的队列
      *
-     *
-     * 当前 subpartiion 堆积的所有的 Buffer 的队列
-     *
-     * All buffers of this subpartition.
-     * Access to the buffers is synchronized on this object.
-     *
-     * */
-    final PrioritizedDeque<BufferConsumerWithPartialRecordLength> buffers =  new PrioritizedDeque<>();
+     * <p>All buffers of this subpartition. Access to the buffers is synchronized on this object.
+     */
+    final PrioritizedDeque<BufferConsumerWithPartialRecordLength> buffers =
+            new PrioritizedDeque<>();
 
     /**
-     * //当前 subpartiion 中堆积的 buffer 的数量
-     * The number of non-event buffers currently in this subpartition.
-     * */
+     * //当前 subpartiion 中堆积的 buffer 的数量 The number of non-event buffers currently in this
+     * subpartition.
+     */
     @GuardedBy("buffers")
     private int buffersInBacklog;
 
-    /**
-     * 用于消费写入的 Buffer
-     * The read view to consume this subpartition.
-     * */
+    /** 用于消费写入的 Buffer The read view to consume this subpartition. */
     PipelinedSubpartitionView readView;
 
     /** Flag indicating whether the subpartition has been finished. */
@@ -171,7 +163,6 @@ public class PipelinedSubpartition extends ResultSubpartition
 
         // 同步队列 ???
         synchronized (buffers) {
-
             if (isFinished || isReleased) {
                 bufferConsumer.close();
                 return false;
@@ -184,7 +175,7 @@ public class PipelinedSubpartition extends ResultSubpartition
             }
             updateStatistics(bufferConsumer);
 
-            //更新 backlog 的数量，只有 buffer 才会使得 buffersInBacklog + 1，事件不会增加 buffersInBacklog
+            // 更新 backlog 的数量，只有 buffer 才会使得 buffersInBacklog + 1，事件不会增加 buffersInBacklog
             increaseBuffersInBacklog(bufferConsumer);
             notifyDataAvailable = finish || shouldNotifyDataAvailable();
 
@@ -195,7 +186,7 @@ public class PipelinedSubpartition extends ResultSubpartition
             notifyPriorityEvent(prioritySequenceNumber);
         }
         if (notifyDataAvailable) {
-            //通知数据可以被消费
+            // 通知数据可以被消费
             notifyDataAvailable();
         }
 
@@ -312,14 +303,14 @@ public class PipelinedSubpartition extends ResultSubpartition
 
             while (!buffers.isEmpty()) {
 
-                BufferConsumerWithPartialRecordLength bufferConsumerWithPartialRecordLength = buffers.peek();
-
+                BufferConsumerWithPartialRecordLength bufferConsumerWithPartialRecordLength =
+                        buffers.peek();
 
                 // 获取消费者
                 BufferConsumer bufferConsumer =
                         bufferConsumerWithPartialRecordLength.getBufferConsumer();
 
-               // 转换bufferConsumer为Buffer类型
+                // 转换bufferConsumer为Buffer类型
                 buffer = buildSliceBuffer(bufferConsumerWithPartialRecordLength);
 
                 // 检查buffers队列，没有finished的buffer不能在队列头部
@@ -364,7 +355,6 @@ public class PipelinedSubpartition extends ResultSubpartition
 
             // 更新总字节数计数器
             updateStatistics(buffer);
-
 
             // Do not report last remaining buffer on buffers as available to read (assuming it's
             // unfinished).
@@ -569,7 +559,7 @@ public class PipelinedSubpartition extends ResultSubpartition
         }
     }
 
-    //只在第一个 buffer 为 finish 的时候才通知
+    // 只在第一个 buffer 为 finish 的时候才通知
     @GuardedBy("buffers")
     private boolean shouldNotifyDataAvailable() {
         // Notify only when we added first finished buffer.
@@ -579,7 +569,7 @@ public class PipelinedSubpartition extends ResultSubpartition
                 && getNumberOfFinishedBuffers() == 1;
     }
 
-    //通知readView，有数据可用了
+    // 通知readView，有数据可用了
     private void notifyDataAvailable() {
         final PipelinedSubpartitionView readView = this.readView;
         if (readView != null) {
@@ -587,7 +577,7 @@ public class PipelinedSubpartition extends ResultSubpartition
         }
     }
 
-    //通知readView，有 EVENT 可用了
+    // 通知readView，有 EVENT 可用了
     private void notifyPriorityEvent(int prioritySequenceNumber) {
         final PipelinedSubpartitionView readView = this.readView;
         if (readView != null) {

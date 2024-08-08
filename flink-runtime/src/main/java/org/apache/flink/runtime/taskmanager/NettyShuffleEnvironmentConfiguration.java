@@ -117,7 +117,11 @@ public class NettyShuffleEnvironmentConfiguration {
         this.requestSegmentsTimeout = Preconditions.checkNotNull(requestSegmentsTimeout);
         //    isNetworkDetailedMetrics = false
         this.isNetworkDetailedMetrics = isNetworkDetailedMetrics;
-        //    nettyConfig = {NettyConfig@5154} "NettyConfig [server address: /0.0.0.0, server port: 0, ssl enabled: false, memory segment size (bytes): 32768, transport type: AUTO, number of server threads: 4 (manual), number of client threads: 4 (manual), server connect backlog: 0 (use Netty's default), client connect timeout (sec): 120, send/receive buffer size (bytes): 0 (use Netty's default)]"
+        //    nettyConfig = {NettyConfig@5154} "NettyConfig [server address: /0.0.0.0, server port:
+        // 0, ssl enabled: false, memory segment size (bytes): 32768, transport type: AUTO, number
+        // of server threads: 4 (manual), number of client threads: 4 (manual), server connect
+        // backlog: 0 (use Netty's default), client connect timeout (sec): 120, send/receive buffer
+        // size (bytes): 0 (use Netty's default)]"
         this.nettyConfig = nettyConfig;
         //    tempDirs = {String[1]@5185} ["/opt/tools/hado..."]
         this.tempDirs = Preconditions.checkNotNull(tempDirs);
@@ -133,7 +137,6 @@ public class NettyShuffleEnvironmentConfiguration {
         this.sortShuffleMinBuffers = sortShuffleMinBuffers;
         //    sortShuffleMinParallelism = 2147483647
         this.sortShuffleMinParallelism = sortShuffleMinParallelism;
-
     }
 
     // ------------------------------------------------------------------------
@@ -238,7 +241,6 @@ public class NettyShuffleEnvironmentConfiguration {
                         taskManagerAddress,
                         dataBindPort);
 
-
         //    networkMemorySize = {MemorySize@5213} "134217730 bytes"
         //    localTaskManagerCommunication = false
         //    taskManagerAddress = {Inet4Address@5296} "/0.0.0.0"
@@ -286,7 +288,6 @@ public class NettyShuffleEnvironmentConfiguration {
         boolean isNetworkDetailedMetrics =
                 configuration.getBoolean(NettyShuffleEnvironmentOptions.NETWORK_DETAILED_METRICS);
 
-
         // /opt/tools/hadoop-3.1.3/data/local-dirs/usercache/yarn/appcache/application_1619273419318_0062
         String[] tempDirs = ConfigurationUtils.parseTempDirectories(configuration);
 
@@ -300,7 +301,6 @@ public class NettyShuffleEnvironmentConfiguration {
         // FILE
         BoundedBlockingSubpartitionType blockingSubpartitionType =
                 getBlockingSubpartitionType(configuration);
-
 
         // FALSE
         boolean blockingShuffleCompressionEnabled =

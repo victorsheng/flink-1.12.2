@@ -39,14 +39,13 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
- *
  * UnionInputGate 时多个 SingleInputGate 联合组成，它的内部有一个 inputGatesWithData 队列
  *
- * Input gate wrapper合并来自多个  input gates 的输入。
- * 
- * 每个  input gates 都连接有输入通道，从中读取数据。
+ * <p>Input gate wrapper合并来自多个 input gates 的输入。
  *
- * 在每个  input gates 处，输入通道具有从0（包含）到输入通道数（排除）的唯一ID。
+ * <p>每个 input gates 都连接有输入通道，从中读取数据。
+ *
+ * <p>在每个 input gates 处，输入通道具有从0（包含）到输入通道数（排除）的唯一ID。
  *
  * <pre>
  * +---+---+      +---+---+---+
@@ -56,13 +55,10 @@ import static org.apache.flink.util.Preconditions.checkState;
  * +--------------+--------------+
  * </pre>
  *
- *
- *
- *
  * Input gate wrapper to union the input from multiple input gates.
  *
- * <p>Each input gate has input channels attached from which it reads data.
- * At each input gate, the input channels have unique IDs from 0 (inclusive) to the number of input channels (exclusive).
+ * <p>Each input gate has input channels attached from which it reads data. At each input gate, the
+ * input channels have unique IDs from 0 (inclusive) to the number of input channels (exclusive).
  *
  * <pre>
  * +---+---+      +---+---+---+
@@ -76,12 +72,9 @@ import static org.apache.flink.util.Preconditions.checkState;
  * unioned input gates, e.g. the channels of input gate 0 keep their original indexes and the
  * channel indexes of input gate 1 are set off by 2 to 2--4.
  *
+ * <p>union input gate 将这些ID从0映射到所有union input gates的*total* 输入通道数，
  *
- * union input gate 将这些ID从0映射到所有union input gates的*total* 输入通道数，
- *
- * 例如，输入门0的通道保留其原始索引，
- * gate 1的通道索引由2设置为2--4。
- *
+ * <p>例如，输入门0的通道保留其原始索引， gate 1的通道索引由2设置为2--4。
  *
  * <pre>
  * +---+---++---+---+---+
@@ -338,7 +331,7 @@ public class UnionInputGate extends InputGate {
     @Override
     public void requestPartitions() throws IOException {
         for (InputGate inputGate : inputGatesByGateIndex.values()) {
-            //首先尝试请求分区，实际的请求只会执行一次
+            // 首先尝试请求分区，实际的请求只会执行一次
             inputGate.requestPartitions();
         }
     }

@@ -198,9 +198,7 @@ public class MailboxProcessor implements Closeable {
                         // 根据需要在默认操作中获取锁
                         // lock is acquired inside default action as needed
                         defaultActionContext);
-
             }
-
         }
     }
 

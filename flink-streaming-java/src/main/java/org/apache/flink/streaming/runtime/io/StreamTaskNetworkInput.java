@@ -197,7 +197,6 @@ public final class StreamTaskNetworkInput<T> implements StreamTaskInput<T> {
                 // data after the barrier before checkpoint is performed for unaligned checkpoint
                 // mode
 
-
                 if (bufferOrEvent.get().isBuffer()) {
                     // 如果是buffer的话
                     processBuffer(bufferOrEvent.get());
@@ -221,7 +220,6 @@ public final class StreamTaskNetworkInput<T> implements StreamTaskInput<T> {
 
     // 处理任务...
     private void processElement(StreamElement recordOrMark, DataOutput<T> output) throws Exception {
-
 
         if (recordOrMark.isRecord()) {
             //  [ 重点 ]  如果是数据
@@ -254,7 +252,6 @@ public final class StreamTaskNetworkInput<T> implements StreamTaskInput<T> {
         if (event.getClass() == EndOfPartitionEvent.class) {
             // release the record deserializer immediately,
             // which is very valuable in case of bounded stream
-
 
             //  清除channel对应的反序列化器
             // 并将recordDeserializers[channelIndex] 引用置空

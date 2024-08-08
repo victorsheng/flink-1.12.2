@@ -60,7 +60,7 @@ public final class OneInputTransformationTranslator<IN, OUT>
     }
 
     /**
-     * map , flatmap  转换算子 相关
+     * map , flatmap 转换算子 相关
      *
      * @param transformation The transformation to be translated.
      * @param context The translation context.

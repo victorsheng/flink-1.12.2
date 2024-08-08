@@ -107,12 +107,10 @@ public class ProcessMemoryUtils<FM extends FlinkMemory> {
     private CommonProcessMemorySpec<FM> deriveProcessSpecWithTotalFlinkMemory(
             Configuration config) {
 
-
         MemorySize totalFlinkMemorySize =
                 getMemorySizeFromConfig(config, options.getTotalFlinkMemoryOption());
 
-
-        // 
+        //
         FM flinkInternalMemory =
                 flinkMemoryUtils.deriveFromTotalFlinkMemory(config, totalFlinkMemorySize);
         JvmMetaspaceAndOverhead jvmMetaspaceAndOverhead =

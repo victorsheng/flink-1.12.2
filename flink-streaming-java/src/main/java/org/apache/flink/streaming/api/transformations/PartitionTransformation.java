@@ -30,11 +30,9 @@ import java.util.List;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * 此转换表示输入元素分区的更改。 它不会创建物理操作，它只会影响上游操作与下游操作的连接方式。
  *
- * 此转换表示输入元素分区的更改。
- * 它不会创建物理操作，它只会影响上游操作与下游操作的连接方式。
- *
- * This transformation represents a change of partitioning of the input elements.
+ * <p>This transformation represents a change of partitioning of the input elements.
  *
  * <p>This does not create a physical operation, it only affects how upstream operations are
  * connected to downstream operations.
@@ -56,7 +54,8 @@ public class PartitionTransformation<T> extends Transformation<T> {
     /**
      * 根据输入和StreamPartitioner 生成一个PartitionTransformation
      *
-     * Creates a new {@code PartitionTransformation} from the given input and {@link StreamPartitioner}.
+     * <p>Creates a new {@code PartitionTransformation} from the given input and {@link
+     * StreamPartitioner}.
      *
      * @param input The input {@code Transformation}
      * @param partitioner The {@code StreamPartitioner}

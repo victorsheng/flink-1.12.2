@@ -128,9 +128,6 @@ class SlotSharingExecutionSlotAllocator implements ExecutionSlotAllocator {
         SharedSlotProfileRetriever sharedSlotProfileRetriever =
                 sharedSlotProfileRetrieverFactory.createFromBulk(new HashSet<>(executionVertexIds));
 
-
-
-
         //    executionsByGroup = {HashMap@7976}  size = 4
 
         //    {ExecutionSlotSharingGroup@7984}  -> {ArrayList@7985}  size = 4
@@ -168,7 +165,6 @@ class SlotSharingExecutionSlotAllocator implements ExecutionSlotAllocator {
                                 Collectors.toMap(
                                         SharedSlot::getExecutionSlotSharingGroup,
                                         Function.identity()));
-
 
         Map<ExecutionVertexID, SlotExecutionVertexAssignment> assignments =
                 allocateLogicalSlotsFromSharedSlots(slots, executionsByGroup);

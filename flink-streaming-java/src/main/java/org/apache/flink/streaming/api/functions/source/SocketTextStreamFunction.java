@@ -110,7 +110,7 @@ public class SocketTextStreamFunction implements SourceFunction<String> {
     @Override
     public void run(SourceContext<String> ctx) throws Exception {
 
-        //构建buffer 缓存...
+        // 构建buffer 缓存...
         final StringBuilder buffer = new StringBuilder();
 
         // 重试次数
@@ -121,7 +121,6 @@ public class SocketTextStreamFunction implements SourceFunction<String> {
 
             // 构建socket
             try (Socket socket = new Socket()) {
-
 
                 // 设置当前currentSocket
                 currentSocket = socket;

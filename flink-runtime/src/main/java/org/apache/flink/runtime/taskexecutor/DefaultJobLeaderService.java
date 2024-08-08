@@ -345,7 +345,6 @@ public class DefaultJobLeaderService implements JobLeaderService {
                     new JobManagerRegisteredRpcConnection(
                             LOG, leaderAddress, jobMasterId, rpcService.getExecutor());
 
-
             // Try to register at job manager
             //      akka.tcp://flink@192.168.8.188:62257/user/rpc/jobmanager_2 with
             // leader id

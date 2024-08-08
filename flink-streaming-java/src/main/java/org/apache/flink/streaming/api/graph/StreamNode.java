@@ -65,30 +65,27 @@ public class StreamNode {
     private KeySelector<?, ?>[] statePartitioners = new KeySelector[0];
     private TypeSerializer<?> stateKeySerializer;
 
-
     // 其他参数..
 
     /**
-     * Maximum parallelism for this stream node.
-     * The maximum parallelism is the upper limit for dynamic scaling and the number of key groups used for partitioned state.
+     * Maximum parallelism for this stream node. The maximum parallelism is the upper limit for
+     * dynamic scaling and the number of key groups used for partitioned state.
      */
     private int maxParallelism;
 
     private ResourceSpec minResources = ResourceSpec.DEFAULT;
     private ResourceSpec preferredResources = ResourceSpec.DEFAULT;
-    private final Map<ManagedMemoryUseCase, Integer> managedMemoryOperatorScopeUseCaseWeights = new HashMap<>();
+    private final Map<ManagedMemoryUseCase, Integer> managedMemoryOperatorScopeUseCaseWeights =
+            new HashMap<>();
     private final Set<ManagedMemoryUseCase> managedMemorySlotScopeUseCases = new HashSet<>();
     private long bufferTimeout;
 
     private @Nullable String slotSharingGroup;
     private @Nullable String coLocationGroup;
 
-
     private StreamOperatorFactory<?> operatorFactory;
     private TypeSerializer<?>[] typeSerializersIn = new TypeSerializer[0];
     private TypeSerializer<?> typeSerializerOut;
-
-
 
     private final Class<? extends AbstractInvokable> jobVertexClass;
 

@@ -169,7 +169,8 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
             replaceGracefulExitWithHaltIfConfigured(configuration);
 
             // 插件信息
-            PluginManager pluginManager = PluginUtils.createPluginManagerFromRootFolder(configuration);
+            PluginManager pluginManager =
+                    PluginUtils.createPluginManagerFromRootFolder(configuration);
             configureFileSystems(configuration, pluginManager);
 
             SecurityContext securityContext = installSecurityContext(configuration);
@@ -178,7 +179,7 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
                     (Callable<Void>)
                             () -> {
 
-                                //启动集群 ???
+                                // 启动集群 ???
                                 runCluster(configuration, pluginManager);
 
                                 return null;
@@ -234,7 +235,6 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
             configuration.setString(JobManagerOptions.ADDRESS, commonRpcService.getAddress());
             configuration.setInteger(JobManagerOptions.PORT, commonRpcService.getPort());
 
-
             // 创建JobManager内的组件 : Dispatcher / ResourceManager / JobMaster
             // 构建 DispatcherResourceManagerComponentFactory
             final DispatcherResourceManagerComponentFactory
@@ -282,8 +282,6 @@ public abstract class ClusterEntrypoint implements AutoCloseableAsync, FatalErro
         LOG.info("Initializing cluster services.");
 
         synchronized (lock) {
-
-
             commonRpcService =
                     AkkaRpcServiceUtils.createRemoteRpcService(
                             configuration,

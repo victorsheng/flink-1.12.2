@@ -426,7 +426,7 @@ public class TaskManagerRunner implements FatalErrorHandler {
             exitCode =
                     SecurityUtils.getInstalledContext()
                             // 启动TaskManager = > runTaskManager
-                            .runSecured(() -> runTaskManager(configuration, pluginManager)  );
+                            .runSecured(() -> runTaskManager(configuration, pluginManager));
         } catch (Throwable t) {
             throwable = ExceptionUtils.stripException(t, UndeclaredThrowableException.class);
             exitCode = FAILURE_EXIT_CODE;

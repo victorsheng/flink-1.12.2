@@ -71,7 +71,6 @@ class PartitionRequestClientFactory {
             final CompletableFuture<NettyPartitionRequestClient> newClientFuture =
                     new CompletableFuture<>();
 
-
             // 连接创建成功后会回调 handInChannel 方法
             final CompletableFuture<NettyPartitionRequestClient> clientFuture =
                     clients.putIfAbsent(connectionId, newClientFuture);
@@ -80,7 +79,7 @@ class PartitionRequestClientFactory {
 
             if (clientFuture == null) {
                 try {
-                    //连接到 Netty Server
+                    // 连接到 Netty Server
                     client = connectWithRetries(connectionId);
                 } catch (Throwable e) {
                     newClientFuture.completeExceptionally(

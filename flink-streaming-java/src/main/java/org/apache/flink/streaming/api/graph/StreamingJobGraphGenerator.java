@@ -105,7 +105,7 @@ public class StreamingJobGraphGenerator {
     // 默认网络 BUFFER 超时时间 : 100 L
     private static final long DEFAULT_NETWORK_BUFFER_TIMEOUT = 100L;
 
-    //未定义的网络缓冲区超时  : -1
+    // 未定义的网络缓冲区超时  : -1
     public static final long UNDEFINED_NETWORK_BUFFER_TIMEOUT = -1L;
 
     // ------------------------------------------------------------------------
@@ -117,7 +117,6 @@ public class StreamingJobGraphGenerator {
 
     // 构建根据StreamGraph 构建 JobGraph
     public static JobGraph createJobGraph(StreamGraph streamGraph, @Nullable JobID jobID) {
-
 
         // 构建一个 StreamingJobGraphGenerator 生成器构建 createJobGraph
         // StreamingJobGraphGenerator 构造方法里面会创建一个JobGraph
@@ -157,9 +156,7 @@ public class StreamingJobGraphGenerator {
     // chained 的首选 资源
     private final Map<Integer, ResourceSpec> chainedPreferredResources;
 
-
     private final Map<Integer, InputOutputFormatContainer> chainedInputOutputFormats;
-
 
     private final StreamGraphHasher defaultStreamGraphHasher;
 
@@ -216,7 +213,7 @@ public class StreamingJobGraphGenerator {
             legacyHashes.add(hasher.traverseStreamGraphAndGenerateHashes(streamGraph));
         }
 
-         // [重点] 生成JobVertex , JobEdge等, 并尽可能地将多个节点chain在一起
+        // [重点] 生成JobVertex , JobEdge等, 并尽可能地将多个节点chain在一起
         setChaining(hashes, legacyHashes);
 
         // 将每个生成JobVertex的入边集合也序列化到改生成JobVertex的StreamConfig中(出边集合已经在setChaining的时候写入了)
@@ -379,21 +376,19 @@ public class StreamingJobGraphGenerator {
     }
 
     /**
-     * 从 source  StreamNode 实例里面 , 设置 task的chain
-     * 他将递归创建所有{@link JobVertex}实例
+     * 从 source StreamNode 实例里面 , 设置 task的chain 他将递归创建所有{@link JobVertex}实例
      *
-     *
-     * Sets up task chains from the source {@link StreamNode} instances.
+     * <p>Sets up task chains from the source {@link StreamNode} instances.
      *
      * <p>This will recursively create all {@link JobVertex} instances.
      */
-    private void  setChaining(Map<Integer, byte[]> hashes, List<Map<Integer, byte[]>> legacyHashes) {
+    private void setChaining(Map<Integer, byte[]> hashes, List<Map<Integer, byte[]>> legacyHashes) {
         // we separate out the sources that run as inputs to another operator (chained inputs)
         // from the sources that needs to run as the main (head) operator.
 
-
         // 我们将需要作为 main (head) operator 运行的 sources 与作为其他运算符的输入运行的源（链接的输入）分开。
-        final Map<Integer, OperatorChainInfo> chainEntryPoints = buildChainedInputsAndGetHeadInputs(hashes, legacyHashes);
+        final Map<Integer, OperatorChainInfo> chainEntryPoints =
+                buildChainedInputsAndGetHeadInputs(hashes, legacyHashes);
 
         final Collection<OperatorChainInfo> initialEntryPoints =
                 chainEntryPoints.entrySet().stream()
@@ -435,7 +430,7 @@ public class StreamingJobGraphGenerator {
             // 不可以串起来的出边
             List<StreamEdge> nonChainableOutputs = new ArrayList<StreamEdge>();
 
-            //获取节点
+            // 获取节点
             StreamNode currentNode = streamGraph.getStreamNode(currentNodeId);
 
             // 将当前节点的出边分成chainable和nonchainable两类
@@ -443,7 +438,6 @@ public class StreamingJobGraphGenerator {
             // 获取当前节点的出边
             // 将当前节点的出边分成 chainable 和 nonChainable 两类
             for (StreamEdge outEdge : currentNode.getOutEdges()) {
-
 
                 // 验证是否可以串联: (下游的输入edge是1 && 是可以串联的)
                 if (isChainable(outEdge, streamGraph)) {
@@ -511,8 +505,6 @@ public class StreamingJobGraphGenerator {
                     currentNodeId.equals(startNodeId)
                             ? createJobVertex(startNodeId, chainInfo)
                             : new StreamConfig(new Configuration());
-
-
 
             // 设置 JobVertex 的 StreamConfig, 基本上是序列化 StreamNode 中的配置到 StreamConfig中.
             setVertexConfig(
@@ -849,7 +841,7 @@ public class StreamingJobGraphGenerator {
 
         ResultPartitionType resultPartitionType;
         switch (edge.getShuffleMode()) {
-            case PIPELINED:  // 流处理
+            case PIPELINED: // 流处理
                 resultPartitionType = ResultPartitionType.PIPELINED_BOUNDED;
                 break;
             case BATCH:
@@ -994,18 +986,17 @@ public class StreamingJobGraphGenerator {
         // 获取下游的 StreamOperatorFactory
         StreamOperatorFactory<?> downStreamOperator = downStreamVertex.getOperatorFactory();
 
-
         if (downStreamOperator == null || upStreamOperator == null) {
             return false;
         }
 
         // yielding operators cannot be chained to legacy sources
-        // unfortunately the information that vertices have been chained is not preserved at this  point
+        // unfortunately the information that vertices have been chained is not preserved at this
+        // point
         if (downStreamOperator instanceof YieldingOperatorFactory
                 && getHeadOperator(upStreamVertex, streamGraph).isLegacySource()) {
             return false;
         }
-
 
         // 根据算子的ChainingStrategy 来判断是否上下游可以进行chain
 
@@ -1447,9 +1438,10 @@ public class StreamingJobGraphGenerator {
                                 .collect(Collectors.joining(", ")));
     }
 
-    /** 一个维护 operator chain 信息的私有类, 在递归请求createChain方法期间使用.
-     * A private class to help maintain the information of an operator chain during the recursive
-     * call in {@link #createChain(Integer, int, OperatorChainInfo, Map)}.
+    /**
+     * 一个维护 operator chain 信息的私有类, 在递归请求createChain方法期间使用. A private class to help maintain the
+     * information of an operator chain during the recursive call in {@link #createChain(Integer,
+     * int, OperatorChainInfo, Map)}.
      */
     private static class OperatorChainInfo {
         private final Integer startNodeId;

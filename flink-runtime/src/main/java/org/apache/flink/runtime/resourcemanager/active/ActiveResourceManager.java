@@ -240,12 +240,10 @@ public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable>
     // 请求一个新的 TaskManager
     private void requestNewWorker(WorkerResourceSpec workerResourceSpec) {
 
-
         // 获取内存资源配置
         final TaskExecutorProcessSpec taskExecutorProcessSpec =
                 TaskExecutorProcessUtils.processSpecFromWorkerResourceSpec(
                         flinkConfig, workerResourceSpec);
-
 
         final int pendingCount = pendingWorkerCounter.increaseAndGet(workerResourceSpec);
 
@@ -260,7 +258,6 @@ public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable>
         CompletableFuture<WorkerType> requestResourceFuture =
                 resourceManagerDriver.requestResource(taskExecutorProcessSpec);
 
-
         FutureUtils.assertNoException(
                 requestResourceFuture.handle(
                         (worker, exception) -> {
@@ -274,7 +271,6 @@ public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable>
                                         exception);
                                 requestWorkerIfRequired();
                             } else {
-
 
                                 final ResourceID resourceId = worker.getResourceID();
                                 workerNodeMap.put(resourceId, worker);
@@ -324,7 +320,9 @@ public class ActiveResourceManager<WorkerType extends ResourceIDRetrievable>
 
             //  Worker container_1615446205104_0025_01_000002(192.168.8.188:57958)
             //  with resource spec
-            //          WorkerResourceSpec {cpuCores=1.0, taskHeapSize=384.000mb (402653174 bytes), taskOffHeapSize=0 bytes, networkMemSize=128.000mb (134217730 bytes), managedMemSize=512.000mb (536870920 bytes)}
+            //          WorkerResourceSpec {cpuCores=1.0, taskHeapSize=384.000mb (402653174 bytes),
+            // taskOffHeapSize=0 bytes, networkMemSize=128.000mb (134217730 bytes),
+            // managedMemSize=512.000mb (536870920 bytes)}
             //  was requested in current attempt.
             //
             //  Current pending count after registering: 0.

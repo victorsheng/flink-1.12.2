@@ -783,8 +783,10 @@ public class TypeExtractor {
             TypeInformation<IN1> in1Type,
             TypeInformation<IN2> in2Type) {
 
-        //    baseClass = {Class@3244} "interface org.apache.flink.streaming.api.functions.source.SourceFunction"
-        //    clazz = {Class@3245} "class org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction"
+        //    baseClass = {Class@3244} "interface
+        // org.apache.flink.streaming.api.functions.source.SourceFunction"
+        //    clazz = {Class@3245} "class
+        // org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction"
         //    returnParamPos = 0
         //    in1Type = null
         //    in2Type = null

@@ -271,7 +271,6 @@ public abstract class AbstractDispatcherLeaderProcess implements DispatcherLeade
 
         CompletableFuture<ApplicationStatus> getShutDownFuture();
 
-
         CompletableFuture<Void> getTerminationFuture();
     }
 }

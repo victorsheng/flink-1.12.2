@@ -433,7 +433,6 @@ public class JobGraph implements Serializable {
 
         // 首先，找到没有输入边的顶点和具有断开输入的顶点（这指一些独立数据集)
 
-
         // start by finding the vertices with no input edges
         // and the ones with disconnected inputs (that refer to some standalone data set)
         {
@@ -443,7 +442,8 @@ public class JobGraph implements Serializable {
 
                 if (vertex.hasNoConnectedInputs()) {
                     // sorted
-                    // 0 = Source: Socket Stream (org.apache.flink.streaming.runtime.tasks.SourceStreamTask)
+                    // 0 = Source: Socket Stream
+                    // (org.apache.flink.streaming.runtime.tasks.SourceStreamTask)
                     sorted.add(vertex);
                     iter.remove();
                 }
@@ -463,7 +463,6 @@ public class JobGraph implements Serializable {
 
             // Source: Socket Stream (org.apache.flink.streaming.runtime.tasks.SourceStreamTask)
             JobVertex current = sorted.get(startNodePos++);
-
 
             addNodesThatHaveNoNewPredecessors(current, sorted, remaining);
         }

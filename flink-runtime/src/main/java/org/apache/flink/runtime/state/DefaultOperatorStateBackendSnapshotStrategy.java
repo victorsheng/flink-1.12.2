@@ -35,18 +35,13 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
 /**
- * 会为对当前注册的所有 operator state（包含 list state 和 broadcast state）做深度拷贝，
- * 然后将实际的写入操作封装在一个异步的 FutureTask 中，
- * 这个 FutureTask 的主要任务包括：
- *      1）打开输出流
- *      2）写入状态元数据信息
- *      3）写入状态
- *      4）关闭输出流，获得状态句柄。
+ * 会为对当前注册的所有 operator state（包含 list state 和 broadcast state）做深度拷贝， 然后将实际的写入操作封装在一个异步的 FutureTask 中，
+ * 这个 FutureTask 的主要任务包括： 1）打开输出流 2）写入状态元数据信息 3）写入状态 4）关闭输出流，获得状态句柄。
  *
- * 如果不启用异步checkpoint模式，
- * 那么这个 FutureTask 在同步阶段就会立刻执行。
+ * <p>如果不启用异步checkpoint模式， 那么这个 FutureTask 在同步阶段就会立刻执行。
  *
- * Snapshot strategy for this backend. */
+ * <p>Snapshot strategy for this backend.
+ */
 class DefaultOperatorStateBackendSnapshotStrategy
         extends AbstractSnapshotStrategy<OperatorStateHandle> {
     private final ClassLoader userClassLoader;
@@ -87,7 +82,7 @@ class DefaultOperatorStateBackendSnapshotStrategy
         final Map<String, BackendWritableBroadcastState<?, ?>> registeredBroadcastStatesDeepCopies =
                 new HashMap<>(registeredBroadcastStates.size());
 
-        //获得已注册的所有 list state 和 broadcast state 的深拷贝
+        // 获得已注册的所有 list state 和 broadcast state 的深拷贝
         ClassLoader snapshotClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(userClassLoader);
         try {
@@ -119,7 +114,7 @@ class DefaultOperatorStateBackendSnapshotStrategy
             Thread.currentThread().setContextClassLoader(snapshotClassLoader);
         }
 
-        //将主要写入操作封装为一个异步的FutureTask
+        // 将主要写入操作封装为一个异步的FutureTask
         AsyncSnapshotCallable<SnapshotResult<OperatorStateHandle>> snapshotCallable =
                 new AsyncSnapshotCallable<SnapshotResult<OperatorStateHandle>>() {
 
@@ -203,7 +198,7 @@ class DefaultOperatorStateBackendSnapshotStrategy
 
                         if (snapshotCloseableRegistry.unregisterCloseable(localOut)) {
 
-                            //关闭输出流，获得状态句柄，后面可以用这个句柄读取状态
+                            // 关闭输出流，获得状态句柄，后面可以用这个句柄读取状态
                             StreamStateHandle stateHandle = localOut.closeAndGetHandle();
 
                             if (stateHandle != null) {
@@ -225,7 +220,7 @@ class DefaultOperatorStateBackendSnapshotStrategy
 
                     @Override
                     protected void logAsyncSnapshotComplete(long startTime) {
-                        //如果不是异步 checkpoint 那么在这里直接运行 FutureTask，即在同步阶段就完成了状态的写入
+                        // 如果不是异步 checkpoint 那么在这里直接运行 FutureTask，即在同步阶段就完成了状态的写入
                         if (asynchronousSnapshots) {
                             logAsyncCompleted(streamFactory, startTime);
                         }

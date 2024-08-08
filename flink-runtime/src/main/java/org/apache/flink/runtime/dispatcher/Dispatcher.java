@@ -217,9 +217,8 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
             throw exception;
         }
 
-        //启动JobMaster
+        // 启动JobMaster
         startRecoveredJobs();
-
 
         this.dispatcherBootstrap =
                 this.dispatcherBootstrapFactory.create(
@@ -409,7 +408,8 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
         long initializationTimestamp = System.currentTimeMillis();
 
         // 构建 JobManagerRunner
-        CompletableFuture<JobManagerRunner> jobManagerRunnerFuture =  createJobManagerRunner(jobGraph, initializationTimestamp);
+        CompletableFuture<JobManagerRunner> jobManagerRunnerFuture =
+                createJobManagerRunner(jobGraph, initializationTimestamp);
 
         DispatcherJob dispatcherJob =
                 DispatcherJob.createFor(
@@ -419,9 +419,6 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
                         initializationTimestamp);
         // 将Job加入队列
         runningJobs.put(jobGraph.getJobID(), dispatcherJob);
-
-
-
 
         final JobID jobId = jobGraph.getJobID();
 
@@ -488,11 +485,9 @@ public abstract class Dispatcher extends PermanentlyFencedRpcEndpoint<Dispatcher
             JobGraph jobGraph, long initializationTimestamp) {
         final RpcService rpcService = getRpcService();
 
-
         return CompletableFuture.supplyAsync(
                 () -> {
                     try {
-
 
                         // 创建JobManagerRunner
                         JobManagerRunner runner =

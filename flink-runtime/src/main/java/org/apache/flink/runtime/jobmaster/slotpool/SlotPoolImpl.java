@@ -76,26 +76,26 @@ import java.util.stream.Stream;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * slot pool为{@link ExecutionGraph}发出的slot请求提供服务。 当它无法提供slot请求时，它将尝试从ResourceManager获取新的slot。
+ * 如果当前没有可用的ResourceManager，或者ResourceManager拒绝了它，或者请求超时，那么它将使slot请求失败。 slot
+ * pool还保存提供给它并被接受的所有slot，因此即使ResourceManager关闭，也可以提供注册的空闲slot。
+ * slot只有在无用时才会释放，例如，当作业完全运行时，但我们仍有一些可用slot。 所有的分配或slot提供都将由自己生成的AllocationID标识，我们将使用它来消除歧义。
  *
- * slot pool为{@link ExecutionGraph}发出的slot请求提供服务。
- * 当它无法提供slot请求时，它将尝试从ResourceManager获取新的slot。
- * 如果当前没有可用的ResourceManager，或者ResourceManager拒绝了它，或者请求超时，那么它将使slot请求失败。
- * slot pool还保存提供给它并被接受的所有slot，因此即使ResourceManager关闭，也可以提供注册的空闲slot。
- * slot只有在无用时才会释放，例如，当作业完全运行时，但我们仍有一些可用slot。
- * 所有的分配或slot提供都将由自己生成的AllocationID标识，我们将使用它来消除歧义。
- * 
- * TODO:使挂起的请求位置首选项感知
- * TODO:在发送slot请求时将位置首选项传递给ResourceManager
+ * <p>TODO:使挂起的请求位置首选项感知 TODO:在发送slot请求时将位置首选项传递给ResourceManager
  *
- * The slot pool serves slot request issued by {@link ExecutionGraph}.
+ * <p>The slot pool serves slot request issued by {@link ExecutionGraph}.
  *
- * It will attempt to acquire  new slots from the ResourceManager when it cannot serve a slot request.
+ * <p>It will attempt to acquire new slots from the ResourceManager when it cannot serve a slot
+ * request.
  *
- * If no ResourceManager is currently available, or it gets a decline from the ResourceManager, or a request times out, it fails the slot request.
+ * <p>If no ResourceManager is currently available, or it gets a decline from the ResourceManager,
+ * or a request times out, it fails the slot request.
  *
- * The slot pool also holds all the slots that were offered to it and accepted, and can thus provides registered free slots even if the ResourceManager is down.
+ * <p>The slot pool also holds all the slots that were offered to it and accepted, and can thus
+ * provides registered free slots even if the ResourceManager is down.
  *
- * The slots will only be released when they are useless, e.g. when the job is fully running but we still have some free slots.
+ * <p>The slots will only be released when they are useless, e.g. when the job is fully running but
+ * we still have some free slots.
  *
  * <p>All the allocation or the slot offering will be identified by self generated AllocationID, we
  * will use it to eliminate ambiguities.
@@ -110,7 +110,7 @@ public class SlotPoolImpl implements SlotPool {
     /**
      * SlotPool在调试级别写入其slot分布的间隔（毫秒）。
      *
-     * The interval (in milliseconds) in which the SlotPool writes its slot distribution on debug
+     * <p>The interval (in milliseconds) in which the SlotPool writes its slot distribution on debug
      * level.
      */
     private static final long STATUS_LOG_INTERVAL_MS = 60_000;
@@ -119,51 +119,37 @@ public class SlotPoolImpl implements SlotPool {
     private final JobID jobId;
 
     /**
-     * 仅当资源已注册时，才会接受和使用所有已注册的TaskManager、slot。
-     * All registered TaskManagers, slots will be accepted and used only if the resource is registered.
+     * 仅当资源已注册时，才会接受和使用所有已注册的TaskManager、slot。 All registered TaskManagers, slots will be accepted
+     * and used only if the resource is registered.
      */
     private final HashSet<ResourceID> registeredTaskManagers;
 
-    /**
-     * 所有分配的slot的book-keeping。
-     * The book-keeping of all allocated slots.
-     * */
+    /** 所有分配的slot的book-keeping。 The book-keeping of all allocated slots. */
     private final AllocatedSlots allocatedSlots;
 
-    /**
-     * 所有可用slot的 book-keeping
-     * The book-keeping of all available slots.
-     * */
+    /** 所有可用slot的 book-keeping The book-keeping of all available slots. */
     private final AvailableSlots availableSlots;
 
-    /**
-     * 等待slot的所有挂起请求。
-     * All pending requests waiting for slots.
-     * */
+    /** 等待slot的所有挂起请求。 All pending requests waiting for slots. */
     private final DualKeyLinkedMap<SlotRequestId, AllocationID, PendingRequest> pendingRequests;
 
     /**
-     * 等待连接 resource manager 的请求。
-     * The requests that are waiting for the resource manager to be connected.
-     * */
+     * 等待连接 resource manager 的请求。 The requests that are waiting for the resource manager to be
+     * connected.
+     */
     private final LinkedHashMap<SlotRequestId, PendingRequest> waitingForResourceManager;
 
     /**
-     *
      * 外部请求调用超时（例如，到ResourceManager或TaskExecutor）。
-     * 
-     * Timeout for external request calls (e.g. to the ResourceManager or the TaskExecutor).
-     * */
+     *
+     * <p>Timeout for external request calls (e.g. to the ResourceManager or the TaskExecutor).
+     */
     private final Time rpcTimeout;
 
-    /** 
-     * 释放空闲slot超时。
-     * Timeout for releasing idle slots. */
+    /** 释放空闲slot超时。 Timeout for releasing idle slots. */
     private final Time idleSlotTimeout;
 
-    /**
-     * 批处理slot请求超时。
-     * Timeout for batch slot requests. */
+    /** 批处理slot请求超时。 Timeout for batch slot requests. */
     private final Time batchSlotTimeout;
 
     private final Clock clock;
@@ -247,8 +233,7 @@ public class SlotPoolImpl implements SlotPool {
     // ------------------------------------------------------------------------
 
     /**
-     * 启动slot池以接受RPC调用。
-     * Start the slot pool to accept RPC calls.
+     * 启动slot池以接受RPC调用。 Start the slot pool to accept RPC calls.
      *
      * @param jobMasterId The necessary leader id for running the job.
      * @param newJobManagerAddress for the slot requests which are sent to the resource manager
@@ -275,10 +260,10 @@ public class SlotPoolImpl implements SlotPool {
         }
     }
 
-    /** 
-     * 挂起此池，意味着它已失去接受和分发slot的权限。
-     * Suspends this pool, meaning it has lost its authority to accept and distribute slots.
-     * */
+    /**
+     * 挂起此池，意味着它已失去接受和分发slot的权限。 Suspends this pool, meaning it has lost its authority to accept and
+     * distribute slots.
+     */
     @Override
     public void suspend() {
 
@@ -363,8 +348,7 @@ public class SlotPoolImpl implements SlotPool {
     /**
      * 从RM中请求一个新的slot
      *
-     *
-     * Requests a new slot from the ResourceManager. If there is currently not ResourceManager
+     * <p>Requests a new slot from the ResourceManager. If there is currently not ResourceManager
      * connected, then the request is stashed and send once a new ResourceManager is connected.
      *
      * @param pendingRequest pending slot request
@@ -416,8 +400,6 @@ public class SlotPoolImpl implements SlotPool {
                                 }
                             }
                         });
-
-
 
         // Requesting new slot [SlotRequestId{d3517a9282334314b63f9493850f55f0}]
         // and
@@ -576,8 +558,10 @@ public class SlotPoolImpl implements SlotPool {
     @Override
     @Nonnull
     public Collection<SlotInfoWithUtilization> getAvailableSlotsInformation() {
-        final Map<ResourceID, Set<AllocatedSlot>> availableSlotsByTaskManager = availableSlots.getSlotsByTaskManager();
-        final Map<ResourceID, Set<AllocatedSlot>> allocatedSlotsByTaskManager = allocatedSlots.getSlotsByTaskManager();
+        final Map<ResourceID, Set<AllocatedSlot>> availableSlotsByTaskManager =
+                availableSlots.getSlotsByTaskManager();
+        final Map<ResourceID, Set<AllocatedSlot>> allocatedSlotsByTaskManager =
+                allocatedSlots.getSlotsByTaskManager();
 
         return availableSlotsByTaskManager.entrySet().stream()
                 .flatMap(
@@ -660,14 +644,12 @@ public class SlotPoolImpl implements SlotPool {
     }
 
     /**
-     * 
      * 尝试使用给定的已分配slot完成挂起的slot请求，
      *
-     * 或者如果没有匹配的请求，则将已分配的slot归还到可用slot集。
-     * 
-     * Tries to fulfill with the given allocated slot a pending slot request
-     * or
-     * add the allocated slot to the set of available slots if no matching request is available.
+     * <p>或者如果没有匹配的请求，则将已分配的slot归还到可用slot集。
+     *
+     * <p>Tries to fulfill with the given allocated slot a pending slot request or add the allocated
+     * slot to the set of available slots if no matching request is available.
      *
      * @param allocatedSlot which shall be returned
      */
@@ -692,7 +674,6 @@ public class SlotPoolImpl implements SlotPool {
             // 将请求从 请求队列中移除 .
             removePendingRequest(pendingRequest.getSlotRequestId());
 
-
             // 将当前分配的slot加入到已分配的allocatedSlots集合中, 标识已被使用.
             allocatedSlots.add(pendingRequest.getSlotRequestId(), allocatedSlot);
 
@@ -702,7 +683,6 @@ public class SlotPoolImpl implements SlotPool {
             // 一旦相应的请求被删除，这个分配就可能成为孤立的
             // this allocation may become orphan once its corresponding request is removed
             final Optional<AllocationID> allocationIdOfRequest = pendingRequest.getAllocationId();
-
 
             // 处理重新连接操作.
 
@@ -796,23 +776,23 @@ public class SlotPoolImpl implements SlotPool {
     }
 
     /**
-     *
      * 根据AllocationID , TaskExecutor 提供Slot
      *
-     * AllocationID最初由该 pool 生成，并通过ResourceManager传输到TaskManager
+     * <p>AllocationID最初由该 pool 生成，并通过ResourceManager传输到TaskManager
      *
-     * 我们用它来区分我们发行的不同分配。
+     * <p>我们用它来区分我们发行的不同分配。
      *
-     * 如果我们发现某个Slot不匹配或实际上没有等待此Slot的挂起请求（可能由其他返回的Slot完成），则Slot提供可能会被拒绝。
+     * <p>如果我们发现某个Slot不匹配或实际上没有等待此Slot的挂起请求（可能由其他返回的Slot完成），则Slot提供可能会被拒绝。
      *
+     * <p>Slot offering by TaskExecutor with AllocationID.
      *
-     * Slot offering by TaskExecutor with AllocationID.
+     * <p>The AllocationID is originally generated by this pool and transfer through the
+     * ResourceManager to TaskManager.
      *
-     * The AllocationID is originally generated by this pool and transfer through the ResourceManager to TaskManager.
+     * <p>We use it to distinguish the different allocation we issued.
      *
-     * We use it to distinguish the different allocation we issued.
-     *
-     * Slot offering may be rejected if we find something mismatching or there is actually no pending request waiting for this slot (maybe fulfilled by some other returned slot).
+     * <p>Slot offering may be rejected if we find something mismatching or there is actually no
+     * pending request waiting for this slot (maybe fulfilled by some other returned slot).
      *
      * @param taskManagerLocation location from where the offer comes from
      * @param taskManagerGateway TaskManager gateway
@@ -848,13 +828,13 @@ public class SlotPoolImpl implements SlotPool {
 
             //  我们需要弄清楚这是对完全相同的slot的重复offer，
             //  还是在ResourceManager重新尝试请求后来自不同TaskManager的另一个offer
-            
+
             // we need to figure out if this is a repeated offer for the exact same slot,
             // or another offer that comes from a different TaskManager after the ResourceManager
             // re-tried the request
 
             // 我们用比较SlotID的方式来写这个，因为SlotIDD是 TaskManager上实际slot的标识符
-            
+
             // we write this in terms of comparing slot, because the Slot IDs are the
             // identifiers of
             // the actual slots on the TaskManagers
@@ -916,16 +896,15 @@ public class SlotPoolImpl implements SlotPool {
     // ------------------------------------------------------------------------
 
     /**
-     *
-     * 失败指定的分配和释放相应的slot，如果我们有一个。
-     * 当某些slot分配因rpcTimeout失败时，这可能由JobManager触发。
+     * 失败指定的分配和释放相应的slot，如果我们有一个。 当某些slot分配因rpcTimeout失败时，这可能由JobManager触发。
      * 或者，当TaskManager发现slot出了问题并决定收回slot时，可能会触发这种情况。
      *
-     * Fail the specified allocation and release the corresponding slot if we have one.
+     * <p>Fail the specified allocation and release the corresponding slot if we have one.
      *
-     * This may triggered by JobManager when some slot allocation failed with rpcTimeout.
+     * <p>This may triggered by JobManager when some slot allocation failed with rpcTimeout.
      *
-     * Or this could be triggered by TaskManager, when it finds out something went wrong with the slot, and decided to take it back.
+     * <p>Or this could be triggered by TaskManager, when it finds out something went wrong with the
+     * slot, and decided to take it back.
      *
      * @param allocationID Represents the allocation which should be failed
      * @param cause The cause of the failure
@@ -998,14 +977,13 @@ public class SlotPoolImpl implements SlotPool {
     // ------------------------------------------------------------------------
 
     /**
-     * 
      * 将TaskManager注册到此 pool ，只有来自已注册TaskManager的slot才被视为有效。
      * 它还为我们提供了一种方法，使“dead”或“abnormal”任务管理者远离这个池
-     * 
-     * 
-     * Register TaskManager to this pool, only those slots come from registered TaskManager will be  considered valid.
      *
-     * Also it provides a way for us to keep "dead" or "abnormal" TaskManagers out of this pool.
+     * <p>Register TaskManager to this pool, only those slots come from registered TaskManager will
+     * be considered valid.
+     *
+     * <p>Also it provides a way for us to keep "dead" or "abnormal" TaskManagers out of this pool.
      *
      * @param resourceID The id of the TaskManager
      */
@@ -1020,14 +998,14 @@ public class SlotPoolImpl implements SlotPool {
     }
 
     /**
-     * 
      * 从该池中注销TaskManager，将释放所有相关slot并取消任务。
      * 当我们发现某个TaskManager变得“dead”或“abnormal”，并且我们决定不再使用其中的slot时调用。
-     * 
-     * 
-     * Unregister TaskManager from this pool, all the related slots will be released and tasks be canceled.
      *
-     * Called when we find some TaskManager becomes "dead" or "abnormal", and we decide to not using slots from it anymore.
+     * <p>Unregister TaskManager from this pool, all the related slots will be released and tasks be
+     * canceled.
+     *
+     * <p>Called when we find some TaskManager becomes "dead" or "abnormal", and we decide to not
+     * using slots from it anymore.
      *
      * @param resourceId The id of the TaskManager
      * @param cause for the releasing of the TaskManager

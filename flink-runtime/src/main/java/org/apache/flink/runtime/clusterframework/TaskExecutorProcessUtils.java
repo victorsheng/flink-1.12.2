@@ -159,12 +159,10 @@ public class TaskExecutorProcessUtils {
                         workerResourceSpec.getNetworkMemSize(),
                         workerResourceSpec.getManagedMemSize());
 
-
         // JVM 元空间配置 相关...
         final JvmMetaspaceAndOverhead jvmMetaspaceAndOverhead =
                 PROCESS_MEMORY_UTILS.deriveJvmMetaspaceAndOverheadFromTotalFlinkMemory(
                         config, flinkMemory.getTotalFlinkMemorySize());
-
 
         return new TaskExecutorProcessSpec(
                 workerResourceSpec.getCpuCores(), flinkMemory, jvmMetaspaceAndOverhead);

@@ -171,12 +171,12 @@ public class TaskExecutorLocalStateStoresManager {
 
                 taskStateManagers.put(taskKey, taskLocalStateStore);
 
-
                 // Registered new local state store with configuration
                 //          LocalRecoveryConfig{
                 //                  localRecoveryMode=false,
                 //                  localStateDirectories=LocalRecoveryDirectoryProvider{
-                //                          rootDirectories=[/opt/tools/hadoop-3.2.1/local-dirs/usercache/sysadmin/appcache/application_1615446205104_0025/localState/aid_3755cb8f9962a9a7738db04f2a02084c],
+                //
+                // rootDirectories=[/opt/tools/hadoop-3.2.1/local-dirs/usercache/sysadmin/appcache/application_1615446205104_0025/localState/aid_3755cb8f9962a9a7738db04f2a02084c],
                 //                          jobID=694474d11da6100e82744c9e47e2f511,
                 //                          jobVertexID=90bea66de1c231edf33913ecd54406c1,
                 //                          subtaskIndex=0

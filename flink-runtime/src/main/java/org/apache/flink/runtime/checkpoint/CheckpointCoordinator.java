@@ -516,13 +516,8 @@ public class CheckpointCoordinator {
         return triggerCheckpoint(checkpointProperties, null, isPeriodic);
     }
 
-
-
-
     /**
-     * 定时任务被封装为 ScheduledTrigger,
-     * 运行时会调用 CheckpointCoordinator.
-     * triggerCheckpoint() 触发一次 checkpoint。
+     * 定时任务被封装为 ScheduledTrigger, 运行时会调用 CheckpointCoordinator. triggerCheckpoint() 触发一次 checkpoint。
      *
      * @param props
      * @param externalSavepointLocation
@@ -642,8 +637,7 @@ public class CheckpointCoordinator {
                                                 final long checkpointId =
                                                         checkpoint.getCheckpointId();
 
-
-                                                //[重要] 触发 Checkpoint !!!!!!!!!!!!!!!!
+                                                // [重要] 触发 Checkpoint !!!!!!!!!!!!!!!!
                                                 snapshotTaskState(
                                                         timestamp,
                                                         checkpointId,
@@ -1752,7 +1746,6 @@ public class CheckpointCoordinator {
             stopCheckpointScheduler();
 
             periodicScheduling = true;
-
 
             // 启动 checkpoint 的定时器。
             currentPeriodicTrigger = scheduleTriggerWithDelay(getRandomInitDelay());

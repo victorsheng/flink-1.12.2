@@ -62,21 +62,18 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
     private static final Logger LOG = LoggerFactory.getLogger(TaskSlotTableImpl.class);
 
     /**
-     * 静态slot分配中的slot数。
-     * 如果请求带索引的slot，则所请求的索引必须在[0，numberSlots）范围内。
-     * 生成slot report时，即使该slot不存在，我们也应始终生成索引为[0，numberSlots）的广告位。
-     * 
-     * Number of slots in static slot allocation.
-     * If slot is requested with an index, the requested index must within the range of [0, numberSlots).
+     * 静态slot分配中的slot数。 如果请求带索引的slot，则所请求的索引必须在[0，numberSlots）范围内。 生成slot
+     * report时，即使该slot不存在，我们也应始终生成索引为[0，numberSlots）的广告位。
      *
-     * When generating slot report, we should always generate slots with index in [0, numberSlots) even the slot does not exist.
+     * <p>Number of slots in static slot allocation. If slot is requested with an index, the
+     * requested index must within the range of [0, numberSlots).
+     *
+     * <p>When generating slot report, we should always generate slots with index in [0,
+     * numberSlots) even the slot does not exist.
      */
     private final int numberSlots;
 
-    /**
-     * 用于静态slot分配的slot资源配置文件。
-     * Slot resource profile for static slot allocation.
-     * */
+    /** 用于静态slot分配的slot资源配置文件。 Slot resource profile for static slot allocation. */
     private final ResourceProfile defaultSlotResourceProfile;
 
     /** Page size for memory manager. */
@@ -85,39 +82,25 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
     /** Timer service used to time out allocated slots. */
     private final TimerService<AllocationID> timerService;
 
-    /**
-     * 缓存  index -> TaskSlot
-     * The list of all task slots. */
+    /** 缓存 index -> TaskSlot The list of all task slots. */
     private final Map<Integer, TaskSlot<T>> taskSlots;
 
-    /**
-     * 缓存 AllocationID -> TaskSlot
-     * Mapping from allocation id to task slot.
-     * */
+    /** 缓存 AllocationID -> TaskSlot Mapping from allocation id to task slot. */
     private final Map<AllocationID, TaskSlot<T>> allocatedSlots;
 
     /**
-     * ExecutionAttemptID -> TaskSlotMapping
-     *  Mapping from execution attempt id to task and task slot.
-     *  */
+     * ExecutionAttemptID -> TaskSlotMapping Mapping from execution attempt id to task and task
+     * slot.
+     */
     private final Map<ExecutionAttemptID, TaskSlotMapping<T>> taskSlotMappings;
 
-    /**
-     *
-     *
-     * Mapping from job id to allocated slots for a job.
-     * */
+    /** Mapping from job id to allocated slots for a job. */
     private final Map<JobID, Set<AllocationID>> slotsPerJob;
 
     /** Interface for slot actions, such as freeing them or timing them out. */
     @Nullable private SlotActions slotActions;
 
-    /**
-     * 状态相关 :   CREATED,
-     *            RUNNING,
-     *            CLOSING,
-     *            CLOSED
-     * The table state. */
+    /** 状态相关 : CREATED, RUNNING, CLOSING, CLOSED The table state. */
     private volatile State state;
 
     private final ResourceBudgetManager budgetManager;
@@ -259,7 +242,7 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
             SlotID slotId = new SlotID(resourceId, i);
             SlotStatus slotStatus;
             if (taskSlots.containsKey(i)) {
-                //该slot已经分配
+                // 该slot已经分配
                 TaskSlot<T> taskSlot = taskSlots.get(i);
                 // 构建 SlotStatus
                 slotStatus =
@@ -269,7 +252,7 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
                                 taskSlot.getJobId(),
                                 taskSlot.getAllocationId());
             } else {
-                //该slot尚未分配
+                // 该slot尚未分配
                 slotStatus = new SlotStatus(slotId, defaultSlotResourceProfile, null, null);
             }
 
@@ -346,7 +329,9 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
 
         // 获取 resourceProfile
 
-        //    resourceProfile = {ResourceProfile@6124} "ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}"
+        //    resourceProfile = {ResourceProfile@6124} "ResourceProfile{cpuCores=1.0000000000000000,
+        // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+        // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}"
         //        cpuCores = {CPUResource@6139} "Resource(CPU: 1.0000000000000000)"
         //        taskHeapMemory = {MemorySize@6140} "100663293 bytes"
         //        taskOffHeapMemory = {MemorySize@6141} "0 bytes"
@@ -354,7 +339,6 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
         //        networkMemory = {MemorySize@6143} "32 mb"
         //        extendedResources = {HashMap@6144}  size = 0
         resourceProfile = index >= 0 ? defaultSlotResourceProfile : resourceProfile;
-
 
         // 存储resourceProfile
         if (!budgetManager.reserve(resourceProfile)) {
@@ -369,16 +353,25 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
 
         // 构建 taskSlot
 
-        //  taskSlot = {TaskSlot@6191} "TaskSlot(index:0, state:ALLOCATED, resource profile: ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}, allocationId: a9ce7abc6f1d6f264dbdce5564efcb76, jobId: 05fdf1bc744b274be1525c918c1ad378)"
+        //  taskSlot = {TaskSlot@6191} "TaskSlot(index:0, state:ALLOCATED, resource profile:
+        // ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes),
+        // taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes),
+        // networkMemory=32.000mb (33554432 bytes)}, allocationId: a9ce7abc6f1d6f264dbdce5564efcb76,
+        // jobId: 05fdf1bc744b274be1525c918c1ad378)"
         //    index = 0
-        //    resourceProfile = {ResourceProfile@6124} "ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}"
+        //    resourceProfile = {ResourceProfile@6124} "ResourceProfile{cpuCores=1.0000000000000000,
+        // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+        // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}"
         //    tasks = {HashMap@6197}  size = 0
         //    memoryManager = {MemoryManager@6198}
         //    state = {TaskSlotState@6199} "ALLOCATED"
         //    jobId = {JobID@6056} "05fdf1bc744b274be1525c918c1ad378"
         //    allocationId = {AllocationID@6057} "a9ce7abc6f1d6f264dbdce5564efcb76"
-        //    closingFuture = {CompletableFuture@6200} "java.util.concurrent.CompletableFuture@670d0482[Not completed]"
-        //    asyncExecutor = {ThreadPoolExecutor@6076} "java.util.concurrent.ThreadPoolExecutor@da5c1a9[Running, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0]"
+        //    closingFuture = {CompletableFuture@6200}
+        // "java.util.concurrent.CompletableFuture@670d0482[Not completed]"
+        //    asyncExecutor = {ThreadPoolExecutor@6076}
+        // "java.util.concurrent.ThreadPoolExecutor@da5c1a9[Running, pool size = 0, active threads =
+        // 0, queued tasks = 0, completed tasks = 0]"
         taskSlot =
                 new TaskSlot<>(
                         index,
@@ -387,7 +380,6 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
                         jobId,
                         allocationId,
                         memoryVerificationExecutor);
-
 
         if (index >= 0) {
             // 加入缓存...
@@ -724,13 +716,11 @@ public class TaskSlotTableImpl<T extends TaskSlotPayload> implements TaskSlotTab
         }
     }
 
-
     /**
-     *
      * 足给定状态条件并属于给定作业的{@link TaskSlot}上的迭代器。
      *
-     * Iterator over {@link TaskSlot} which fulfill a given state condition and belong to the given
-     * job.
+     * <p>Iterator over {@link TaskSlot} which fulfill a given state condition and belong to the
+     * given job.
      */
     private final class TaskSlotIterator implements Iterator<TaskSlot<T>> {
         private final Iterator<AllocationID> allSlots;

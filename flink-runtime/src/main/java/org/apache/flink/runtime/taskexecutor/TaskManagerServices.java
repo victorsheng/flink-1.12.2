@@ -54,13 +54,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
+ * TaskExecutor 相关的服务比如: MemoryManager , IOManager ,ShuffleEnvironment 等等 Container for {@link
+ * TaskExecutor} services such as the {@link MemoryManager}, {@link IOManager}, {@link
+ * ShuffleEnvironment}.
  *
- * TaskExecutor 相关的服务比如: MemoryManager , IOManager ,ShuffleEnvironment 等等
- * Container for {@link TaskExecutor} services such as the {@link MemoryManager}, {@link IOManager},
- * {@link ShuffleEnvironment}.
- *
- * All services are exclusive to a single {@link TaskExecutor}.
- * Consequently, the respective {@link TaskExecutor} is responsible for closing them.
+ * <p>All services are exclusive to a single {@link TaskExecutor}. Consequently, the respective
+ * {@link TaskExecutor} is responsible for closing them.
  */
 public class TaskManagerServices {
     private static final Logger LOG = LoggerFactory.getLogger(TaskManagerServices.class);
@@ -366,7 +365,9 @@ public class TaskManagerServices {
     //    taskExecutorResourceSpec = {TaskExecutorResourceSpec@5649}
     //    timerServiceShutdownTimeout = 1000000000
     //    pageSize = 32768
-    //    memoryVerificationExecutor = {ThreadPoolExecutor@5638} "java.util.concurrent.ThreadPoolExecutor@443a06ad[Running, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0]"
+    //    memoryVerificationExecutor = {ThreadPoolExecutor@5638}
+    // "java.util.concurrent.ThreadPoolExecutor@443a06ad[Running, pool size = 0, active threads = 0,
+    // queued tasks = 0, completed tasks = 0]"
     private static TaskSlotTable<Task> createTaskSlotTable(
             final int numberOfSlots,
             final TaskExecutorResourceSpec taskExecutorResourceSpec,
@@ -449,7 +450,8 @@ public class TaskManagerServices {
                     String path = file.getAbsolutePath();
 
                     // Temporary file directory
-                    //      '/opt/tools/hadoop-3.2.1/local-dirs/usercache/sysadmin/appcache/application_1615446205104_0025':
+                    //
+                    // '/opt/tools/hadoop-3.2.1/local-dirs/usercache/sysadmin/appcache/application_1615446205104_0025':
                     //
                     //      total 465 GB, usable 56 GB (12.04% usable)
 

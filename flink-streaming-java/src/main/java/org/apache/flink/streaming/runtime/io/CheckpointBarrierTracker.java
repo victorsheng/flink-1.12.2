@@ -125,7 +125,7 @@ public class CheckpointBarrierTracker extends CheckpointBarrierHandler {
                         LOG.debug("Received all barriers for checkpoint {}", barrierId);
                     }
                     markAlignmentEnd();
-                    //通知进行 checkpoint
+                    // 通知进行 checkpoint
                     notifyCheckpoint(receivedBarrier);
                 }
             }

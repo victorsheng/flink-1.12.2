@@ -239,11 +239,15 @@ public class CliFrontend {
 
         final ProgramOptions programOptions = ProgramOptions.create(commandLine);
 
-
         // jobJars : 0 = file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar
         final List<URL> jobJars = getJobJarAndDependencies(programOptions);
 
-        //    effectiveConfiguration = {Configuration@3429} "{taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, jobmanager.rpc.port=6123, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], $internal.deployment.config-dir=/opt/tools/flink-1.12.2/conf}"
+        //    effectiveConfiguration = {Configuration@3429} "{taskmanager.memory.process.size=1728m,
+        // jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost,
+        // execution.target=yarn-per-job, jobmanager.memory.process.size=1600m,
+        // jobmanager.rpc.port=6123, execution.savepoint.ignore-unclaimed-state=false,
+        // execution.attached=true, execution.shutdown-on-attached-exit=false,
+        // pipeline.jars=[file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], $internal.deployment.config-dir=/opt/tools/flink-1.12.2/conf}"
         //        confData = {HashMap@3448}  size = 14
         //        "taskmanager.memory.process.size" -> "1728m"
         //        "jobmanager.execution.failover-strategy" -> "region"
@@ -269,15 +273,18 @@ public class CliFrontend {
 
             // ------------------------------------------------------
             //    program = {PackagedProgram@3430}
-            //    jarFile = {URL@3435} "file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar"
+            //    jarFile = {URL@3435}
+            // "file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar"
             //    args = {String[2]@3436}
             //    0 = "--port"
             //    1 = "9999"
-            //    mainClass = {Class@3423} "class org.apache.flink.streaming.examples.socket.SocketWindowWordCount"
+            //    mainClass = {Class@3423} "class
+            // org.apache.flink.streaming.examples.socket.SocketWindowWordCount"
             //    extractedTempLibraries = {Collections$EmptyList@3437}  size = 0
             //    classpaths = {ArrayList@3438}  size = 0
             //    userCodeClassLoader = {FlinkUserCodeClassLoaders$SafetyNetWrapperClassLoader@3439}
-            //    savepointSettings = {SavepointRestoreSettings@3440} "SavepointRestoreSettings.none()"
+            //    savepointSettings = {SavepointRestoreSettings@3440}
+            // "SavepointRestoreSettings.none()"
             //    isPython = false
 
             // 开始执行程序
@@ -845,14 +852,15 @@ public class CliFrontend {
     //  Interaction with programs and JobManager
     // --------------------------------------------------------------------------------------------
 
-
     protected void executeProgram(final Configuration configuration, final PackagedProgram program)
             throws ProgramInvocationException {
 
         //  configuration 相关的配置信息.....
-        //    configuration = {Configuration@3126} "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
+        //    configuration = {Configuration@3126}
+        // "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
         //        confData = {HashMap@3129}  size = 22
-        //            "env.java.opts.client" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
+        //            "env.java.opts.client" ->
+        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
         //            "jobmanager.webapp.authentication.type" -> "simple"
         //            "taskmanager.memory.process.size" -> "1728m"
         //            "jobmanager.execution.failover-strategy" -> "region"
@@ -861,10 +869,12 @@ public class CliFrontend {
         //            "jobmanager.memory.process.size" -> "1600m"
         //            "security.kerberos.login.use-ticket-cache" -> "true"
         //            "jobmanager.rpc.port" -> "6123"
-        //            "jobmanager.webapp.authentication.kerberos.keytab" -> "/opt/keytab/HTTP.keytab"
+        //            "jobmanager.webapp.authentication.kerberos.keytab" ->
+        // "/opt/keytab/HTTP.keytab"
         //            "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
         //            "sun.security.krb5.debug" -> "true"
-        //            "jobmanager.webapp.authentication.kerberos.principal" -> "HTTP/henghe-030@HENGHE.COM"
+        //            "jobmanager.webapp.authentication.kerberos.principal" ->
+        // "HTTP/henghe-030@HENGHE.COM"
         //            "execution.savepoint.ignore-unclaimed-state" -> {Boolean@3181} false
         //            "execution.attached" -> {Boolean@3183} true
         //            "execution.shutdown-on-attached-exit" -> {Boolean@3181} false
@@ -875,21 +885,22 @@ public class CliFrontend {
         //            "security.kerberos.login.keytab" -> "/opt/keytab/yarn.keytab"
         //            "$internal.deployment.config-dir" -> "/opt/tools/flink-1.12.0/conf"
 
-        //----------------------------------------------
-
+        // ----------------------------------------------
 
         //  program 相关的配置信息.....
 
         //    program = {PackagedProgram@3127}
-        //        jarFile = {URL@3197} "file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar"
+        //        jarFile = {URL@3197}
+        // "file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar"
         //        args = {String[4]@3198} ["--hostname", "192.168.xx.xx", "--port", "9999"]
-        //        mainClass = {Class@3123} "class org.apache.flink.streaming.examples.socket.SocketWindowWordCount"
+        //        mainClass = {Class@3123} "class
+        // org.apache.flink.streaming.examples.socket.SocketWindowWordCount"
         //        extractedTempLibraries = {Collections$EmptyList@3199}  size = 0
         //        classpaths = {ArrayList@3200}  size = 0
         //        userCodeClassLoader = {FlinkUserCodeClassLoaders$SafetyNetWrapperClassLoader@3201}
-        //        savepointSettings = {SavepointRestoreSettings@3202} "SavepointRestoreSettings.none()"
+        //        savepointSettings = {SavepointRestoreSettings@3202}
+        // "SavepointRestoreSettings.none()"
         //        isPython = false
-
 
         ClientUtils.executeProgram(
                 new DefaultExecutorServiceLoader(), configuration, program, false, false);
@@ -1201,24 +1212,20 @@ public class CliFrontend {
         }
     }
 
-
-
     /**
      * env :
      *
-     * FLINK_CONF_DIR=/opt/tools/flink-1.12.2/conf;log.file=/opt/tools/flink-1.12.2/log/flink-sysadmin-client-BoYi-Pro.local.log ;log4j.configuration=file:/opt/tools/flink-1.12.2/conf/log4j-cli.properties ;log4j.configurationFile=file:/opt/tools/flink-1.12.2/conf/log4j-cli.properties ;logback.configurationFile=file:/opt/tools/flink-1.12.2/conf/logback.xml
+     * <p>FLINK_CONF_DIR=/opt/tools/flink-1.12.2/conf;log.file=/opt/tools/flink-1.12.2/log/flink-sysadmin-client-BoYi-Pro.local.log
+     * ;log4j.configuration=file:/opt/tools/flink-1.12.2/conf/log4j-cli.properties
+     * ;log4j.configurationFile=file:/opt/tools/flink-1.12.2/conf/log4j-cli.properties
+     * ;logback.configurationFile=file:/opt/tools/flink-1.12.2/conf/logback.xml
      *
+     * <p>org.apache.flink.client.cli.CliFrontend run -t yarn-per-job -c
+     * org.apache.flink.streaming.examples.socket.SocketWindowWordCount
+     * /opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar --port 9999
      *
-     * org.apache.flink.client.cli.CliFrontend
-     * run -t yarn-per-job -c org.apache.flink.streaming.examples.socket.SocketWindowWordCount /opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar --port 9999
-     *
-     * 提交函数
-     * Submits the job based on the arguments.
-     *
-     *
-     *
-     *
-     * */
+     * <p>提交函数 Submits the job based on the arguments.
+     */
     public static void main(final String[] args) {
         EnvironmentInformation.logEnvironmentInfo(LOG, "Command Line Client", args);
 
@@ -1250,9 +1257,9 @@ public class CliFrontend {
             SecurityUtils.install(new SecurityConfiguration(cli.configuration));
 
             // 使用parseAndRun 提交指令
-            int retCode = SecurityUtils.getInstalledContext().runSecured(() -> cli.parseAndRun(args));
+            int retCode =
+                    SecurityUtils.getInstalledContext().runSecured(() -> cli.parseAndRun(args));
             System.exit(retCode);
-
 
         } catch (Throwable t) {
             final Throwable strippedThrowable =

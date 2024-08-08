@@ -95,7 +95,6 @@ public class PipelinedRegionSchedulingStrategy implements SchedulingStrategy {
     @Override
     public void startScheduling() {
 
-
         final Set<SchedulingPipelinedRegion> sourceRegions =
                 IterableUtils.toStream(schedulingTopology.getAllPipelinedRegions())
                         .filter(region -> !region.getConsumedResults().iterator().hasNext())

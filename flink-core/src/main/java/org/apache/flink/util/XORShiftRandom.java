@@ -23,19 +23,16 @@ import org.apache.flink.annotation.Public;
 import java.util.Random;
 
 /**
- *
  * 基于George Marsaglia 提出的 XORShift 算法实现了一个随机数发生器。
  *
- * 这个RNG比基准测试中的{@link java.util.Random}快4.5倍，代价是放弃线程安全性。
- * 因此建议为每个线程创建一个新的{@link XORShiftRandom}
+ * <p>这个RNG比基准测试中的{@link java.util.Random}快4.5倍，代价是放弃线程安全性。 因此建议为每个线程创建一个新的{@link XORShiftRandom}
  *
- *
- * Implement a random number generator based on the XORShift algorithm discovered by George
+ * <p>Implement a random number generator based on the XORShift algorithm discovered by George
  * Marsaglia.
  *
- * This RNG is observed 4.5 times faster than {@link java.util.Random} in benchmark, with
- * the cost that abandon thread-safety. So it's recommended to create a new {@link XORShiftRandom}
- * for each thread.
+ * <p>This RNG is observed 4.5 times faster than {@link java.util.Random} in benchmark, with the
+ * cost that abandon thread-safety. So it's recommended to create a new {@link XORShiftRandom} for
+ * each thread.
  *
  * @see <a href="http://www.jstatsoft.org/v08/i14/paper">XORShift Algorithm Paper</a>
  */

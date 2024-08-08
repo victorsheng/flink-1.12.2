@@ -85,28 +85,22 @@ public class SlotManagerImpl implements SlotManager {
     /** Timeout after which an unused TaskManager is released. */
     private final Time taskManagerTimeout;
 
-    /** 
-     * 所有当前可用slot的索引。
-     * Map for all registered slots. */
+    /** 所有当前可用slot的索引。 Map for all registered slots. */
     private final HashMap<SlotID, TaskManagerSlot> slots;
 
     /** Index of all currently free slots. */
     private final LinkedHashMap<SlotID, TaskManagerSlot> freeSlots;
 
-    /**
-     * 所有当前注册的任务管理器。
-     * All currently registered task managers. */
+    /** 所有当前注册的任务管理器。 All currently registered task managers. */
     private final HashMap<InstanceID, TaskManagerRegistration> taskManagerRegistrations;
 
     /**
-     * 用于请求重复数据消除的已完成和活动分配的映射。
-     * Map of fulfilled and active allocations for request deduplication purposes.
-     * */
+     * 用于请求重复数据消除的已完成和活动分配的映射。 Map of fulfilled and active allocations for request deduplication
+     * purposes.
+     */
     private final HashMap<AllocationID, SlotID> fulfilledSlotRequests;
 
-    /**
-     * 挂起/未完成的slot分配请求的映射
-     * Map of pending/unfulfilled slot allocation requests. */
+    /** 挂起/未完成的slot分配请求的映射 Map of pending/unfulfilled slot allocation requests. */
     private final HashMap<AllocationID, PendingSlotRequest> pendingSlotRequests;
 
     private final HashMap<TaskManagerSlotId, PendingTaskManagerSlot> pendingSlots;
@@ -413,7 +407,7 @@ public class SlotManagerImpl implements SlotManager {
 
             return false;
         } else {
-            //构建请求
+            // 构建请求
             PendingSlotRequest pendingSlotRequest = new PendingSlotRequest(slotRequest);
 
             pendingSlotRequests.put(slotRequest.getAllocationId(), pendingSlotRequest);
@@ -462,13 +456,12 @@ public class SlotManagerImpl implements SlotManager {
     }
 
     /**
-     *
      * 在 slot manager中注册一个新的task manager
      *
-     * 从而是 task managers slots 可以被感知/调度
+     * <p>从而是 task managers slots 可以被感知/调度
      *
-     * Registers a new task manager at the slot manager.
-     * This will make the task managers slots known and, thus, available for allocation.
+     * <p>Registers a new task manager at the slot manager. This will make the task managers slots
+     * known and, thus, available for allocation.
      *
      * @param taskExecutorConnection for the new task manager
      * @param initialSlotReport for the new task manager
@@ -524,15 +517,46 @@ public class SlotManagerImpl implements SlotManager {
             taskManagerRegistrations.put(
                     taskExecutorConnection.getInstanceID(), taskManagerRegistration);
 
-
             // next register the new slots
 
-            //    initialSlotReport = {SlotReport@8859} "SlotReport{\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_0, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_1, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_2, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_3, all"
+            //    initialSlotReport = {SlotReport@8859}
+            // "SlotReport{\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_0,
+            // allocationID=null, jobID=null,
+            // resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb
+            // (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730
+            // bytes), networkMemory=32.000mb (33554432
+            // bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_1,
+            // allocationID=null, jobID=null,
+            // resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb
+            // (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730
+            // bytes), networkMemory=32.000mb (33554432
+            // bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_2,
+            // allocationID=null, jobID=null,
+            // resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb
+            // (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730
+            // bytes), networkMemory=32.000mb (33554432
+            // bytes)}}\n\tSlotStatus{slotID=container_1619273419318_0032_01_000002_3, all"
             //        slotsStatus = {ArrayList@8870}  size = 4
-            //            0 = {SlotStatus@8872} "SlotStatus{slotID=container_1619273419318_0032_01_000002_0, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
-            //            1 = {SlotStatus@8866} "SlotStatus{slotID=container_1619273419318_0032_01_000002_1, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
-            //            2 = {SlotStatus@8873} "SlotStatus{slotID=container_1619273419318_0032_01_000002_2, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
-            //            3 = {SlotStatus@8874} "SlotStatus{slotID=container_1619273419318_0032_01_000002_3, allocationID=null, jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
+            //            0 = {SlotStatus@8872}
+            // "SlotStatus{slotID=container_1619273419318_0032_01_000002_0, allocationID=null,
+            // jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000,
+            // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+            // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
+            //            1 = {SlotStatus@8866}
+            // "SlotStatus{slotID=container_1619273419318_0032_01_000002_1, allocationID=null,
+            // jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000,
+            // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+            // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
+            //            2 = {SlotStatus@8873}
+            // "SlotStatus{slotID=container_1619273419318_0032_01_000002_2, allocationID=null,
+            // jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000,
+            // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+            // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
+            //            3 = {SlotStatus@8874}
+            // "SlotStatus{slotID=container_1619273419318_0032_01_000002_3, allocationID=null,
+            // jobID=null, resourceProfile=ResourceProfile{cpuCores=1.0000000000000000,
+            // taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes,
+            // managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}}"
             for (SlotStatus slotStatus : initialSlotReport) {
 
                 // 开始注册slots
@@ -719,16 +743,13 @@ public class SlotManagerImpl implements SlotManager {
     }
 
     /**
+     * 为给定的资源配置文件查找匹配的slot。 匹配的slot至少具有与给定资源配置文件相同的可用资源。 如果没有此类slot可用，则该方法返回null。
      *
-     * 为给定的资源配置文件查找匹配的slot。
-     * 匹配的slot至少具有与给定资源配置文件相同的可用资源。
-     * 如果没有此类slot可用，则该方法返回null。
+     * <p>Finds a matching slot for a given resource profile.
      *
-     * Finds a matching slot for a given resource profile.
+     * <p>A matching slot has at least as many resources available as the given resource profile.
      *
-     * A matching slot has at least as many resources available as the given resource profile.
-     *
-     * If there is no such slot available, then the method returns null.
+     * <p>If there is no such slot available, then the method returns null.
      *
      * <p>Note: If you want to change the behaviour of the slot manager wrt slot allocation and
      * request fulfillment, then you should override this method.
@@ -765,17 +786,14 @@ public class SlotManagerImpl implements SlotManager {
     // ---------------------------------------------------------------------------------------------
 
     /**
+     * 在 slot manager 中为给定的task manager 注册slot。 slot由给定的 slot id 标识。 给定的资源配置文件定义了slot的可用资源。
      *
-     * 在 slot manager 中为给定的task manager 注册slot。
-     * slot由给定的 slot id 标识。
-     * 给定的资源配置文件定义了slot的可用资源。
+     * <p>Registers a slot for the given task manager at the slot manager. The slot is identified by
+     * the given slot id.
      *
-     * Registers a slot for the given task manager at the slot manager.
-     * The slot is identified by the given slot id.
+     * <p>The given resource profile defines the available resources for the slot.
      *
-     * The given resource profile defines the available resources for the slot.
-     *
-     * The task manager connection can be used to communicate with the task manager.
+     * <p>The task manager connection can be used to communicate with the task manager.
      *
      * @param slotId identifying the slot on the task manager
      * @param allocationId which is currently deployed in the slot
@@ -800,24 +818,22 @@ public class SlotManagerImpl implements SlotManager {
                                     slotId)));
         }
 
-
         // 构建 slot 信息
 
         //    slot = {TaskManagerSlot@8917}
         //        slotId = {SlotID@8911} "container_1619273419318_0032_01_000002_1"
-        //        resourceProfile = {ResourceProfile@8852} "ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}"
+        //        resourceProfile = {ResourceProfile@8852}
+        // "ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes),
+        // taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes),
+        // networkMemory=32.000mb (33554432 bytes)}"
         //        taskManagerConnection = {WorkerRegistration@8801}
         //        allocationId = null
         //        jobId = null
         //        assignedSlotRequest = null
         //        state = {SlotState@8920} "FREE"
 
-
-
-
         final TaskManagerSlot slot =
                 createAndRegisterTaskManagerSlot(slotId, resourceProfile, taskManagerConnection);
-
 
         final PendingTaskManagerSlot pendingTaskManagerSlot;
 
@@ -873,9 +889,9 @@ public class SlotManagerImpl implements SlotManager {
         // 迭代阻塞/挂起的请求.
         for (PendingTaskManagerSlot pendingTaskManagerSlot : pendingSlots.values()) {
 
-
             // 如果需求的资源相同的话, 则直接返回该PendingTaskManagerSlot
-            if (isPendingSlotExactlyMatchingResourceProfile(  pendingTaskManagerSlot, resourceProfile)) {
+            if (isPendingSlotExactlyMatchingResourceProfile(
+                    pendingTaskManagerSlot, resourceProfile)) {
                 return pendingTaskManagerSlot;
             }
         }
@@ -959,7 +975,7 @@ public class SlotManagerImpl implements SlotManager {
             @Nullable JobID jobId) {
         if (null != allocationId) {
             switch (slot.getState()) {
-                // 挂起...
+                    // 挂起...
                 case PENDING:
                     // we have a pending slot request --> check whether we have to reject it
                     PendingSlotRequest pendingSlotRequest = slot.getAssignedSlotRequest();
@@ -1053,13 +1069,15 @@ public class SlotManagerImpl implements SlotManager {
         final ResourceProfile resourceProfile = pendingSlotRequest.getResourceProfile();
 
         OptionalConsumer.of(findMatchingSlot(resourceProfile))
-                .ifPresent(taskManagerSlot -> {
-                    // taskManagerSlot 存在操作
-                    allocateSlot(taskManagerSlot, pendingSlotRequest);
-                })
-                .ifNotPresent(() -> {
+                .ifPresent(
+                        taskManagerSlot -> {
+                            // taskManagerSlot 存在操作
+                            allocateSlot(taskManagerSlot, pendingSlotRequest);
+                        })
+                .ifNotPresent(
+                        () -> {
                             // taskManagerSlot 不存在操作 ==>  启动 TaskManager
-                            fulfillPendingSlotRequestWithPendingTaskManagerSlot( pendingSlotRequest);
+                            fulfillPendingSlotRequestWithPendingTaskManagerSlot(pendingSlotRequest);
                         });
     }
 
@@ -1165,7 +1183,6 @@ public class SlotManagerImpl implements SlotManager {
         // 已经注册solt的树林
         final int numPendingSlots = getNumberPendingTaskManagerSlots();
 
-
         if (isMaxSlotNumExceededAfterAdding(numSlotsPerWorker)) {
             LOG.warn(
                     "Could not allocate {} more slots. The number of registered and pending slots is {}, while the maximum is {}.",
@@ -1221,7 +1238,6 @@ public class SlotManagerImpl implements SlotManager {
         // 获取 TaskManager 的Gateway ...
         TaskExecutorGateway gateway = taskExecutorConnection.getTaskExecutorGateway();
 
-
         // 缓存task slot的回调 completableFuture
         final CompletableFuture<Acknowledge> completableFuture = new CompletableFuture<>();
 
@@ -1234,14 +1250,13 @@ public class SlotManagerImpl implements SlotManager {
         // 获取taskManager的 实例id
         final InstanceID instanceID = taskManagerSlot.getInstanceId();
 
-
         // task manager 的slot 处理 : 将slot的状态设置为 PENDING
         taskManagerSlot.assignPendingSlotRequest(pendingSlotRequest);
 
         // 设置回调 completableFuture ...
         pendingSlotRequest.setRequestFuture(completableFuture);
 
-        //设置 返回挂起的TaskManager Slot
+        // 设置 返回挂起的TaskManager Slot
         returnPendingTaskManagerSlotIfAssigned(pendingSlotRequest);
 
         // 获取实例的 TaskManagerRegistration
@@ -1267,7 +1282,6 @@ public class SlotManagerImpl implements SlotManager {
                         pendingSlotRequest.getTargetAddress(),
                         resourceManagerId,
                         taskManagerRequestTimeout);
-
 
         requestFuture.whenComplete(
                 (Acknowledge acknowledge, Throwable throwable) -> {

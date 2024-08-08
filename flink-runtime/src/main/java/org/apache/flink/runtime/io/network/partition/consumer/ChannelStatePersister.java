@@ -87,9 +87,10 @@ public final class ChannelStatePersister {
         if (lastSeenBarrier < barrierId) {
             // 不管当前的检查点状态如何，如果我们收到关于最近的检查点的通知，那么我们到目前为止已经看到了，总是标记这个最近的屏障是挂起的。
             //
-            //BARRIER_RECEIVED status可以发生，如果我们看到一个旧的BARRIER，该BARRIER可能还没有被任务处理，但是任务现在通知我们检查点已经为新的检查点启动。
+            // BARRIER_RECEIVED
+            // status可以发生，如果我们看到一个旧的BARRIER，该BARRIER可能还没有被任务处理，但是任务现在通知我们检查点已经为新的检查点启动。
             //
-            //我们应该把我们所知道的都说出来，并表明我们正在等待新的障碍的到来
+            // 我们应该把我们所知道的都说出来，并表明我们正在等待新的障碍的到来
 
             // Regardless of the current checkpointStatus, if we are notified about a more recent
             // checkpoint then we have seen so far, always mark that this more recent barrier is

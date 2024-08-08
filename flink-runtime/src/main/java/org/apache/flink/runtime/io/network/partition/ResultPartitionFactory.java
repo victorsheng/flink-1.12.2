@@ -133,7 +133,7 @@ public class ResultPartitionFactory {
                 || type == ResultPartitionType.PIPELINED_BOUNDED
                 || type == ResultPartitionType.PIPELINED_APPROXIMATE) {
 
-            //构建  结果分区 ... 在这里会构建 LocalBufferPool
+            // 构建  结果分区 ... 在这里会构建 LocalBufferPool
             final PipelinedResultPartition pipelinedPartition =
                     new PipelinedResultPartition(
                             taskNameWithSubtaskAndId,
@@ -256,14 +256,12 @@ public class ResultPartitionFactory {
     SupplierWithException<BufferPool, IOException> createBufferPoolFactory(
             int numberOfSubpartitions, ResultPartitionType type) {
         return () -> {
-            //本地缓冲池使用的 buffer 数量
+            // 本地缓冲池使用的 buffer 数量
             int maxNumberOfMemorySegments =
                     type.isBounded()
                             ? numberOfSubpartitions * networkBuffersPerChannel
                                     + floatingNetworkBuffersPerGate
                             : Integer.MAX_VALUE;
-
-
 
             int numRequiredBuffers =
                     !type.isPipelined() && numberOfSubpartitions >= sortShuffleMinParallelism

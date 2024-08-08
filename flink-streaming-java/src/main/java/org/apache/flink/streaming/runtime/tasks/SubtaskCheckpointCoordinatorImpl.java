@@ -314,10 +314,7 @@ class SubtaskCheckpointCoordinatorImpl implements SubtaskCheckpointCoordinator {
             channelStateWriter.finishOutput(metadata.getCheckpointId());
         }
 
-
-
         // 第4步，异步执行checkpoint操作，checkpoint数据落地
-
 
         // Step (4): Take the state snapshot. This should be largely asynchronous, to not impact
         // progress of the
@@ -624,7 +621,6 @@ class SubtaskCheckpointCoordinatorImpl implements SubtaskCheckpointCoordinator {
                 checkpointId,
                 checkpointMetrics.getAlignmentDurationNanosOrDefault() / 1_000_000,
                 checkpointMetrics.getSyncDurationMillis());
-
 
         checkpointMetrics.setSyncDurationMillis((System.nanoTime() - started) / 1_000_000);
         return true;

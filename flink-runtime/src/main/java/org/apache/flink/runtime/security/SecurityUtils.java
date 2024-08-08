@@ -50,7 +50,7 @@ public class SecurityUtils {
     /**
      * SecurityUtils.install方法是提交Flink任务安全认证的入口方法，用于安装安全配置。
      *
-     * Installs a process-wide security configuration.
+     * <p>Installs a process-wide security configuration.
      *
      * <p>Applies the configuration using the available security modules (i.e. Hadoop, JAAS).
      */
@@ -118,7 +118,6 @@ public class SecurityUtils {
                 //     并且要求org.apache.hadoop.security.UserGroupInformation在classpath中。
                 //
                 // NoOpSecurityContextFactory无任何要求。
-
 
                 if (contextFactory.isCompatibleWith(config)) {
                     try {

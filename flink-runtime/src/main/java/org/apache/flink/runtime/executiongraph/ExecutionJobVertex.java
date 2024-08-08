@@ -73,17 +73,15 @@ import java.util.stream.Collectors;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
+ * ExecutionJobVertex 是 {@link ExecutionGraph} 中的一部分, 对等于 JobGraph中的 {@link JobVertex} {@code
+ * ExecutionJobVertex}对应于并行化操作。 它为该操作的每个并行实例包含一个{@link ExecutionVertex}。
  *
- * ExecutionJobVertex 是 {@link ExecutionGraph} 中的一部分, 对等于 JobGraph中的 {@link  JobVertex}
- * {@code ExecutionJobVertex}对应于并行化操作。
- * 它为该操作的每个并行实例包含一个{@link ExecutionVertex}。
- *
- * An {@code ExecutionJobVertex} is part of the {@link ExecutionGraph}, and the peer to the {@link
- * JobVertex}.
+ * <p>An {@code ExecutionJobVertex} is part of the {@link ExecutionGraph}, and the peer to the
+ * {@link JobVertex}.
  *
  * <p>The {@code ExecutionJobVertex} corresponds to a parallelized operation.
  *
- * It contains an {@link ExecutionVertex} for each parallel instance of that operation.
+ * <p>It contains an {@link ExecutionVertex} for each parallel instance of that operation.
  */
 public class ExecutionJobVertex
         implements AccessExecutionJobVertex, Archiveable<ArchivedExecutionJobVertex> {
@@ -102,7 +100,7 @@ public class ExecutionJobVertex
     // JobVertex
     private final JobVertex jobVertex;
 
-    //xecutionVertex是执行的并行子任务。
+    // xecutionVertex是执行的并行子任务。
     private final ExecutionVertex[] taskVertices;
 
     // 输出
@@ -119,7 +117,6 @@ public class ExecutionJobVertex
 
     @Nullable private final CoLocationGroup coLocationGroup;
 
-
     private final InputSplit[] inputSplits;
 
     private final boolean maxParallelismConfigured;
@@ -128,15 +125,15 @@ public class ExecutionJobVertex
 
     private final ResourceProfile resourceProfile;
 
-
     /**
      * 存储序列化的任务信息（对于所有子任务都是相同的），或者存储卸载的“包含序列化任务的任务信息blob”信息的永久blob键。
      *
-     * Either store a serialized task information, which is for all sub tasks the same, or the
+     * <p>Either store a serialized task information, which is for all sub tasks the same, or the
      * permanent blob key of the offloaded task information BLOB containing the serialized task
      * information.
      */
-    private Either<SerializedValue<TaskInformation>, PermanentBlobKey> taskInformationOrBlobKey =  null;
+    private Either<SerializedValue<TaskInformation>, PermanentBlobKey> taskInformationOrBlobKey =
+            null;
 
     private final Collection<OperatorCoordinatorHolder> operatorCoordinators;
 
@@ -469,7 +466,6 @@ public class ExecutionJobVertex
             // fetch the intermediate result via ID. if it does not exist, then it either has not
             // been created, or the order
             // in which this method is called for the job vertices is not a topological order
-
 
             /*TODO 通过 ID获取当前JobEdge的输入所对应的 IntermediateResult*/
             IntermediateResult ires = intermediateDataSets.get(edge.getSourceId());

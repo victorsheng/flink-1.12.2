@@ -107,11 +107,9 @@ public abstract class AbstractStreamOperator<OUT>
     /**
      * 包含此运算符（以及同一链中的其他运算符）的任务。
      *
-     * The task that contains this operator
-     * (and other operators in the same chain).
-     * */
+     * <p>The task that contains this operator (and other operators in the same chain).
+     */
     private transient StreamTask<?, ?> container;
-
 
     protected transient StreamConfig config;
 
@@ -119,7 +117,6 @@ public abstract class AbstractStreamOperator<OUT>
     protected transient Output<StreamRecord<OUT>> output;
 
     /** The runtime context for UDFs. */
-
     private transient StreamingRuntimeContext runtimeContext;
 
     // ---------------- key/value state ------------------
@@ -601,13 +598,13 @@ public abstract class AbstractStreamOperator<OUT>
     /**
      * 返回{@link InternalTimerService}用于查询当前处理时间和事件时间并设置计时器。
      *
-     * Returns a {@link InternalTimerService} that can be used to query current processing time and
-     * event time and to set timers.
+     * <p>Returns a {@link InternalTimerService} that can be used to query current processing time
+     * and event time and to set timers.
      *
-     * An operator can have several timer services, where each has its
-     * own namespace serializer. Timer services are differentiated by the string key that is given
-     * when requesting them, if you call this method with the same key multiple times you will get
-     * the same timer service instance in subsequent requests.
+     * <p>An operator can have several timer services, where each has its own namespace serializer.
+     * Timer services are differentiated by the string key that is given when requesting them, if
+     * you call this method with the same key multiple times you will get the same timer service
+     * instance in subsequent requests.
      *
      * <p>Timers are always scoped to a key, the currently active key of a keyed stream operation.
      * When a timer fires, this key will also be set as the currently active key.

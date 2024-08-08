@@ -46,13 +46,12 @@ public class HadoopUtils {
 
     static final Text HDFS_DELEGATION_TOKEN_KIND = new Text("HDFS_DELEGATION_TOKEN");
 
-
-
     //    读取HADOOP_HOME环境变量，如果存在，分别从它的conf和etc/hadoop目录下读取core-site.xml和hdfs-site.xml文件。
     //    从Flink配置文件的fs.hdfs.hdfssite配置项所在目录下寻找。
     //    从Flink配置文件的fs.hdfs.hadoopconf配置项所在目录下寻找。
     //    从HADOOP_CONF_DIR环境变量对应的目录下寻找。
-    //    读取Flink配置文件中所有以flink.hadoop.为前缀的key，将这些key截掉这个前缀作为新的key，和原先的value一起作为hadoop conf的配置项，存放入hadoop conf。
+    //    读取Flink配置文件中所有以flink.hadoop.为前缀的key，将这些key截掉这个前缀作为新的key，和原先的value一起作为hadoop
+    // conf的配置项，存放入hadoop conf。
     //
 
     @SuppressWarnings("deprecation")
@@ -112,7 +111,6 @@ public class HadoopUtils {
         if (hdfsDefaultPath != null) {
             result.addResource(new org.apache.hadoop.fs.Path(hdfsDefaultPath));
 
-
             LOG.debug(
                     "Using hdfs-default configuration-file path from Flink config: {}",
                     hdfsDefaultPath);
@@ -144,18 +142,17 @@ public class HadoopUtils {
         if (hadoopConfDir != null) {
             LOG.debug("Searching Hadoop configuration files in HADOOP_CONF_DIR: {}", hadoopConfDir);
 
-
             // 读取Flink配置文件中所有以flink.hadoop.为前缀的key
             // 将这些key截掉这个前缀作为新的key，和原先的value一起作为hadoop conf的配置项，存放入hadoop conf
 
-            //  Searching Hadoop configuration files in HADOOP_CONF_DIR: /opt/tools/hadoop-3.2.1/etc/hadoop
+            //  Searching Hadoop configuration files in HADOOP_CONF_DIR:
+            // /opt/tools/hadoop-3.2.1/etc/hadoop
             //  Adding /opt/tools/hadoop-3.2.1/etc/hadoop/core-site.xml to hadoop configuration
             //  Adding /opt/tools/hadoop-3.2.1/etc/hadoop/hdfs-site.xml to hadoop configuration
 
             foundHadoopConfiguration =
                     addHadoopConfIfFound(result, hadoopConfDir) || foundHadoopConfiguration;
         }
-
 
         // 如果以上途径均未找到hadoop conf，显示告警信息
 

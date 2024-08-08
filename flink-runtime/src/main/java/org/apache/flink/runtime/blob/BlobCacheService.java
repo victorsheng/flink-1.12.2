@@ -28,8 +28,9 @@ import java.net.InetSocketAddress;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
- * BLOB缓存提供对永久和临时BLOB的BLOB服务的访问。
- * The BLOB cache provides access to BLOB services for permanent and transient BLOBs. */
+ * BLOB缓存提供对永久和临时BLOB的BLOB服务的访问。 The BLOB cache provides access to BLOB services for permanent and
+ * transient BLOBs.
+ */
 public class BlobCacheService implements BlobService {
 
     /** Caching store for permanent BLOBs. */

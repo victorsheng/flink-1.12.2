@@ -54,10 +54,9 @@ public class YarnClusterClientFactory
     @Override
     public YarnClusterDescriptor createClusterDescriptor(Configuration configuration) {
 
-
         checkNotNull(configuration);
         // 获取配置
-        // 
+        //
         final String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
 
         // 设置日志 ?
@@ -81,21 +80,18 @@ public class YarnClusterClientFactory
     }
 
     private YarnClusterDescriptor getClusterDescriptor(Configuration configuration) {
-        
+
         // 获取 yarn 的配置...
         final YarnClient yarnClient = YarnClient.createYarnClient();
-        
-        
+
         // 获取配置文件
         final YarnConfiguration yarnConfiguration = new YarnConfiguration();
 
         // 初始化配置文件
         yarnClient.init(yarnConfiguration);
 
-
         // 启动yarn client
         yarnClient.start();
-
 
         // 构建 yarn 集群的 描述符
         return new YarnClusterDescriptor(

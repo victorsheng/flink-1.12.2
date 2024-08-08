@@ -181,12 +181,10 @@ public class CheckpointedInputGate implements PullingAsyncDataInput<BufferOrEven
             CheckpointBarrier checkpointBarrier = (CheckpointBarrier) bufferOrEvent.getEvent();
             barrierHandler.processBarrier(checkpointBarrier, bufferOrEvent.getChannelInfo());
 
-
         } else if (eventClass == CancelCheckpointMarker.class) {
             // 如果是CancelCheckpointMarker类型,处理该消息
             barrierHandler.processCancellationBarrier(
                     (CancelCheckpointMarker) bufferOrEvent.getEvent());
-
 
         } else if (eventClass == EndOfPartitionEvent.class) {
 

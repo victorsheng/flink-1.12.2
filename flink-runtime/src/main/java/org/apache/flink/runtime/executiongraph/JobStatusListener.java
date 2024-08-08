@@ -24,15 +24,10 @@ import org.apache.flink.api.common.JobStatus;
 /** Interface for observers that monitor the status of a job. */
 public interface JobStatusListener {
 
-
-
-
     /**
-     * CheckpointCoordinatorDeActivator
-     * 当Job状态改变时调用startCheckpointScheduler()
+     * CheckpointCoordinatorDeActivator 当Job状态改变时调用startCheckpointScheduler()
      *
-     *
-     * This method is called whenever the status of the job changes.
+     * <p>This method is called whenever the status of the job changes.
      *
      * @param jobId The ID of the job.
      * @param newJobStatus The status the job switched to.

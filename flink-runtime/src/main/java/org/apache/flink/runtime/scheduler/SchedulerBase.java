@@ -300,11 +300,6 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
         return newExecutionGraph;
     }
 
-
-
-
-
-
     private ExecutionGraph createExecutionGraph(
             JobManagerJobMetricGroup currentJobManagerJobMetricGroup,
             ShuffleMaster<?> shuffleMaster,
@@ -313,10 +308,7 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
             long initializationTimestamp)
             throws JobExecutionException, JobException {
 
-
         // shuffleMaster:  INSTANCE
-
-
 
         ExecutionDeploymentListener executionDeploymentListener =
                 new ExecutionDeploymentTrackerDeploymentListenerAdapter(executionDeploymentTracker);
@@ -513,7 +505,7 @@ public abstract class SchedulerBase implements SchedulerNG, CheckpointScheduling
 
         return result;
     }
-    //修改ExecutionVertex 状态为SCHEDULED
+    // 修改ExecutionVertex 状态为SCHEDULED
     protected void transitionToScheduled(final List<ExecutionVertexID> verticesToDeploy) {
         verticesToDeploy.forEach(
                 executionVertexId ->

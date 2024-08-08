@@ -124,7 +124,6 @@ public class DispatcherProcess extends TestJvmProcess {
 
                 ClusterEntrypoint.runClusterEntrypoint(clusterEntrypoint);
 
-
                 TimeUnit.HOURS.sleep(1111);
             } catch (Throwable t) {
                 LOG.error("Failed to start Dispatcher process", t);

@@ -326,7 +326,6 @@ public abstract class FileSystem {
 
             Collection<Supplier<Iterator<FileSystemFactory>>> factorySuppliers = new ArrayList<>(2);
 
-
             factorySuppliers.add(() -> ServiceLoader.load(FileSystemFactory.class).iterator());
 
             if (pluginManager != null) {
@@ -373,17 +372,13 @@ public abstract class FileSystem {
 
             ALLOWED_FALLBACK_FILESYSTEMS.clear();
 
-
             final Iterable<String> allowedFallbackFilesystems =
                     Splitter.on(';')
                             .omitEmptyStrings()
                             .trimResults()
                             .split(config.getString(CoreOptions.ALLOWED_FALLBACK_FILESYSTEMS));
 
-
-
             allowedFallbackFilesystems.forEach(ALLOWED_FALLBACK_FILESYSTEMS::add);
-
 
         } finally {
             LOCK.unlock();

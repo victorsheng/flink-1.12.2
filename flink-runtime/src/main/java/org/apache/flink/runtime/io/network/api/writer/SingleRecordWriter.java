@@ -30,8 +30,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * 单个输出情况的特定委托实现
  *
- * The specific delegate implementation for the single output case.
- * */
+ * <p>The specific delegate implementation for the single output case.
+ */
 public class SingleRecordWriter<T extends IOReadableWritable> implements RecordWriterDelegate<T> {
 
     private final RecordWriter<T> recordWriter;

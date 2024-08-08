@@ -69,7 +69,6 @@ public class SingleCheckpointBarrierHandler extends CheckpointBarrierHandler {
 
     private int numOpenChannels;
 
-
     // 如果所有的input channel都接收到了barrier，
     // 这个CompletableFuture会complete，
     // 其他使用whenComplete等待该变量状态变化的地方

@@ -28,19 +28,14 @@ import java.io.IOException;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-
 /**
- * NettyConnectionManager 在启动的时候会创建并启动 NettyClient 和 NettyServer，
- * NettyServer 会启动一个服务端监听，等待其它 NettyClient 的连接：
+ * NettyConnectionManager 在启动的时候会创建并启动 NettyClient 和 NettyServer， NettyServer 会启动一个服务端监听，等待其它
+ * NettyClient 的连接：
  *
+ * <p>当 RemoteInputChannel 请求一个远端的 ResultSubpartition 的时候， NettyClient 就会发起和请求的 ResultSubpartition
+ * 所在 Task 的 NettyServer 的连接， 后续所有的数据交换都在这个连接上进行。
  *
- * 当 RemoteInputChannel 请求一个远端的 ResultSubpartition 的时候，
- * NettyClient 就会发起和请求的 ResultSubpartition 所在 Task 的 NettyServer 的连接，
- * 后续所有的数据交换都在这个连接上进行。
- *
- * 两个 Task 之间只会建立一个连接，
- * 这个连接会在不同的 RemoteInputChannel 和 ResultSubpartition 之间进行复用
- *
+ * <p>两个 Task 之间只会建立一个连接， 这个连接会在不同的 RemoteInputChannel 和 ResultSubpartition 之间进行复用
  */
 public class NettyConnectionManager implements ConnectionManager {
 
@@ -73,9 +68,8 @@ public class NettyConnectionManager implements ConnectionManager {
 
     @Override
     public int start() throws IOException {
-        //初始化 Netty Client
+        // 初始化 Netty Client
         client.init(nettyProtocol, bufferPool);
-
 
         // 初始化并启动 Netty Server
         return server.init(nettyProtocol, bufferPool);
@@ -84,8 +78,8 @@ public class NettyConnectionManager implements ConnectionManager {
     @Override
     public PartitionRequestClient createPartitionRequestClient(ConnectionID connectionId)
             throws IOException, InterruptedException {
-        //这里实际上会建立和其它 Task 的 Server 的连接
-        //返回的 PartitionRequestClient 中封装了 netty channel 和 channel handler
+        // 这里实际上会建立和其它 Task 的 Server 的连接
+        // 返回的 PartitionRequestClient 中封装了 netty channel 和 channel handler
         return partitionRequestClientFactory.createPartitionRequestClient(connectionId);
     }
 

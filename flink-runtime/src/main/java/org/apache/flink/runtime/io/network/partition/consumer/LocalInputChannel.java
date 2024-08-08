@@ -51,23 +51,20 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
+ * 如果一个 InputChannel 和其消费的上游 ResultPartition 所属 Task 都在同一个 TaskManager 中运行， 那么它们之间的数据交换就在同一个 JVM
+ * 进程内不同线程之间进行，无需通过网络交换。
  *
+ * <p>LocalInputChannel 实现了 InputChannel 接口，同时也实现了 BufferAvailabilityListener 接口。
  *
- * 如果一个 InputChannel 和其消费的上游 ResultPartition 所属 Task 都在同一个 TaskManager 中运行，
- * 那么它们之间的数据交换就在同一个 JVM 进程内不同线程之间进行，无需通过网络交换。
- *
- * LocalInputChannel 实现了 InputChannel 接口，同时也实现了 BufferAvailabilityListener 接口。
- *
- *
- * LocalInputChannel 通过 ResultPartitionManager 请求创建和指定 ResultSubparition 关联的 ResultSubparitionView，
- * 并以自身作为 ResultSubparitionView 的回调。
- * 这样，一旦 ResultSubparition 有数据产出时，ResultSubparitionView 会得到通知，
- * 同时 LocalInputChannel 的回调函数也会被调用，
+ * <p>LocalInputChannel 通过 ResultPartitionManager 请求创建和指定 ResultSubparition 关联的
+ * ResultSubparitionView， 并以自身作为 ResultSubparitionView 的回调。 这样，一旦 ResultSubparition
+ * 有数据产出时，ResultSubparitionView 会得到通知， 同时 LocalInputChannel 的回调函数也会被调用，
  * 这样消费者这一端就可以及时获取到数据的生产情况，从而及时地去消费数据。
  *
- * ResultSubpartition 中的 buffer 可以通过 ResultSubpartitionView 进行消费
+ * <p>ResultSubpartition 中的 buffer 可以通过 ResultSubpartitionView 进行消费
  *
- * An input channel, which requests a local subpartition. */
+ * <p>An input channel, which requests a local subpartition.
+ */
 public class LocalInputChannel extends InputChannel implements BufferAvailabilityListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalInputChannel.class);
@@ -77,28 +74,48 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
     private final Object requestLock = new Object();
 
     /**
-     *
-     * 分区管理器,里面存放着所有的分区信息
-     *    partitionManager = {ResultPartitionManager@7381}
-     *            registeredPartitions = {HashMap@7405}  size = 8
-     *                    {ResultPartitionID@7416} "6b3e5e999219f9532114514c4bdbb773#0@51ad11521e991efaad6349cdf2accda7" -> {PipelinedResultPartition@7417} "PipelinedResultPartition 6b3e5e999219f9532114514c4bdbb773#0@51ad11521e991efaad6349cdf2accda7 [PIPELINED_BOUNDED, 1 subpartitions, 1 pending consumptions]"
-     *                    {ResultPartitionID@7418} "6b3e5e999219f9532114514c4bdbb773#2@aecbd0682c0973976efe563eca747cc0" -> {PipelinedResultPartition@7419} "PipelinedResultPartition 6b3e5e999219f9532114514c4bdbb773#2@aecbd0682c0973976efe563eca747cc0 [PIPELINED_BOUNDED, 1 subpartitions, 1 pending consumptions]"
-     *                    {ResultPartitionID@7420} "e07667949eeb5fe115288459d1d137f1#1@0ef8b3d70af60be8633af8af4e1c0698" -> {PipelinedResultPartition@7421} "PipelinedResultPartition e07667949eeb5fe115288459d1d137f1#1@0ef8b3d70af60be8633af8af4e1c0698 [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
-     *                    {ResultPartitionID@7422} "e07667949eeb5fe115288459d1d137f1#2@5e3aaeed65818bcfeb1485d0fd22d1ac" -> {PipelinedResultPartition@7423} "PipelinedResultPartition e07667949eeb5fe115288459d1d137f1#2@5e3aaeed65818bcfeb1485d0fd22d1ac [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
-     *                    {ResultPartitionID@7424} "e07667949eeb5fe115288459d1d137f1#3@30e457019371f01a403bd06cf3041eeb" -> {PipelinedResultPartition@7425} "PipelinedResultPartition e07667949eeb5fe115288459d1d137f1#3@30e457019371f01a403bd06cf3041eeb [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
-     *                    {ResultPartitionID@7426} "e07667949eeb5fe115288459d1d137f1#0@bfbc34d8314d506a39528d9c86f16859" -> {PipelinedResultPartition@7427} "PipelinedResultPartition e07667949eeb5fe115288459d1d137f1#0@bfbc34d8314d506a39528d9c86f16859 [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
-     *                    {ResultPartitionID@7428} "6b3e5e999219f9532114514c4bdbb773#1@bcf3be98463b672ea899cee1290423a2" -> {PipelinedResultPartition@7429} "PipelinedResultPartition 6b3e5e999219f9532114514c4bdbb773#1@bcf3be98463b672ea899cee1290423a2 [PIPELINED_BOUNDED, 1 subpartitions, 1 pending consumptions]"
-     *                    {ResultPartitionID@7379} "5eba1007ad48ad2243891e1eff29c32b#0@db0c587a67c31a83cff5fd8be9496e5d" -> {PipelinedResultPartition@7371} "PipelinedResultPartition 5eba1007ad48ad2243891e1eff29c32b#0@db0c587a67c31a83cff5fd8be9496e5d [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
-     * The local partition manager. */
+     * 分区管理器,里面存放着所有的分区信息 partitionManager = {ResultPartitionManager@7381} registeredPartitions =
+     * {HashMap@7405} size = 8 {ResultPartitionID@7416}
+     * "6b3e5e999219f9532114514c4bdbb773#0@51ad11521e991efaad6349cdf2accda7" ->
+     * {PipelinedResultPartition@7417} "PipelinedResultPartition
+     * 6b3e5e999219f9532114514c4bdbb773#0@51ad11521e991efaad6349cdf2accda7 [PIPELINED_BOUNDED, 1
+     * subpartitions, 1 pending consumptions]" {ResultPartitionID@7418}
+     * "6b3e5e999219f9532114514c4bdbb773#2@aecbd0682c0973976efe563eca747cc0" ->
+     * {PipelinedResultPartition@7419} "PipelinedResultPartition
+     * 6b3e5e999219f9532114514c4bdbb773#2@aecbd0682c0973976efe563eca747cc0 [PIPELINED_BOUNDED, 1
+     * subpartitions, 1 pending consumptions]" {ResultPartitionID@7420}
+     * "e07667949eeb5fe115288459d1d137f1#1@0ef8b3d70af60be8633af8af4e1c0698" ->
+     * {PipelinedResultPartition@7421} "PipelinedResultPartition
+     * e07667949eeb5fe115288459d1d137f1#1@0ef8b3d70af60be8633af8af4e1c0698 [PIPELINED_BOUNDED, 4
+     * subpartitions, 4 pending consumptions]" {ResultPartitionID@7422}
+     * "e07667949eeb5fe115288459d1d137f1#2@5e3aaeed65818bcfeb1485d0fd22d1ac" ->
+     * {PipelinedResultPartition@7423} "PipelinedResultPartition
+     * e07667949eeb5fe115288459d1d137f1#2@5e3aaeed65818bcfeb1485d0fd22d1ac [PIPELINED_BOUNDED, 4
+     * subpartitions, 4 pending consumptions]" {ResultPartitionID@7424}
+     * "e07667949eeb5fe115288459d1d137f1#3@30e457019371f01a403bd06cf3041eeb" ->
+     * {PipelinedResultPartition@7425} "PipelinedResultPartition
+     * e07667949eeb5fe115288459d1d137f1#3@30e457019371f01a403bd06cf3041eeb [PIPELINED_BOUNDED, 4
+     * subpartitions, 4 pending consumptions]" {ResultPartitionID@7426}
+     * "e07667949eeb5fe115288459d1d137f1#0@bfbc34d8314d506a39528d9c86f16859" ->
+     * {PipelinedResultPartition@7427} "PipelinedResultPartition
+     * e07667949eeb5fe115288459d1d137f1#0@bfbc34d8314d506a39528d9c86f16859 [PIPELINED_BOUNDED, 4
+     * subpartitions, 4 pending consumptions]" {ResultPartitionID@7428}
+     * "6b3e5e999219f9532114514c4bdbb773#1@bcf3be98463b672ea899cee1290423a2" ->
+     * {PipelinedResultPartition@7429} "PipelinedResultPartition
+     * 6b3e5e999219f9532114514c4bdbb773#1@bcf3be98463b672ea899cee1290423a2 [PIPELINED_BOUNDED, 1
+     * subpartitions, 1 pending consumptions]" {ResultPartitionID@7379}
+     * "5eba1007ad48ad2243891e1eff29c32b#0@db0c587a67c31a83cff5fd8be9496e5d" ->
+     * {PipelinedResultPartition@7371} "PipelinedResultPartition
+     * 5eba1007ad48ad2243891e1eff29c32b#0@db0c587a67c31a83cff5fd8be9496e5d [PIPELINED_BOUNDED, 4
+     * subpartitions, 4 pending consumptions]" The local partition manager.
+     */
     private final ResultPartitionManager partitionManager;
 
     /**
-     *
      * taskEventPublisher = {TaskEventDispatcher@6289}
      *
-     * Task event dispatcher for backwards events.
-     *
-     * */
+     * <p>Task event dispatcher for backwards events.
+     */
     private final TaskEventPublisher taskEventPublisher;
 
     /** The consumed subpartition. */
@@ -168,7 +185,7 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
         channelStatePersister.stopPersisting(checkpointId);
     }
 
-    //请求消费对应的子分区
+    // 请求消费对应的子分区
     @Override
     protected void requestSubpartition(int subpartitionIndex) throws IOException {
 
@@ -255,6 +272,7 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
 
     /**
      * //读取数据，借助 ResultSubparitionView 消费 ResultSubparition 中的数据
+     *
      * @return
      * @throws IOException
      */
@@ -289,7 +307,7 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
             subpartitionView = checkAndWaitForSubpartitionView();
         }
 
-        //通过 ResultSubparitionView 获取
+        // 通过 ResultSubparitionView 获取
         BufferAndBacklog next = subpartitionView.getNextBuffer();
 
         if (next == null) {
@@ -332,10 +350,10 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
                         next.getSequenceNumber()));
     }
 
-    //回调，在 ResultSubparition 通知 ResultSubparitionView 有数据可供消费，
+    // 回调，在 ResultSubparition 通知 ResultSubparitionView 有数据可供消费，
     @Override
     public void notifyDataAvailable() {
-        //LocalInputChannel 通知 InputGate
+        // LocalInputChannel 通知 InputGate
         notifyChannelNonEmpty();
     }
 
@@ -374,7 +392,7 @@ public class LocalInputChannel extends InputChannel implements BufferAvailabilit
                 subpartitionView != null,
                 "Tried to send task event to producer before requesting the subpartition.");
 
-        //事件分发
+        // 事件分发
         if (!taskEventPublisher.publish(partitionId, event)) {
             throw new IOException(
                     "Error while publishing event "

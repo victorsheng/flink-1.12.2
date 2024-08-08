@@ -28,14 +28,14 @@ import java.io.IOException;
 /**
  * 一个消费 {@link ResultSubpartition}实例的视图
  *
- * *
- * A view to consume a {@link ResultSubpartition} instance. */
+ * <p>* A view to consume a {@link ResultSubpartition} instance.
+ */
 public interface ResultSubpartitionView {
 
     /**
      * 从队列中获取{@link Buffer}的实例
      *
-     * Returns the next {@link Buffer} instance of this queue iterator.
+     * <p>Returns the next {@link Buffer} instance of this queue iterator.
      *
      * <p>If there is currently no instance available, it will return <code>null</code>. This might
      * happen for example when a pipelined queue producer is slower than the consumer or a spilled
@@ -47,10 +47,10 @@ public interface ResultSubpartitionView {
     @Nullable
     BufferAndBacklog getNextBuffer() throws IOException;
 
-    //通知 ResultSubpartition 的数据可供消费
+    // 通知 ResultSubpartition 的数据可供消费
     void notifyDataAvailable();
 
-    //已经完成对 ResultSubpartition 的Event消费
+    // 已经完成对 ResultSubpartition 的Event消费
     default void notifyPriorityEvent(int priorityBufferNumber) {}
 
     // 释放所有资源

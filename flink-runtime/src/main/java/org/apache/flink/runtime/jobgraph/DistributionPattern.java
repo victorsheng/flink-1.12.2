@@ -29,8 +29,8 @@ public enum DistributionPattern {
     /**
      * 全连接
      *
-     * 每个生产子任务都连接到消费任务的每个子任务。
-     * Each producing sub task is connected to each sub task of the consuming task.
+     * <p>每个生产子任务都连接到消费任务的每个子任务。 Each producing sub task is connected to each sub task of the
+     * consuming task.
      *
      * <p>{@link
      * ExecutionVertex#connectAllToAll(org.apache.flink.runtime.executiongraph.IntermediateResultPartition[],
@@ -39,11 +39,9 @@ public enum DistributionPattern {
     ALL_TO_ALL,
 
     /**
-     * 点对点
-     * 每个产生子任务都连接到 consuming 任务的一个或多个子任务。
+     * 点对点 每个产生子任务都连接到 consuming 任务的一个或多个子任务。
      *
-     *
-     * Each producing sub task is connected to one or more subtask(s) of the consuming task.
+     * <p>Each producing sub task is connected to one or more subtask(s) of the consuming task.
      *
      * <p>{@link
      * ExecutionVertex#connectPointwise(org.apache.flink.runtime.executiongraph.IntermediateResultPartition[],

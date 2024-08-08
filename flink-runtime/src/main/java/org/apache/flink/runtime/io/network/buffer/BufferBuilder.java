@@ -30,13 +30,13 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
- * 不是线程安全类，用于填充{@link MemorySegment}的内容。
- * 要访问写入的数据，请使用{@link BufferConsumer}，它允许从写入的数据构建{@link Buffer}实例。
+ * 不是线程安全类，用于填充{@link MemorySegment}的内容。 要访问写入的数据，请使用{@link BufferConsumer}，它允许从写入的数据构建{@link
+ * Buffer}实例。
  *
- * Not thread safe class for filling in the content of the {@link MemorySegment}.
+ * <p>Not thread safe class for filling in the content of the {@link MemorySegment}.
  *
- *
- * To access written data please use {@link BufferConsumer} which allows to build {@link Buffer} instances from the written data.
+ * <p>To access written data please use {@link BufferConsumer} which allows to build {@link Buffer}
+ * instances from the written data.
  */
 @NotThreadSafe
 public class BufferBuilder {
@@ -54,14 +54,13 @@ public class BufferBuilder {
     }
 
     /**
-     *
      * 此方法始终从当前writer offset 开始创建{@link BufferConsumer}。
      *
-     * 在创建{@link BufferConsumer}之前写入{@link BufferBuilder}的数据对于该{@link BufferConsumer}将不可见。
-     * 
-     * This method always creates a {@link BufferConsumer} starting from the current writer offset.
-     * Data written to {@link BufferBuilder} before creation of {@link BufferConsumer} won't be
-     * visible for that {@link BufferConsumer}.
+     * <p>在创建{@link BufferConsumer}之前写入{@link BufferBuilder}的数据对于该{@link BufferConsumer}将不可见。
+     *
+     * <p>This method always creates a {@link BufferConsumer} starting from the current writer
+     * offset. Data written to {@link BufferBuilder} before creation of {@link BufferConsumer} won't
+     * be visible for that {@link BufferConsumer}.
      *
      * @return created matching instance of {@link BufferConsumer} to this {@link BufferBuilder}.
      */

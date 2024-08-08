@@ -27,21 +27,13 @@ import java.io.IOException;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-/**
- *
- *
- * A single subpartition of a {@link ResultPartition} instance. */
+/** A single subpartition of a {@link ResultPartition} instance. */
 public abstract class ResultSubpartition {
 
-    /**
-     * 子分区的信息
-     * The info of the subpartition to identify it globally within a task.
-     * */
+    /** 子分区的信息 The info of the subpartition to identify it globally within a task. */
     protected final ResultSubpartitionInfo subpartitionInfo;
 
-    /**
-     * 该子分区属于那个Resultpartition
-     * The parent partition this subpartition belongs to. */
+    /** 该子分区属于那个Resultpartition The parent partition this subpartition belongs to. */
     protected final ResultPartition parent;
 
     // - Statistics ----------------------------------------------------------
@@ -75,14 +67,12 @@ public abstract class ResultSubpartition {
     }
 
     /**
-     * 添加给定的buffer。
-     * 请求可以同步执行，也可以异步执行，具体取决于实现。
+     * 添加给定的buffer。 请求可以同步执行，也可以异步执行，具体取决于实现。
      *
-     * 在添加新的{@link BufferConsumer}之前，先前添加的必须处于finished状态。
-     * 由于性能原因，这仅在数据读取期间强制执行。
+     * <p>在添加新的{@link BufferConsumer}之前，先前添加的必须处于finished状态。 由于性能原因，这仅在数据读取期间强制执行。
      * 可以在前一个缓冲区使用者仍然打开时添加优先级事件，在这种情况下，打开的缓冲区使用者将被超越。
      *
-     * Adds the given buffer.
+     * <p>Adds the given buffer.
      *
      * <p>The request may be executed synchronously, or asynchronously, depending on the
      * implementation.
@@ -90,10 +80,10 @@ public abstract class ResultSubpartition {
      * <p><strong>IMPORTANT:</strong> Before adding new {@link BufferConsumer} previously added must
      * be in finished state.
      *
-     * Because of the performance reasons, this is only enforced during the data reading.
+     * <p>Because of the performance reasons, this is only enforced during the data reading.
      *
-     * Priority events can be added while the previous buffer consumer is still open,
-     * in which case the open buffer consumer is overtaken.
+     * <p>Priority events can be added while the previous buffer consumer is still open, in which
+     * case the open buffer consumer is overtaken.
      *
      * @param bufferConsumer the buffer to add (transferring ownership to this writer)
      * @param partialRecordLength the length of bytes to skip in order to start with a complete
@@ -109,7 +99,6 @@ public abstract class ResultSubpartition {
     public abstract void finish() throws IOException;
 
     public abstract void release() throws IOException;
-
 
     public abstract ResultSubpartitionView createReadView(
             BufferAvailabilityListener availabilityListener) throws IOException;
@@ -134,9 +123,9 @@ public abstract class ResultSubpartition {
     // ------------------------------------------------------------------------
 
     /**
-     * {@link Buffer}  和backlog长度的组合，指示子分区中有多少非事件缓冲区可用。
+     * {@link Buffer} 和backlog长度的组合，指示子分区中有多少非事件缓冲区可用。
      *
-     * A combination of a {@link Buffer} and the backlog length indicating how many non-event
+     * <p>A combination of a {@link Buffer} and the backlog length indicating how many non-event
      * buffers are available in the subpartition.
      */
     public static final class BufferAndBacklog {

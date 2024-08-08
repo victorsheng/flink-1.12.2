@@ -110,36 +110,31 @@ import static org.apache.flink.util.Preconditions.checkState;
 /**
  * vertex 的一次执行。
  *
- * 当一个 {@link ExecutionVertex} 可以多次执行(for recovery, re-computation, re-configuration)
+ * <p>当一个 {@link ExecutionVertex} 可以多次执行(for recovery, re-computation, re-configuration)
  * 此类跟踪该vertex和资源的单个执行的状态。
  *
- * <h2>无锁状态转换<h2>
+ * <h2>无锁状态转换
  *
- * 在代码的几个方面，我们需要处理可能的并发状态更改和操作。
- * > 例如，在调用部署任务（将其发送到TaskManager）时，该任务会被取消。
- *   我们可以锁定代码的整个部分（decision to deploy，deploy，set state to running），
- *   这样就可以保证任何“cancel command”只有在部署完成后才会出现，
- *   并且“cancel command”调用永远不会超过部署调用。
+ * <h2>在代码的几个方面，我们需要处理可能的并发状态更改和操作。 > 例如，在调用部署任务（将其发送到TaskManager）时，该任务会被取消。 我们可以锁定代码的整个部分（decision
+ * to deploy，deploy，set state to running）， 这样就可以保证任何“cancel command”只有在部署完成后才会出现， 并且“cancel
+ * command”调用永远不会超过部署调用。
  *
- *这会大大阻塞线程，因为远程调用可能需要很长时间。
- * 根据它们的锁定行为，它甚至可能导致分布式死锁（除非小心避免）。
+ * <p>这会大大阻塞线程，因为远程调用可能需要很长时间。 根据它们的锁定行为，它甚至可能导致分布式死锁（除非小心避免）。
  *
- * 因此，我们使用原子状态更新和偶尔的双重检查来确保完成调用后的状态符合预期，
- * 如果不符合预期，则触发更正操作。
+ * <p>因此，我们使用原子状态更新和偶尔的双重检查来确保完成调用后的状态符合预期， 如果不符合预期，则触发更正操作。
  *
- * 许多动作也是幂等的（比如取消）。
+ * <p>许多动作也是幂等的（比如取消）。
  *
- * A single execution of a vertex.
+ * <p>A single execution of a vertex.
  *
- * While an {@link ExecutionVertex} can be executed multiple times
- * (for recovery, re-computation, re-configuration), this class tracks the state of a single
- * execution of that vertex and the resources.
+ * <p>While an {@link ExecutionVertex} can be executed multiple times (for recovery, re-computation,
+ * re-configuration), this class tracks the state of a single execution of that vertex and the
+ * resources.
  *
  * <h2>Lock free state transitions</h2>
  *
  * <p>In several points of the code, we need to deal with possible concurrent state changes and
- * actions.
- * For example, while the call to deploy a task (send it to the TaskManager) happens, the
+ * actions. For example, while the call to deploy a task (send it to the TaskManager) happens, the
  * task gets cancelled.
  *
  * <p>We could lock the entire portion of the code (decision to deploy, deploy, set state to
@@ -320,11 +315,10 @@ public class Execution
     }
 
     /**
-     * 尝试将给定的solt分配给执行。
-     * 只有在执行处于计划状态时，分配才起作用。如果可以分配资源，则返回true。
+     * 尝试将给定的solt分配给执行。 只有在执行处于计划状态时，分配才起作用。如果可以分配资源，则返回true。
      *
-     * Tries to assign the given slot to the execution.
-     * The assignment works only if the Execution is in state SCHEDULED. Returns true, if the resource could be assigned.
+     * <p>Tries to assign the given slot to the execution. The assignment works only if the
+     * Execution is in state SCHEDULED. Returns true, if the resource could be assigned.
      *
      * @param logicalSlot to assign to this execution
      * @return true if the slot could be assigned to the execution, otherwise false
@@ -457,16 +451,13 @@ public class Execution
     }
 
     /**
+     * 此方法仅在其处于非法状态以进行调度，或者需要立即调度任务且没有可用资源时引发异常。 如果任务被调度接受，则任何错误都会将顶点状态设置为“失败”，并触发恢复逻辑。
      *
-     * 此方法仅在其处于非法状态以进行调度，或者需要立即调度任务且没有可用资源时引发异常。
-     * 如果任务被调度接受，则任何错误都会将顶点状态设置为“失败”，并触发恢复逻辑。
+     * <p>NOTE: This method only throws exceptions if it is in an illegal state to be scheduled, or
+     * if the tasks needs to be scheduled immediately and no resource is available.
      *
-     *
-     *
-     * NOTE: This method only throws exceptions if it is in an illegal state to be scheduled, or if
-     * the tasks needs to be scheduled immediately and no resource is available.
-     *
-     * If the task is accepted by the schedule, any error sets the vertex state to failed and triggers the recovery logic.
+     * <p>If the task is accepted by the schedule, any error sets the vertex state to failed and
+     * triggers the recovery logic.
      *
      * @param slotProviderStrategy The slot provider strategy to use to allocate slot for this
      *     execution attempt.
@@ -761,8 +752,7 @@ public class Execution
     }
 
     /**
-     *  将 execution 部署到先前分配的资源。
-     * Deploys the execution to the previously assigned resource.
+     * 将 execution 部署到先前分配的资源。 Deploys the execution to the previously assigned resource.
      *
      * @throws JobException if the execution cannot be deployed to the assigned resource
      */
@@ -772,20 +762,22 @@ public class Execution
         // 获取slot
 
         //    slotRequestId = {SlotRequestId@8931} "SlotRequestId{7d3611a3599a124ed703d75c55561420}"
-        //    slotContext = {AllocatedSlot@8932} "AllocatedSlot e5eeb5d0e767c407ea81ab345a14ebd8 @ container_1619273419318_0017_01_000002 @ henghe-030 (dataPort=39722) - 0"
+        //    slotContext = {AllocatedSlot@8932} "AllocatedSlot e5eeb5d0e767c407ea81ab345a14ebd8 @
+        // container_1619273419318_0017_01_000002 @ henghe-030 (dataPort=39722) - 0"
         //    slotSharingGroupId = null
         //    locality = {Locality@8933} "UNKNOWN"
         //    slotOwner = {SharedSlot@8934}
-        //    releaseFuture = {CompletableFuture@8935} "java.util.concurrent.CompletableFuture@7ea60a0f[Not completed]"
+        //    releaseFuture = {CompletableFuture@8935}
+        // "java.util.concurrent.CompletableFuture@7ea60a0f[Not completed]"
         //    state = {SingleLogicalSlot$State@8936} "ALIVE"
-        //    payload = {Execution@8899} "Attempt #0 (Source: Socket Stream (1/1)) @ org.apache.flink.runtime.jobmaster.slotpool.SingleLogicalSlot@7f697d27 - [SCHEDULED]"
+        //    payload = {Execution@8899} "Attempt #0 (Source: Socket Stream (1/1)) @
+        // org.apache.flink.runtime.jobmaster.slotpool.SingleLogicalSlot@7f697d27 - [SCHEDULED]"
         //    willBeOccupiedIndefinitely = true
         final LogicalSlot slot = assignedResource;
 
         checkNotNull(
                 slot,
                 "In order to deploy the execution we first have to assign a resource via tryAssignResource.");
-
 
         // Check if the TaskManager died in the meantime
         // This only speeds up the response to TaskManagers failing concurrently to deployments.
@@ -864,7 +856,8 @@ public class Execution
             // 将 IntermediateResultPartition 转化成 ResultPartition
             // 将 ExecutionEdge 转成 InputChannelDeploymentDescriptor（最终会在执行时转化成InputGate）
             final TaskDeploymentDescriptor deployment =
-                    TaskDeploymentDescriptorFactory.fromExecutionVertex(vertex, attemptNumber) // task
+                    TaskDeploymentDescriptorFactory.fromExecutionVertex(
+                                    vertex, attemptNumber) // task
                             .createDeploymentDescriptor(
                                     slot.getAllocationId(),
                                     slot.getPhysicalSlotNumber(),
@@ -1061,7 +1054,6 @@ public class Execution
             // ----------------------------------------------------------------
             if (consumerState == CREATED) {
 
-
                 // Schedule the consumer vertex if its inputs constraint is satisfied, otherwise
                 // skip the scheduling.
                 // A shortcut of input constraint check is added for InputDependencyConstraint.ANY
@@ -1204,7 +1196,6 @@ public class Execution
             long checkpointId, long timestamp, CheckpointOptions checkpointOptions) {
         triggerCheckpointHelper(checkpointId, timestamp, checkpointOptions);
     }
-
 
     // triggerCheckpoint主要进行以下操作
     // 1.根据配置进行CK需要的检验
@@ -1446,33 +1437,28 @@ public class Execution
     }
 
     /**
-     *
-     * 处理执行失败。
-     * 该失败可以由JobManager触发，也可以由TaskManager报告。
+     * 处理执行失败。 该失败可以由JobManager触发，也可以由TaskManager报告。
      * 如果它是由JobManager触发的，并且执行已经部署，那么它需要发送PRC调用以从TaskManager中删除该任务。
      *
-     * 如果生成的分区在部署之前失败（因为分区可能已经在外部shuffle服务中创建），
-     * 或者JobManager主动使其失败（在JobManager尝试使其失败时在TaskManager中完成），
-     * 那么它还需要释放生成的分区。
+     * <p>如果生成的分区在部署之前失败（因为分区可能已经在外部shuffle服务中创建），
+     * 或者JobManager主动使其失败（在JobManager尝试使其失败时在TaskManager中完成）， 那么它还需要释放生成的分区。
      *
-     * 如果失败来自ExecutionGraph，则会通知SchedulerNG。这将触发SchedulerNG的失败处理，以恢复此失败的执行。
+     * <p>如果失败来自ExecutionGraph，则会通知SchedulerNG。这将触发SchedulerNG的失败处理，以恢复此失败的执行。
      *
+     * <p>Process a execution failure.
      *
-     * Process a execution failure.
+     * <p>The failure can be fired by JobManager or reported by TaskManager.
      *
-     * The failure can be fired by JobManager or reported by TaskManager.
+     * <p>If it is fired by JobManager and the execution is already deployed, it needs to send a PRC
+     * call to remove the task from TaskManager.
      *
-     * If it is fired by JobManager and the execution is already deployed, it needs to
-     * send a PRC call to remove the task from TaskManager.
+     * <p>It also needs to release the produced partitions if it fails before deployed (because the
+     * partitions are possibly already created in external shuffle service) or JobManager
+     * proactively fails it (in case that it finishes in TaskManager when JobManager tries to fail
+     * it).
      *
-     * It also needs to release the produced
-     * partitions if it fails before deployed (because the partitions are possibly already created
-     * in external shuffle service) or JobManager proactively fails it (in case that it finishes in
-     * TaskManager when JobManager tries to fail it).
-     *
-     * The failure will be notified to SchedulerNG if
-     * it is from within the ExecutionGraph. This is to trigger the failure handling of SchedulerNG
-     * to recover this failed execution.
+     * <p>The failure will be notified to SchedulerNG if it is from within the ExecutionGraph. This
+     * is to trigger the failure handling of SchedulerNG to recover this failed execution.
      *
      * @param t Failure cause
      * @param cancelTask Indicating whether to send a PRC call to remove task from TaskManager. True

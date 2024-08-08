@@ -89,58 +89,51 @@ import static org.apache.flink.util.Preconditions.checkState;
 /**
  * 从{@link Transformation}的图生成{@link StreamGraph}的生成器。
  *
- * 这将遍历从sinks 开始的{@code Transformations}树。
+ * <p>这将遍历从sinks 开始的{@code Transformations}树。
  *
- * 在每次转换时，我们递归地转换输入，然后在{@code StreamGraph}中创建一个节点，并将输入节点的边添加到新创建的节点。
+ * <p>在每次转换时，我们递归地转换输入，然后在{@code StreamGraph}中创建一个节点，并将输入节点的边添加到新创建的节点。
  *
- * 转换方法返回StreamGraph中表示输入转换的节点的id。
+ * <p>转换方法返回StreamGraph中表示输入转换的节点的id。
  *
- * 可以返回几个id来处理反馈转换和联合。
+ * <p>可以返回几个id来处理反馈转换和联合。
  *
- * 为此，我们在{@code StreamGraph}中创建一个虚拟节点，该节点包含特定的属性，即分区、选择器等。
+ * <p>为此，我们在{@code StreamGraph}中创建一个虚拟节点，该节点包含特定的属性，即分区、选择器等。
  *
- * 当从虚拟节点到下游节点创建边时，{@code StreamGraph}解析原始节点的id，并在图中创建具有所需属性的边。
+ * <p>当从虚拟节点到下游节点创建边时，{@code StreamGraph}解析原始节点的id，并在图中创建具有所需属性的边。
  *
- * 例如，如果您有以下图表：
+ * <p>例如，如果您有以下图表：
  *
  * <pre>
  *     Map-1 >  HashPartition-2 >  Map-3
  * </pre>
  *
- * 其中数字表示转换ID。
- * 我们首先一路递归下去。
- * {@code Map-1} 被转换，即我们创建一个ID为1的  {@code StreamNode} 。
- * 然后我们转换{@code HashPartition}，为此，我们创建ID为4的虚拟节点，其中包含属性{@code HashPartition}。
- * 这个转换返回ID 4。
- * 然后我们转换 {@code Map-3}.
- * 我们添加边  {@code 4 -> 3}.
- * {@code StreamGraph} 解析了ID为1的实际节点，并用HashPartition属性创建和边缘{@code 1 -> 3}。
+ * 其中数字表示转换ID。 我们首先一路递归下去。 {@code Map-1} 被转换，即我们创建一个ID为1的 {@code StreamNode} 。 然后我们转换{@code
+ * HashPartition}，为此，我们创建ID为4的虚拟节点，其中包含属性{@code HashPartition}。 这个转换返回ID 4。 然后我们转换 {@code Map-3}.
+ * 我们添加边 {@code 4 -> 3}. {@code StreamGraph} 解析了ID为1的实际节点，并用HashPartition属性创建和边缘{@code 1 -> 3}。
  *
+ * <p>Partitioning, split/select and union 不会在{@code StreamGraph}中创建实际的节点。
  *
- *
- *
- * Partitioning, split/select and union 不会在{@code StreamGraph}中创建实际的节点。
- *
- * A generator that generates a {@link StreamGraph} from a graph of {@link Transformation}s.
+ * <p>A generator that generates a {@link StreamGraph} from a graph of {@link Transformation}s.
  *
  * <p>This traverses the tree of {@code Transformations} starting from the sinks.
  *
- * At each transformation we recursively transform the inputs, then create a node in the {@code StreamGraph} and add edges from the input Nodes to our newly created node.
+ * <p>At each transformation we recursively transform the inputs, then create a node in the {@code
+ * StreamGraph} and add edges from the input Nodes to our newly created node.
  *
- * The transformation methods return the IDs of the nodes in the StreamGraph that represent the input transformation.
+ * <p>The transformation methods return the IDs of the nodes in the StreamGraph that represent the
+ * input transformation.
  *
- * Several IDs can be returned to be able to deal with feedback transformations and unions.
+ * <p>Several IDs can be returned to be able to deal with feedback transformations and unions.
  *
  * <p>Partitioning, split/select and union don't create actual nodes in the {@code StreamGraph}.
  *
- * For these, we create a virtual node in the {@code StreamGraph} that holds the specific property,
- * i.e. partitioning, selector and so on.
+ * <p>For these, we create a virtual node in the {@code StreamGraph} that holds the specific
+ * property, i.e. partitioning, selector and so on.
  *
- * When an edge is created from a virtual node to a downstream
- * node the {@code StreamGraph} resolved the id of the original node and creates an edge in the
- * graph with the desired property.
+ * <p>When an edge is created from a virtual node to a downstream node the {@code StreamGraph}
+ * resolved the id of the original node and creates an edge in the graph with the desired property.
  *
- * For example, if you have this graph:
+ * <p>For example, if you have this graph:
  *
  * <pre>
  *     Map-1 -&gt; HashPartition-2 -&gt; Map-3
@@ -148,21 +141,21 @@ import static org.apache.flink.util.Preconditions.checkState;
  *
  * <p>where the numbers represent transformation IDs.
  *
- * We first recurse all the way down.
+ * <p>We first recurse all the way down.
  *
- * {@code Map-1} is transformed, i.e. we create a {@code StreamNode} with ID 1.
+ * <p>{@code Map-1} is transformed, i.e. we create a {@code StreamNode} with ID 1.
  *
- * Then we transform the {@code HashPartition}, for this, we create virtual node of ID 4 that holds the property {@code HashPartition}.
+ * <p>Then we transform the {@code HashPartition}, for this, we create virtual node of ID 4 that
+ * holds the property {@code HashPartition}.
  *
- * This transformation returns the ID 4.
+ * <p>This transformation returns the ID 4.
  *
- * Then we transform the {@code Map-3}.
+ * <p>Then we transform the {@code Map-3}.
  *
- * We add the edge {@code 4 -> 3}.
+ * <p>We add the edge {@code 4 -> 3}.
  *
- * The {@code StreamGraph} resolved the actual node with ID 1 and creates and edge {@code 1 -> 3} with the property HashPartition.
- *
- *
+ * <p>The {@code StreamGraph} resolved the actual node with ID 1 and creates and edge {@code 1 -> 3}
+ * with the property HashPartition.
  */
 @Internal
 public class StreamGraphGenerator {
@@ -315,7 +308,19 @@ public class StreamGraphGenerator {
 
         //    streamGraph = {StreamGraph@4411}
         //    jobName = null
-        //    executionConfig = {ExecutionConfig@4105} "ExecutionConfig{executionMode=PIPELINED, closureCleanerLevel=RECURSIVE, parallelism=1, maxParallelism=-1, numberOfExecutionRetries=-1, forceKryo=false, disableGenericTypes=false, enableAutoGeneratedUids=true, objectReuse=false, autoTypeRegistrationEnabled=true, forceAvro=false, autoWatermarkInterval=200, latencyTrackingInterval=0, isLatencyTrackingConfigured=false, executionRetryDelay=10000, restartStrategyConfiguration=Cluster level default restart strategy, taskCancellationIntervalMillis=-1, taskCancellationTimeoutMillis=-1, useSnapshotCompression=false, defaultInputDependencyConstraint=ANY, globalJobParameters=org.apache.flink.api.common.ExecutionConfig$GlobalJobParameters@1, registeredTypesWithKryoSerializers={}, registeredTypesWithKryoSerializerClasses={}, defaultKryoSerializers={}, defaultKryoSerializerClasses={}, registeredKryoTypes=[], registeredPojoTypes=[]}"
+        //    executionConfig = {ExecutionConfig@4105} "ExecutionConfig{executionMode=PIPELINED,
+        // closureCleanerLevel=RECURSIVE, parallelism=1, maxParallelism=-1,
+        // numberOfExecutionRetries=-1, forceKryo=false, disableGenericTypes=false,
+        // enableAutoGeneratedUids=true, objectReuse=false, autoTypeRegistrationEnabled=true,
+        // forceAvro=false, autoWatermarkInterval=200, latencyTrackingInterval=0,
+        // isLatencyTrackingConfigured=false, executionRetryDelay=10000,
+        // restartStrategyConfiguration=Cluster level default restart strategy,
+        // taskCancellationIntervalMillis=-1, taskCancellationTimeoutMillis=-1,
+        // useSnapshotCompression=false, defaultInputDependencyConstraint=ANY,
+        // globalJobParameters=org.apache.flink.api.common.ExecutionConfig$GlobalJobParameters@1,
+        // registeredTypesWithKryoSerializers={}, registeredTypesWithKryoSerializerClasses={},
+        // defaultKryoSerializers={}, defaultKryoSerializerClasses={}, registeredKryoTypes=[],
+        // registeredPojoTypes=[]}"
         //            executionMode = {ExecutionMode@3509} "PIPELINED"
         //            closureCleanerLevel = {ExecutionConfig$ClosureCleanerLevel@3510} "RECURSIVE"
         //            parallelism = 4
@@ -331,7 +336,9 @@ public class StreamGraphGenerator {
         //            latencyTrackingInterval = 0
         //            isLatencyTrackingConfigured = false
         //            executionRetryDelay = 10000
-        //            restartStrategyConfiguration = {RestartStrategies$FallbackRestartStrategyConfiguration@3511} "Cluster level default restart strategy"
+        //            restartStrategyConfiguration =
+        // {RestartStrategies$FallbackRestartStrategyConfiguration@3511} "Cluster level default
+        // restart strategy"
         //            taskCancellationIntervalMillis = -1
         //            taskCancellationTimeoutMillis = -1
         //            useSnapshotCompression = false
@@ -358,7 +365,8 @@ public class StreamGraphGenerator {
         //            failOnCheckpointingErrors = true
         //            preferCheckpointForRecovery = false
         //            tolerableCheckpointFailureNumber = -1
-        //    savepointRestoreSettings = {SavepointRestoreSettings@4412} "SavepointRestoreSettings.none()"
+        //    savepointRestoreSettings = {SavepointRestoreSettings@4412}
+        // "SavepointRestoreSettings.none()"
         //    scheduleMode = null
         //    chaining = false
         //    userArtifacts = null
@@ -377,39 +385,49 @@ public class StreamGraphGenerator {
         //    timerServiceProvider = null
         streamGraph = new StreamGraph(executionConfig, checkpointConfig, savepointRestoreSettings);
 
-
         // STREAMING
         shouldExecuteInBatchMode = shouldExecuteInBatchMode(runtimeExecutionMode);
 
-
-
         configureStreamGraph(streamGraph);
 
-
-
         alreadyTransformed = new HashMap<>();
-
 
         // transformations 的数据实例. 这个有三个集合,
         // 我只截取了最新的一个.也就是下标为2的集合.
         //
-        //        {LegacySinkTransformation@3460} "LegacySinkTransformation{id=5, name='Print to Std. Out', outputType=GenericType<java.lang.Object>, parallelism=1}"
-        //        |   input = {OneInputTransformation@3443} "OneInputTransformation{id=4, name='Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)', outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
-        //        |   |     input = {PartitionTransformation@3577} "PartitionTransformation{id=3, name='Partition', outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
-        //        |   |     |     input = {OneInputTransformation@3364} "OneInputTransformation{id=2, name='Flat Map', outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
-        //        |   |     |     |---- input = {LegacySourceTransformation@3548} "LegacySourceTransformation{id=1, name='Socket Stream', outputType=String, parallelism=1}"
-        //        |   |     |     |       |---- operatorFactory = {SimpleUdfStreamOperatorFactory@3555}
-        //        |   |     |     |       |---- boundedness = {Boundedness@3253} "CONTINUOUS_UNBOUNDED"
+        //        {LegacySinkTransformation@3460} "LegacySinkTransformation{id=5, name='Print to
+        // Std. Out', outputType=GenericType<java.lang.Object>, parallelism=1}"
+        //        |   input = {OneInputTransformation@3443} "OneInputTransformation{id=4,
+        // name='Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger,
+        // ReduceFunction$1, PassThroughWindowFunction)',
+        // outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
+        //        |   |     input = {PartitionTransformation@3577} "PartitionTransformation{id=3,
+        // name='Partition',
+        // outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
+        //        |   |     |     input = {OneInputTransformation@3364}
+        // "OneInputTransformation{id=2, name='Flat Map',
+        // outputType=PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>, parallelism=4}"
+        //        |   |     |     |---- input = {LegacySourceTransformation@3548}
+        // "LegacySourceTransformation{id=1, name='Socket Stream', outputType=String,
+        // parallelism=1}"
+        //        |   |     |     |       |---- operatorFactory =
+        // {SimpleUdfStreamOperatorFactory@3555}
+        //        |   |     |     |       |---- boundedness = {Boundedness@3253}
+        // "CONTINUOUS_UNBOUNDED"
         //        |   |     |     |       |---- id = 1
         //        |   |     |     |       |---- name = "Socket Stream"
         //        |   |     |     |       |---- outputType = {BasicTypeInfo@3254} "String"
         //        |   |     |     |       |---- typeUsed = true
         //        |   |     |     |       |---- parallelism = 1
         //        |   |     |     |       |---- maxParallelism = -1
-        //        |   |     |     |       |---- minResources = {ResourceSpec@3549} "ResourceSpec{UNKNOWN}"
-        //        |   |     |     |       |---- preferredResources = {ResourceSpec@3549} "ResourceSpec{UNKNOWN}"
-        //        |   |     |     |       |---- managedMemoryOperatorScopeUseCaseWeights = {HashMap@3556}  size = 0
-        //        |   |     |     |       |---- managedMemorySlotScopeUseCases = {HashSet@3557}  size = 0
+        //        |   |     |     |       |---- minResources = {ResourceSpec@3549}
+        // "ResourceSpec{UNKNOWN}"
+        //        |   |     |     |       |---- preferredResources = {ResourceSpec@3549}
+        // "ResourceSpec{UNKNOWN}"
+        //        |   |     |     |       |---- managedMemoryOperatorScopeUseCaseWeights =
+        // {HashMap@3556}  size = 0
+        //        |   |     |     |       |---- managedMemorySlotScopeUseCases = {HashSet@3557}
+        // size = 0
         //        |   |     |     |       |---- uid = null
         //        |   |     |     |       |---- userProvidedNodeHash = null
         //        |   |     |     |       |---- bufferTimeout = -1
@@ -420,13 +438,17 @@ public class StreamGraphGenerator {
         //        |   |     |     |---- stateKeyType = null
         //        |   |     |     |---- id = 2
         //        |   |     |     |---- name = "Flat Map"
-        //        |   |     |     |---- outputType = {PojoTypeInfo@3369} "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>"
+        //        |   |     |     |---- outputType = {PojoTypeInfo@3369}
+        // "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount,
+        // fields = [count: Long, word: String]>"
         //        |   |     |     |---- typeUsed = true
         //        |   |     |     |---- parallelism = 4
         //        |   |     |     |---- maxParallelism = -1
         //        |   |     |     |---- minResources = {ResourceSpec@3549} "ResourceSpec{UNKNOWN}"
-        //        |   |     |     |---- preferredResources = {ResourceSpec@3549} "ResourceSpec{UNKNOWN}"
-        //        |   |     |     |---- managedMemoryOperatorScopeUseCaseWeights = {HashMap@3550}  size = 0
+        //        |   |     |     |---- preferredResources = {ResourceSpec@3549}
+        // "ResourceSpec{UNKNOWN}"
+        //        |   |     |     |---- managedMemoryOperatorScopeUseCaseWeights = {HashMap@3550}
+        // size = 0
         //        |   |     |     |---- managedMemorySlotScopeUseCases = {HashSet@3551}  size = 0
         //        |   |     |     |---- uid = null
         //        |   |     |     |---- userProvidedNodeHash = null
@@ -437,7 +459,9 @@ public class StreamGraphGenerator {
         //        |   |     |-- shuffleMode = {ShuffleMode@3592} "UNDEFINED"
         //        |   |     |-- id = 3
         //        |   |     |-- name = "Partition"
-        //        |   |     |-- outputType = {PojoTypeInfo@3369} "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>"
+        //        |   |     |-- outputType = {PojoTypeInfo@3369}
+        // "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount,
+        // fields = [count: Long, word: String]>"
         //        |   |     |-- typeUsed = true
         //        |   |     |-- parallelism = 4
         //        |   |     |-- maxParallelism = -1
@@ -454,8 +478,11 @@ public class StreamGraphGenerator {
         //        |   |-- stateKeySelector = {SocketWindowWordCount$lambda@3579}
         //        |   |-- stateKeyType = {BasicTypeInfo@3254} "String"
         //        |   |-- id = 4
-        //        |   |-- name = "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)"
-        //        |   |-- outputType = {PojoTypeInfo@3369} "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>"
+        //        |   |-- name = "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger,
+        // ReduceFunction$1, PassThroughWindowFunction)"
+        //        |   |-- outputType = {PojoTypeInfo@3369}
+        // "PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount,
+        // fields = [count: Long, word: String]>"
         //        |   |-- typeUsed = true
         //        |   |-- parallelism = 4
         //        |   |-- maxParallelism = -1
@@ -505,7 +532,7 @@ public class StreamGraphGenerator {
     private void configureStreamGraph(final StreamGraph graph) {
         checkNotNull(graph);
 
-        //true
+        // true
         graph.setChaining(chaining);
         //  size = 0
         graph.setUserArtifacts(userArtifacts);
@@ -603,11 +630,10 @@ public class StreamGraphGenerator {
     /**
      * Transforms one {@code Transformation}.
      *
-     * 这将检查我们是否已经对其进行了转换，并在这种情况下提前退出。
-     * 如果不是，它将委托给特定于转换的方法处理。
+     * <p>这将检查我们是否已经对其进行了转换，并在这种情况下提前退出。 如果不是，它将委托给特定于转换的方法处理。
      *
-     * <p>This checks whether we already transformed it and exits early in that case.
-     * If not it delegates to one of the transformation specific methods.
+     * <p>This checks whether we already transformed it and exits early in that case. If not it
+     * delegates to one of the transformation specific methods.
      */
 
     // 对每个 transformation 进行转换，转换成 StreamGraph 中的 StreamNode 和 StreamEdge
@@ -895,7 +921,6 @@ public class StreamGraphGenerator {
 
         // 根据不同的类型调用相应的转换逻辑
 
-
         // 已经处理, 直接返回..
         // the recursive call might have already transformed this
         if (alreadyTransformed.containsKey(transform)) {
@@ -914,8 +939,8 @@ public class StreamGraphGenerator {
 
         // 是否执行在批处理模式 ????  ==> translateForStreaming
         return shouldExecuteInBatchMode
-                ? translator.translateForBatch(transform, context)  // 批处理
-                : translator.translateForStreaming(transform, context); //流处理
+                ? translator.translateForBatch(transform, context) // 批处理
+                : translator.translateForStreaming(transform, context); // 流处理
     }
 
     /**

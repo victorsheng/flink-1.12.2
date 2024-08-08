@@ -63,13 +63,11 @@ import java.util.concurrent.CompletableFuture;
 import static org.apache.flink.runtime.execution.ExecutionState.FINISHED;
 
 /**
+ * ExecutionVertex是执行的并行子任务。 它可以执行一次或几次，每次都会产生一个{@link Execution}.
  *
- * ExecutionVertex是执行的并行子任务。
- * 它可以执行一次或几次，每次都会产生一个{@link Execution}.
+ * <p>The ExecutionVertex is a parallel subtask of the execution.
  *
- * The ExecutionVertex is a parallel subtask of the execution.
- *
- * It may be executed once, or several times, each of which time it spawns an {@link Execution}.
+ * <p>It may be executed once, or several times, each of which time it spawns an {@link Execution}.
  */
 public class ExecutionVertex
         implements AccessExecutionVertex, Archiveable<ArchivedExecutionVertex> {
@@ -374,7 +372,7 @@ public class ExecutionVertex
             case POINTWISE:
                 edges = connectPointwise(sourcePartitions, inputNumber);
                 break;
-            // 看这里.. 构造ExecutionEdge
+                // 看这里.. 构造ExecutionEdge
             case ALL_TO_ALL:
                 edges = connectAllToAll(sourcePartitions, inputNumber);
                 break;
@@ -703,7 +701,7 @@ public class ExecutionVertex
             LocationPreferenceConstraint locationPreferenceConstraint,
             @Nonnull Set<AllocationID> allPreviousExecutionGraphAllocationIds) {
 
-        //??
+        // ??
         return this.currentExecution.scheduleForExecution(
                 slotProviderStrategy,
                 locationPreferenceConstraint,

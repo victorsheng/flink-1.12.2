@@ -131,7 +131,6 @@ public class TaskManagerSlot implements TaskManagerSlotInformation {
         // 更新slot的状态
         state = SlotState.PENDING;
 
-
         assignedSlotRequest = Preconditions.checkNotNull(pendingSlotRequest);
     }
 

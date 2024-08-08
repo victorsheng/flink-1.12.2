@@ -51,13 +51,17 @@ public final class ExecutionVertexSchedulingRequirementsMapper {
         // ********************  executionJobVertex 2   end    ********************
 
         // ********************  executionJobVertex 3  start  ********************
-        //    executionVertex = {ExecutionVertex@7725} "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (1/4)"
+        //    executionVertex = {ExecutionVertex@7725} "Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (1/4)"
         //    executionVertexId = {ExecutionVertexID@7451} "ea632d67b7d595e5b851708ae9ad79d6_0"
-        //    executionVertex = {ExecutionVertex@7726} "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (2/4)"
+        //    executionVertex = {ExecutionVertex@7726} "Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (2/4)"
         //    executionVertexId = {ExecutionVertexID@7453} "ea632d67b7d595e5b851708ae9ad79d6_1"
-        //    executionVertex = {ExecutionVertex@7727} "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (3/4)"
+        //    executionVertex = {ExecutionVertex@7727} "Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (3/4)"
         //    executionVertexId = {ExecutionVertexID@7455} "ea632d67b7d595e5b851708ae9ad79d6_2"
-        //    executionVertex = {ExecutionVertex@7728} "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (4/4)"
+        //    executionVertex = {ExecutionVertex@7728} "Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) (4/4)"
         //    executionVertexId = {ExecutionVertexID@7457} "ea632d67b7d595e5b851708ae9ad79d6_3"
         // ********************  executionJobVertex 3   end    ********************
 
@@ -66,16 +70,13 @@ public final class ExecutionVertexSchedulingRequirementsMapper {
         //    executionVertex = {ExecutionVertex@7914} "Sink: Print to Std. Out (1/1)"
         // ********************  executionJobVertex 4   end    ********************
 
-
         final ExecutionVertexID executionVertexId = executionVertex.getID();
-
-
-
 
         final AllocationID latestPriorAllocation = executionVertex.getLatestPriorAllocation();
 
-
-        //    slotSharingGroup = {SlotSharingGroup@7717} "SlotSharingGroup [0a448493b4782967b150582570326227, ea632d67b7d595e5b851708ae9ad79d6, 6d2677a0ecc3fd8df0b72ec675edf8f4, bc764cd8ddf7a0cff126f51c16239658]"
+        //    slotSharingGroup = {SlotSharingGroup@7717} "SlotSharingGroup
+        // [0a448493b4782967b150582570326227, ea632d67b7d595e5b851708ae9ad79d6,
+        // 6d2677a0ecc3fd8df0b72ec675edf8f4, bc764cd8ddf7a0cff126f51c16239658]"
         //        ids = {TreeSet@7794}  size = 4
         //               0 = {JobVertexID@7706} "0a448493b4782967b150582570326227"
         //               1 = {JobVertexID@7702} "ea632d67b7d595e5b851708ae9ad79d6"
@@ -85,7 +86,6 @@ public final class ExecutionVertexSchedulingRequirementsMapper {
         //        resourceSpec = {ResourceSpec@7796} "ResourceSpec{UNKNOWN}"
         final SlotSharingGroup slotSharingGroup =
                 executionVertex.getJobVertex().getSlotSharingGroup();
-
 
         // 返回 ExecutionVertexSchedulingRequirements 对象
 

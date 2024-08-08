@@ -89,7 +89,6 @@ public class OneInputStreamTask<IN, OUT> extends StreamTask<OUT, OneInputStreamO
             // 构建 Checkpointed InputGate
             CheckpointedInputGate inputGate = createCheckpointedInputGate();
 
-
             Counter numRecordsIn = setupNumRecordsInCounter(mainOperator);
             DataOutput<IN> output = createDataOutput(numRecordsIn);
             StreamTaskInput<IN> input = createTaskInput(inputGate);
@@ -197,7 +196,6 @@ public class OneInputStreamTask<IN, OUT> extends StreamTask<OUT, OneInputStreamO
             // 转换操作
             // 如果是map之类的算子, processElement应该在 StreamMap.java调用
             operator.processElement(record);
-
         }
 
         @Override

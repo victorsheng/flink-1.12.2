@@ -38,20 +38,19 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
- *
  * LocalBufferPool是NetworkBufferPool的包装。
  *
- * 负责分配和回收NetworkBufferPool中的一部分buffer对象。
+ * <p>负责分配和回收NetworkBufferPool中的一部分buffer对象。
  *
- * NetworkBufferPool是一个固定大小的缓存池。
+ * <p>NetworkBufferPool是一个固定大小的缓存池。
  *
- * 将一个NetworkBufferPool的可用缓存划分给多个LocalBufferPool使用，
+ * <p>将一个NetworkBufferPool的可用缓存划分给多个LocalBufferPool使用，
  *
- * 避免网络层同时操作NetworkBufferPool造成死锁。
+ * <p>避免网络层同时操作NetworkBufferPool造成死锁。
  *
- * 同时LocalBufferPool实现了默认的回收机制，确保每一个buffer最终会返回给NetworkBufferPool。
-
- * A buffer pool used to manage a number of {@link Buffer} instances from the {@link
+ * <p>同时LocalBufferPool实现了默认的回收机制，确保每一个buffer最终会返回给NetworkBufferPool。
+ *
+ * <p>A buffer pool used to manage a number of {@link Buffer} instances from the {@link
  * NetworkBufferPool}.
  *
  * <p>Buffer requests are mediated to the network buffer pool to ensure dead-lock free operation of
@@ -84,70 +83,61 @@ class LocalBufferPool implements BufferPool {
     /**
      * buffers 从全局 network buffer pool 获取
      *
-     * Global network buffer pool to get buffers from. */
+     * <p>Global network buffer pool to get buffers from.
+     */
     private final NetworkBufferPool networkBufferPool;
 
     /**
-     *
      * 这个pool所需要的最小 segments 数量
      *
-     * The minimum number of required segments for this pool.
-     *
-     * */
+     * <p>The minimum number of required segments for this pool.
+     */
     private final int numberOfRequiredMemorySegments;
 
     /**
      * 当前可用的内存段。
      *
-     * 这些是已从网络缓冲池请求的段，当前未作为缓冲实例分发。
+     * <p>这些是已从网络缓冲池请求的段，当前未作为缓冲实例分发。
      *
-     * 当心:
+     * <p>当心:
      *
-     *
-     * The currently available memory segments. These are segments, which have been requested from
-     * the network buffer pool and are currently not handed out as Buffer instances.
+     * <p>The currently available memory segments. These are segments, which have been requested
+     * from the network buffer pool and are currently not handed out as Buffer instances.
      *
      * <p><strong>BEWARE:</strong> Take special care with the interactions between this lock and
      * locks acquired before entering this class vs. locks being acquired during calls to external
-     * code inside this class, e.g. with {@link org.apache.flink.runtime.io.network.partition.consumer.BufferManager#bufferQueue} via the
+     * code inside this class, e.g. with {@link
+     * org.apache.flink.runtime.io.network.partition.consumer.BufferManager#bufferQueue} via the
      * {@link #registeredListeners} callback.
      */
-    private final ArrayDeque<MemorySegment> availableMemorySegments =  new ArrayDeque<MemorySegment>();
+    private final ArrayDeque<MemorySegment> availableMemorySegments =
+            new ArrayDeque<MemorySegment>();
 
     /**
-     *
      * 缓冲区可用性侦听器，当缓冲区可用时需要通知侦听器。
      *
-     * 侦听器只能在没有可用缓冲区实例的时间/状态下注册。
+     * <p>侦听器只能在没有可用缓冲区实例的时间/状态下注册。
      *
-     * 只有当buffer使用者发现bufferPool中无buffer可用的时候，才能去注册listener，
+     * <p>只有当buffer使用者发现bufferPool中无buffer可用的时候，才能去注册listener，
      * 用于在有buffer可用的时候收到通知。监听器必须实现BufferListener接口。
      *
-     *
-     * Buffer availability listeners, which need to be notified when a Buffer becomes available.
+     * <p>Buffer availability listeners, which need to be notified when a Buffer becomes available.
      * Listeners can only be registered at a time/state where no Buffer instance was available.
      */
     private final ArrayDeque<BufferListener> registeredListeners = new ArrayDeque<>();
 
-    /**
-     * 从  network buffers 分配的最大MemorySegments
-     * Maximum number of network buffers to allocate.
-     * */
+    /** 从 network buffers 分配的最大MemorySegments Maximum number of network buffers to allocate. */
     private final int maxNumberOfMemorySegments;
 
-    /**
-     * 当前pool的大小
-     * The current size of this pool. */
+    /** 当前pool的大小 The current size of this pool. */
     @GuardedBy("availableMemorySegments")
     private int currentPoolSize;
 
     /**
-     *
      * 从网络缓冲池请求并通过该池以某种方式引用的所有内存段的数目（例如，包装在缓冲实例中或作为可用段）。
      *
-     *
-     * Number of all memory segments, which have been requested from the network buffer pool and are
-     * somehow referenced through this pool (e.g. wrapped in Buffer instances or as available
+     * <p>Number of all memory segments, which have been requested from the network buffer pool and
+     * are somehow referenced through this pool (e.g. wrapped in Buffer instances or as available
      * segments).
      */
     @GuardedBy("availableMemorySegments")
@@ -448,14 +438,13 @@ class LocalBufferPool implements BufferPool {
     }
 
     /**
-     * 从全局请求MemorySegment（如果可用）
-     * 一旦有一个池可用，就尝试从全局池中获取缓冲区。
+     * 从全局请求MemorySegment（如果可用） 一旦有一个池可用，就尝试从全局池中获取缓冲区。
      *
-     * Tries to obtain a buffer from global pool as soon as one pool is available.
+     * <p>Tries to obtain a buffer from global pool as soon as one pool is available.
      *
-     * Note that
-     * multiple {@link LocalBufferPool}s might wait on the future of the global pool, hence this
-     * method double-check if a new buffer is really needed at the time it becomes available.
+     * <p>Note that multiple {@link LocalBufferPool}s might wait on the future of the global pool,
+     * hence this method double-check if a new buffer is really needed at the time it becomes
+     * available.
      */
     private void requestMemorySegmentFromGlobalWhenAvailable() {
         assert Thread.holdsLock(availableMemorySegments);
@@ -530,10 +519,9 @@ class LocalBufferPool implements BufferPool {
     /**
      * recycle方法调用registeredListeners.poll()获取listener。
      * Listener的作用是当availableMemorySegments耗尽的时候，在bufferPool注册listener。
-     * 当回收了内存，availableMemorySegments不再为空的时候，
-     * bufferPool调用监听器的notifyBufferAvailable方法，告知现在有buffer可用。
+     * 当回收了内存，availableMemorySegments不再为空的时候， bufferPool调用监听器的notifyBufferAvailable方法，告知现在有buffer可用。
      *
-     * 只有在availableMemorySegments（可用内存段队列）为空并且没有被destroy的时候才能添加listener。
+     * <p>只有在availableMemorySegments（可用内存段队列）为空并且没有被destroy的时候才能添加listener。
      *
      * @param segment
      * @param channel
@@ -548,7 +536,6 @@ class LocalBufferPool implements BufferPool {
         // 一直循环，确保如果listener返回内存不再使用的时候，再次执行这段逻辑将其回收
         while (!notificationResult.isBufferUsed()) {
             synchronized (availableMemorySegments) {
-
                 if (channel != UNKNOWN_CHANNEL) {
                     if (subpartitionBuffersCount[channel]-- == maxBuffersPerChannel) {
                         unavailableSubpartitionsCount--;

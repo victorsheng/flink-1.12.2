@@ -62,28 +62,17 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
 /**
+ * 数据接收端主要是指RemoteInputChannel。 该channel用来接受和处理从其他节点读取到的数据。 和RemoteInputChanel对应的是 LocalInputChannel
+ * ，负责读取本地的subpartition，不需要使用接收端缓存。
  *
+ * <p>RemoteInputChannel 请求远端的 ResultSubpartition 会创建一个 PartitionRequestClient， 并通过 Netty 发送
+ * PartitionRequest 请求， 这时会带上当前 InputChannel 的 id 和初始的 credit 信息：
  *
- * 数据接收端主要是指RemoteInputChannel。
- * 该channel用来接受和处理从其他节点读取到的数据。
- * 和RemoteInputChanel对应的是 LocalInputChannel ，负责读取本地的subpartition，不需要使用接收端缓存。
+ * <p>CreditBasedPartitionRequestClientHandler 从网络中读取数据后交给 RemoteInputChannel， RemoteInputChannel
+ * 会将接收到的加入队列中， 并根据生产端的堆积申请 floating buffer
  *
-
- *
- * RemoteInputChannel 请求远端的 ResultSubpartition
- * 会创建一个 PartitionRequestClient，
- * 并通过 Netty 发送 PartitionRequest 请求，
- * 这时会带上当前 InputChannel 的 id 和初始的 credit 信息：
- *
- *
- * CreditBasedPartitionRequestClientHandler 从网络中读取数据后交给 RemoteInputChannel，
- * RemoteInputChannel 会将接收到的加入队列中，
- * 并根据生产端的堆积申请 floating buffer
- *
- *
- * An input channel, which requests a remote partition queue.
- *
- * */
+ * <p>An input channel, which requests a remote partition queue.
+ */
 public class RemoteInputChannel extends InputChannel {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteInputChannel.class);
 
@@ -111,21 +100,17 @@ public class RemoteInputChannel extends InputChannel {
     private final AtomicBoolean isReleased = new AtomicBoolean();
 
     /**
-     * RemoteInputChannel 请求远端的 ResultSubpartition，
-     * 会创建一个 PartitionRequestClient，
-     * 并通过 Netty 发送 PartitionRequest 请求，
-     * 这时会带上当前 InputChannel 的 id 和初始的 credit 信息
+     * RemoteInputChannel 请求远端的 ResultSubpartition， 会创建一个 PartitionRequestClient， 并通过 Netty 发送
+     * PartitionRequest 请求， 这时会带上当前 InputChannel 的 id 和初始的 credit 信息
      *
-     * Client to establish a (possibly shared) TCP connection and request the partition.
-     * */
+     * <p>Client to establish a (possibly shared) TCP connection and request the partition.
+     */
     private volatile PartitionRequestClient partitionRequestClient;
 
     /** The next expected sequence number for the next buffer. */
     private int expectedSequenceNumber = 0;
 
-    /**
-     * 初始化信用值
-     * The initial number of exclusive buffers assigned to this channel. */
+    /** 初始化信用值 The initial number of exclusive buffers assigned to this channel. */
     private final int initialCredit;
 
     /** The number of available buffers that have not been announced to the producer yet. */
@@ -212,10 +197,10 @@ public class RemoteInputChannel extends InputChannel {
             // Create a client and request the partition
             try {
 
-
                 // 构建一个client, 请求partition
-                //REMOTE，需要网络通信，使用 Netty 建立网络
-                //通过 ConnectionManager 来建立连接：创建 PartitionRequestClient，通过 PartitionRequestClient 发起请求
+                // REMOTE，需要网络通信，使用 Netty 建立网络
+                // 通过 ConnectionManager 来建立连接：创建 PartitionRequestClient，通过 PartitionRequestClient
+                // 发起请求
                 partitionRequestClient =
                         connectionManager.createPartitionRequestClient(connectionId);
             } catch (IOException e) {
@@ -224,7 +209,7 @@ public class RemoteInputChannel extends InputChannel {
                 throw new PartitionConnectionException(partitionId, e);
             }
 
-            //请求分区，通过 netty 发起请求
+            // 请求分区，通过 netty 发起请求
             partitionRequestClient.requestSubpartition(partitionId, subpartitionIndex, this, 0);
         }
     }
@@ -337,7 +322,7 @@ public class RemoteInputChannel extends InputChannel {
      */
     private void notifyCreditAvailable() throws IOException {
         checkPartitionRequestQueueInitialized();
-        //通知当前 channel 有新的 credit
+        // 通知当前 channel 有新的 credit
         partitionRequestClient.notifyCreditAvailable(this);
     }
 
@@ -462,11 +447,9 @@ public class RemoteInputChannel extends InputChannel {
     }
 
     /**
-     *
      * 该方法从bufferQueue中拿到一个buffer并返回。
      *
-     *
-     * Requests buffer from input channel directly for receiving network data. It should always
+     * <p>Requests buffer from input channel directly for receiving network data. It should always
      * return an available buffer in credit-based mode unless the channel has been released.
      *
      * @return The available buffer.
@@ -477,17 +460,14 @@ public class RemoteInputChannel extends InputChannel {
     }
 
     /**
+     * backlog 是发送端的堆积 的 buffer 数量， 如果 bufferQueue 中 buffer 的数量不足，就去须从 LocalBufferPool 中请求 floating
+     * buffer 在请求了新的 buffer 后，通知生产者有 credit 可用
      *
-     * backlog 是发送端的堆积 的 buffer 数量，
-     * 如果 bufferQueue 中 buffer 的数量不足，就去须从 LocalBufferPool 中请求 floating buffer
-     * 在请求了新的 buffer 后，通知生产者有 credit 可用
+     * <p>根据backlog（积压的数量）提前分配内存， 如果backlog加上初始的credit大于可用buffer数，需要分配浮动buffer。
      *
-     * 根据backlog（积压的数量）提前分配内存，
-     * 如果backlog加上初始的credit大于可用buffer数，需要分配浮动buffer。
-     *
-     * Receives the backlog from the producer's buffer response. If the number of available buffers
-     * is less than backlog + initialCredit, it will request floating buffers from the buffer
-     * manager, and then notify unannounced credits to the producer.
+     * <p>Receives the backlog from the producer's buffer response. If the number of available
+     * buffers is less than backlog + initialCredit, it will request floating buffers from the
+     * buffer manager, and then notify unannounced credits to the producer.
      *
      * @param backlog The number of unsent buffers in the producer's sub partition.
      */
@@ -504,6 +484,7 @@ public class RemoteInputChannel extends InputChannel {
 
     /**
      * 接收到远程 ResultSubpartition 发送的 Buffer
+     *
      * @param buffer
      * @param sequenceNumber
      * @param backlog
@@ -527,7 +508,6 @@ public class RemoteInputChannel extends InputChannel {
             boolean firstPriorityEvent = false;
 
             synchronized (receivedBuffers) {
-
                 NetworkActionsLogger.traceInput(
                         "RemoteInputChannel#onBuffer",
                         buffer,
@@ -567,19 +547,18 @@ public class RemoteInputChannel extends InputChannel {
             // 已接收到数据，缓存不需要回收
             recycleBuffer = false;
 
-
             if (firstPriorityEvent) {
 
                 notifyPriorityEvent(sequenceNumber);
             }
             // 如果添加buffer之前的队列为空，需要通知对应的inputGate，现在已经有数据了（不为空
             if (wasEmpty) {
-                //通知 InputGate，当前 channel 有新数据
+                // 通知 InputGate，当前 channel 有新数据
                 notifyChannelNonEmpty();
             }
 
             if (backlog >= 0) {
-                //根据客户端的积压申请float buffer
+                // 根据客户端的积压申请float buffer
                 onSenderBacklog(backlog);
             }
         } finally {

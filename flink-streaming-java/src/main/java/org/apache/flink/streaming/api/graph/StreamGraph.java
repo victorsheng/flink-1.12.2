@@ -107,10 +107,10 @@ public class StreamGraph implements Pipeline {
     private GlobalDataExchangeMode globalDataExchangeMode;
 
     /**
-     *  用于指示默认情况下是否将所有顶点放入同一插槽共享组的标志。
+     * 用于指示默认情况下是否将所有顶点放入同一插槽共享组的标志。
      *
-     *  Flag to indicate whether to put all vertices into the same slot sharing group by default.
-     *  */
+     * <p>Flag to indicate whether to put all vertices into the same slot sharing group by default.
+     */
     private boolean allVerticesInSameSlotSharingGroupByDefault = true;
 
     // StreamNode 集合
@@ -365,10 +365,11 @@ public class StreamGraph implements Pipeline {
         // coLocationGroup : null
         // StreamOperatorFactory : SimpleUdfStreamOperatorFactory
         // inTypeInfo  : String
-        // outTypeInfo : PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount, fields = [count: Long, word: String]>
+        // outTypeInfo :
+        // PojoType<org.apache.flink.streaming.examples.socket.SocketWindowWordCount$WordWithCount,
+        // fields = [count: Long, word: String]>
         // operatorName : Flat Map
         // invokableClass : class org.apache.flink.streaming.runtime.tasks.OneInputStreamTask
-
 
         addNode(
                 vertexID,
@@ -377,7 +378,6 @@ public class StreamGraph implements Pipeline {
                 invokableClass,
                 operatorFactory,
                 operatorName);
-
 
         setSerializers(vertexID, createSerializer(inTypeInfo), null, createSerializer(outTypeInfo));
 
@@ -476,14 +476,12 @@ public class StreamGraph implements Pipeline {
             throw new RuntimeException("Duplicate vertexID " + vertexID);
         }
 
-
         // vertexID: 2
         // slotSharingGroup : default
         // coLocationGroup : null
         // vertexClass : class org.apache.flink.streaming.runtime.tasks.OneInputStreamTask
         // StreamOperatorFactory : SimpleUdfStreamOperatorFactory
         // operatorName : Flat Map
-
 
         StreamNode vertex =
                 new StreamNode(
@@ -771,7 +769,8 @@ public class StreamGraph implements Pipeline {
         //    typeSerializerOut = null
         //    inEdges = {ArrayList@3780}  size = 0
         //    outEdges = {ArrayList@3781}  size = 0
-        //    jobVertexClass = {Class@3714} "class org.apache.flink.streaming.runtime.tasks.OneInputStreamTask"
+        //    jobVertexClass = {Class@3714} "class
+        // org.apache.flink.streaming.runtime.tasks.OneInputStreamTask"
         //    inputFormat = null
         //    outputFormat = null
         //    transformationUID = null
@@ -779,12 +778,9 @@ public class StreamGraph implements Pipeline {
         //    sortedInputs = false
         StreamNode vertex = getStreamNode(vertexID);
 
-
-
         //    in1 = {StringSerializer@3753}
         //    in2 = null
         //    out = {PojoSerializer@3773}
-
 
         vertex.setSerializersIn(in1, in2);
         vertex.setSerializerOut(out);
@@ -993,7 +989,6 @@ public class StreamGraph implements Pipeline {
 
     /** Gets the assembled {@link JobGraph} with a specified {@link JobID}. */
     public JobGraph getJobGraph(@Nullable JobID jobID) {
-
 
         //  开始构建JobGraph ,
         return StreamingJobGraphGenerator.createJobGraph(this, jobID);

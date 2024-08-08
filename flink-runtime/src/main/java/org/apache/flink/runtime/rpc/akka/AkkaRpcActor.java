@@ -204,7 +204,8 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
     }
 
     /**
-     *  处理RPC消息
+     * 处理RPC消息
+     *
      * @param message
      */
     protected void handleRpcMessage(Object message) {

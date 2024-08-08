@@ -28,29 +28,26 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
- * 这表示拓扑中的反馈点。
- * feedback 元素不需要和 上有的{@code Transformation} 匹配.
- * 因为仅仅允许{@code CoFeedbackTransformation}之后的操作是 {@link  org.apache.flink.streaming.api.transformations.TwoInputTransformation TwoInputTransformations}.
- *
- * 上游{@code Transformation}将连接到Co-Transform 的第一个输入，而反馈 edges 将连接到第二个输入。
- *
- * 同时保留了输入边和反馈边的划分。它们也可以有不同的分区策略。
- * 然而，这要求反馈{@code Transformation}的并行性必须与输入{@code Transformation}的并行度匹配。
- *
- * 上游{@code Transformation}未连接到此{@code CoFeedbackTransformation}。
- * 而是直接连接到 {@code TwoInputTransformation}  之后的 {@code  CoFeedbackTransformation}.
- * 这与批处理中的迭代不同。
- *
- * This represents a feedback point in a topology.
- *
- *
- * The type of the feedback elements need not match the type of the upstream {@code Transformation} because the only allowed operations after a
- * {@code CoFeedbackTransformation} are {@link
+ * 这表示拓扑中的反馈点。 feedback 元素不需要和 上有的{@code Transformation} 匹配. 因为仅仅允许{@code
+ * CoFeedbackTransformation}之后的操作是 {@link
  * org.apache.flink.streaming.api.transformations.TwoInputTransformation TwoInputTransformations}.
  *
+ * <p>上游{@code Transformation}将连接到Co-Transform 的第一个输入，而反馈 edges 将连接到第二个输入。
  *
- * The upstream {@code Transformation} will be connected to the first input of the Co-Transform
+ * <p>同时保留了输入边和反馈边的划分。它们也可以有不同的分区策略。 然而，这要求反馈{@code Transformation}的并行性必须与输入{@code
+ * Transformation}的并行度匹配。
+ *
+ * <p>上游{@code Transformation}未连接到此{@code CoFeedbackTransformation}。 而是直接连接到 {@code
+ * TwoInputTransformation} 之后的 {@code CoFeedbackTransformation}. 这与批处理中的迭代不同。
+ *
+ * <p>This represents a feedback point in a topology.
+ *
+ * <p>The type of the feedback elements need not match the type of the upstream {@code
+ * Transformation} because the only allowed operations after a {@code CoFeedbackTransformation} are
+ * {@link org.apache.flink.streaming.api.transformations.TwoInputTransformation
+ * TwoInputTransformations}.
+ *
+ * <p>The upstream {@code Transformation} will be connected to the first input of the Co-Transform
  * while the feedback edges will be connected to the second input.
  *
  * <p>Both the partitioning of the input and the feedback edges is preserved. They can also have
@@ -59,7 +56,7 @@ import java.util.List;
  *
  * <p>The upstream {@code Transformation} is not wired to this {@code CoFeedbackTransformation}.
  *
- * It is instead directly wired to the {@code TwoInputTransformation} after this {@code
+ * <p>It is instead directly wired to the {@code TwoInputTransformation} after this {@code
  * CoFeedbackTransformation}.
  *
  * <p>This is different from Iterations in batch processing.

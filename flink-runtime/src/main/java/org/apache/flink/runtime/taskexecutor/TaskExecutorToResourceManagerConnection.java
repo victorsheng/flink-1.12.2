@@ -128,7 +128,6 @@ public class TaskExecutorToResourceManagerConnection
                 RetryingRegistrationConfiguration retryingRegistrationConfiguration,
                 TaskExecutorRegistration taskExecutorRegistration) {
 
-
             // 调用父类
             super(
                     log,

@@ -92,7 +92,8 @@ public class StreamSource<OUT, SRC extends SourceFunction<OUT>>
         //    "jobmanager.rpc.address" -> "henghe-030"
         //    "taskmanager.memory.task.off-heap.size" -> "0b"
         //    "sun.security.krb5.debug" -> "true"
-        //    "io.tmp.dirs" -> "/opt/tools/hadoop-3.1.3/data/local-dirs/usercache/yarn/appcache/application_1619273419318_0053"
+        //    "io.tmp.dirs" ->
+        // "/opt/tools/hadoop-3.1.3/data/local-dirs/usercache/yarn/appcache/application_1619273419318_0053"
         //    "parallelism.default" -> "4"
         //    "taskmanager.memory.process.size" -> "1728m"
         //    "web.port" -> "0"
@@ -102,7 +103,8 @@ public class StreamSource<OUT, SRC extends SourceFunction<OUT>>
         //    "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
         //    "slot.request.timeout" -> "1000000000"
         //    "rest.address" -> "henghe-030"
-        //    "security.kerberos.login.keytab" -> "/opt/tools/hadoop-3.1.3/data/local-dirs/usercache/yarn/appcache/application_1619273419318_0053/container_1619273419318_0053_01_000002/krb5.keytab"
+        //    "security.kerberos.login.keytab" ->
+        // "/opt/tools/hadoop-3.1.3/data/local-dirs/usercache/yarn/appcache/application_1619273419318_0053/container_1619273419318_0053_01_000002/krb5.keytab"
         //    "$internal.deployment.config-dir" -> "/opt/tools/flink-1.12.0/conf"
         //    "$internal.yarn.log-config-file" -> "/opt/tools/flink-1.12.0/conf/log4j.properties"
         //    "jobmanager.memory.jvm-overhead.max" -> "201326592b"
@@ -131,10 +133,12 @@ public class StreamSource<OUT, SRC extends SourceFunction<OUT>>
         //    "execution.attached" -> "true"
         //    "internal.cluster.execution-mode" -> "NORMAL"
         //    "execution.shutdown-on-attached-exit" -> "false"
-        //    "pipeline.jars" -> "file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar"
+        //    "pipeline.jars" ->
+        // "file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar"
         //    "taskmanager.memory.managed.size" -> "536870920b"
         //    "taskmanager.memory.framework.heap.size" -> "134217728b"
-        //    "env.java.opts.taskmanager" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5007"
+        //    "env.java.opts.taskmanager" ->
+        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5007"
         //    "jobmanager.memory.jvm-metaspace.size" -> "268435456b"
         //    "jobmanager.memory.heap.size" -> "1073741824b"
         final Configuration configuration =
@@ -183,7 +187,7 @@ public class StreamSource<OUT, SRC extends SourceFunction<OUT>>
 
         try {
 
-            //userFunction = {SocketTextStreamFunction@7209}
+            // userFunction = {SocketTextStreamFunction@7209}
             // SocketTextStreamFunction#run
             userFunction.run(ctx);
 

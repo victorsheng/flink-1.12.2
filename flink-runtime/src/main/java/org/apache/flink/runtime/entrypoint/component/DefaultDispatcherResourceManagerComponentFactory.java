@@ -144,7 +144,6 @@ public class DefaultDispatcherResourceManagerComponentFactory
                             new ExponentialBackoffRetryStrategy(
                                     12, Duration.ofMillis(10), Duration.ofMillis(50)));
 
-
             // 构建  Executor
             final ScheduledExecutorService executor =
                     WebMonitorEndpoint.createExecutorService(
@@ -179,7 +178,6 @@ public class DefaultDispatcherResourceManagerComponentFactory
 
             log.debug("Starting Dispatcher REST endpoint.");
             webMonitorEndpoint.start();
-
 
             // 获取主机名称
             final String hostname = RpcUtils.getHostname(rpcService);

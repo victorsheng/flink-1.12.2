@@ -53,7 +53,6 @@ public class PipelineExecutorUtils {
         final ExecutionConfigAccessor executionConfigAccessor =
                 ExecutionConfigAccessor.fromConfiguration(configuration);
 
-
         // 构建JobGraph
         final JobGraph jobGraph =
                 FlinkPipelineTranslationUtil.getJobGraph(
@@ -66,10 +65,6 @@ public class PipelineExecutorUtils {
         jobGraph.addJars(executionConfigAccessor.getJars());
         jobGraph.setClasspaths(executionConfigAccessor.getClasspaths());
         jobGraph.setSavepointRestoreSettings(executionConfigAccessor.getSavepointRestoreSettings());
-
-
-
-
 
         return jobGraph;
     }

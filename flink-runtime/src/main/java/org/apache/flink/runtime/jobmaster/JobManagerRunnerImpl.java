@@ -164,7 +164,6 @@ public class JobManagerRunnerImpl
                     jobMasterFactory.createJobMasterService(
                             jobGraph, this, userCodeLoader, initializationTimestamp);
 
-
             jobMasterCreationFuture.complete(null);
         }
     }

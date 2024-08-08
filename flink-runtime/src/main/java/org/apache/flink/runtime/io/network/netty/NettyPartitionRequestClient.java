@@ -112,9 +112,8 @@ public class NettyPartitionRequestClient implements PartitionRequestClient {
                 partitionId,
                 delayMs);
 
-
-        //向 NetworkClientHandler 注册当前 RemoteInputChannel
-        //单个 Task 所有的 RemoteInputChannel 的数据传输都通过这个 PartitionRequestClient 处理
+        // 向 NetworkClientHandler 注册当前 RemoteInputChannel
+        // 单个 Task 所有的 RemoteInputChannel 的数据传输都通过这个 PartitionRequestClient 处理
 
         // clientHandler为CreditBasedPartitionRequestClientHandler
         // 它内部维护了input channel ID和channel的对应关系，是一个map类型变量
@@ -138,7 +137,7 @@ public class NettyPartitionRequestClient implements PartitionRequestClient {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
 
-                        //如果请求发送失败，要移除当前的 inputChannel
+                        // 如果请求发送失败，要移除当前的 inputChannel
                         if (!future.isSuccess()) {
                             // map中移除这个channel
                             clientHandler.removeInputChannel(inputChannel);
@@ -158,7 +157,7 @@ public class NettyPartitionRequestClient implements PartitionRequestClient {
 
         // 如果不需要延迟发送
         if (delayMs == 0) {
-            //通过 netty 发送请求
+            // 通过 netty 发送请求
             ChannelFuture f = tcpChannel.writeAndFlush(request);
             f.addListener(listener);
         } else {
@@ -215,7 +214,7 @@ public class NettyPartitionRequestClient implements PartitionRequestClient {
 
     @Override
     public void notifyCreditAvailable(RemoteInputChannel inputChannel) {
-        //交给 NetworkClientHandler 处理
+        // 交给 NetworkClientHandler 处理
         clientHandler.notifyCreditAvailable(inputChannel);
     }
 

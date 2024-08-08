@@ -81,7 +81,6 @@ abstract class AbstractOneInputTransformationTranslator<IN, OUT, OP extends Tran
                         ? transformation.getParallelism()
                         : executionConfig.getParallelism();
 
-
         // 设置并行度
         streamGraph.setParallelism(transformationId, parallelism);
         streamGraph.setMaxParallelism(transformationId, transformation.getMaxParallelism());

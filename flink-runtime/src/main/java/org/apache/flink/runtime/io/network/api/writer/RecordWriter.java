@@ -39,18 +39,14 @@ import java.util.concurrent.CompletableFuture;
 import static org.apache.flink.util.Preconditions.checkArgument;
 
 /**
+ * 数据发送端最重要的角色是RecordWriter和ResultPartition。 RecordWriter负责将数据流中的元素序列化，存入到ResultSubpartition中。
  *
- * 数据发送端最重要的角色是RecordWriter和ResultPartition。
- * RecordWriter负责将数据流中的元素序列化，存入到ResultSubpartition中。
- *
- * RecordWriter具有两个子类：BroadcastRecordWriter和ChannelSelectorRecordWriter，
+ * <p>RecordWriter具有两个子类：BroadcastRecordWriter和ChannelSelectorRecordWriter，
  * 分别负责广播形式写入数据和根据channel选择器向指定的channel写入数据。
  *
- * 这两个子类的emit方法主要逻辑都位于父类RecordWriter的emit方法。
+ * <p>这两个子类的emit方法主要逻辑都位于父类RecordWriter的emit方法。
  *
-
- *
- * An abstract record-oriented runtime result writer.
+ * <p>An abstract record-oriented runtime result writer.
  *
  * <p>The RecordWriter wraps the runtime's {@link ResultPartitionWriter} and takes care of channel
  * selection and serializing records into bytes.
@@ -65,13 +61,13 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
 
     private static final Logger LOG = LoggerFactory.getLogger(RecordWriter.class);
 
-    //底层的 ResultPartition
+    // 底层的 ResultPartition
     protected final ResultPartitionWriter targetPartition;
 
-    //channel的数量，即 sub-partition的数量
+    // channel的数量，即 sub-partition的数量
     protected final int numberOfChannels;
 
-    //序列化
+    // 序列化
     protected final DataOutputSerializer serializer;
 
     // 基于George Marsaglia 提出的 XORShift 算法实现了一个随机数发生器。
@@ -83,26 +79,25 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
     // 采用OutputFlusher定时器,每100毫秒flush一次.
     protected final boolean flushAlways;
 
-
     /**
      * //定时强制 flush 输出buffer , 默认值 100 毫秒
      *
-     * 假如产出的数据记录较少无法完整地填充一个 MemorySegment，
-     * 那么 ResultSubpartition 可能会一直处于不可被消费的状态。
-     * 而为了保证产出的记录能够及时被消费，就需要及时进行 flush，从而确保下游能更及时地处理数据。
-     * 在 RecordWriter 中有一个 OutputFlusher 会定时触发 flush，
-     * 间隔可以通过 [算子] DataStream.setBufferTimeout() 来控制。
+     * <p>假如产出的数据记录较少无法完整地填充一个 MemorySegment， 那么 ResultSubpartition 可能会一直处于不可被消费的状态。
+     * 而为了保证产出的记录能够及时被消费，就需要及时进行 flush，从而确保下游能更及时地处理数据。 在 RecordWriter 中有一个 OutputFlusher 会定时触发
+     * flush， 间隔可以通过 [算子] DataStream.setBufferTimeout() 来控制。
      *
-     *
-     * The thread that periodically flushes the output, to give an upper latency bound. */
+     * <p>The thread that periodically flushes the output, to give an upper latency bound.
+     */
     @Nullable private final OutputFlusher outputFlusher;
 
     /**
      * flusher 异常相关
      *
-     * To avoid synchronization overhead on the critical path, best-effort error tracking is enough here.
+     * <p>To avoid synchronization overhead on the critical path, best-effort error tracking is
+     * enough here.
      */
     private Throwable flusherException;
+
     private volatile Throwable volatileFlusherException;
     private int volatileFlusherExceptionCheckSkipCount;
 
@@ -113,7 +108,7 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
         this.targetPartition = writer;
         this.numberOfChannels = writer.getNumberOfSubpartitions();
 
-        //序列化器，用于指的一提将一条记录序列化到多个buffer中
+        // 序列化器，用于指的一提将一条记录序列化到多个buffer中
         this.serializer = new DataOutputSerializer(128);
 
         checkArgument(timeout >= -1);
@@ -122,7 +117,7 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
             outputFlusher = null;
         } else {
 
-            //根据超时时间创建一个定时 flush 输出 buffer 的线程
+            // 根据超时时间创建一个定时 flush 输出 buffer 的线程
             String threadName =
                     taskName == null
                             ? DEFAULT_OUTPUT_FLUSH_THREAD_NAME
@@ -138,8 +133,9 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
 
         // 序列化 record，存入到目标channel的缓存中
 
-
-        //    targetPartition = {PipelinedResultPartition@7312} "PipelinedResultPartition f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0 [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+        //    targetPartition = {PipelinedResultPartition@7312} "PipelinedResultPartition
+        // f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0 [PIPELINED_BOUNDED, 4
+        // subpartitions, 4 pending consumptions]"
         //            releaseLock = {Object@7858}
         //            consumedSubpartitions = {boolean[4]@7859} [false, false, false, false]
         //            numUnconsumedSubpartitions = 4
@@ -147,15 +143,19 @@ public abstract class RecordWriter<T extends IOReadableWritable> implements Avai
         //            unicastBufferBuilders = {BufferBuilder[4]@7861}
         //            broadcastBufferBuilder = null
         //            idleTimeMsPerSecond = {MeterView@7862}
-        //            owningTaskName = "Source: Socket Stream (1/1)#0 (9bd406565dca544a85576fd06acc0fc0)"
+        //            owningTaskName = "Source: Socket Stream (1/1)#0
+        // (9bd406565dca544a85576fd06acc0fc0)"
         //            partitionIndex = 0
-        //            partitionId = {ResultPartitionID@7864} "f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0"
+        //            partitionId = {ResultPartitionID@7864}
+        // "f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0"
         //            partitionType = {ResultPartitionType@6650} "PIPELINED_BOUNDED"
         //            partitionManager = {ResultPartitionManager@6651}
         //            numSubpartitions = 4
         //            numTargetKeyGroups = 128
         //            isReleased = {AtomicBoolean@7865} "false"
-        //            bufferPool = {LocalBufferPool@7866} "[size: 16, required: 5, requested: 5, available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10, destroyed: false]"
+        //            bufferPool = {LocalBufferPool@7866} "[size: 16, required: 5, requested: 5,
+        // available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10,
+        // destroyed: false]"
         //            isFinished = false
         //            cause = null
         //            bufferPoolFactory = {ResultPartitionFactory$lambda@7867}

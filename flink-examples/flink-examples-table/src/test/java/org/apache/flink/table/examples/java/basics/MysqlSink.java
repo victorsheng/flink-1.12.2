@@ -1,19 +1,15 @@
 package org.apache.flink.table.examples.java.basics;
 
-
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
-import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
+import java.sql.DriverManager;
 
-
-public class MysqlSink extends RichSinkFunction<Tuple3<String,String,String>> {
+public class MysqlSink extends RichSinkFunction<Tuple3<String, String, String>> {
 
     private static final long serialVersionUID = -8930276689109741501L;
 
@@ -25,8 +21,13 @@ public class MysqlSink extends RichSinkFunction<Tuple3<String,String,String>> {
         super.open(parameters);
         super.open(parameters);
         Class.forName("com.mysql.jdbc.Driver");
-        connect = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.xxx.xxx:3306", "root", "xxxxx");
-        ps = (PreparedStatement) connect.prepareStatement("insert into user (id,name,sex) values (?,?,?)");
+        connect =
+                (Connection)
+                        DriverManager.getConnection(
+                                "jdbc:mysql://192.168.xxx.xxx:3306", "root", "xxxxx");
+        ps =
+                (PreparedStatement)
+                        connect.prepareStatement("insert into user (id,name,sex) values (?,?,?)");
     }
 
     @Override

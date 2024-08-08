@@ -55,8 +55,7 @@ import java.util.concurrent.CompletableFuture;
 public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEventGateway {
 
     /**
-     * 从TaskManager请求slot
-     * Requests a slot from the TaskManager.
+     * 从TaskManager请求slot Requests a slot from the TaskManager.
      *
      * @param slotId slot id for the request
      * @param jobId for which to request a slot
@@ -79,6 +78,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
 
     /**
      * 获取任务背压相关信息
+     *
      * @param executionAttemptId
      * @param requestId
      * @param timeout
@@ -99,8 +99,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
             TaskDeploymentDescriptor tdd, JobMasterId jobMasterId, @RpcTimeout Time timeout);
 
     /**
-     * 更改任务的 分区
-     * Update the task where the given partitions can be found.
+     * 更改任务的 分区 Update the task where the given partitions can be found.
      *
      * @param executionAttemptID identifying the task
      * @param partitionInfos telling where the partition can be retrieved from
@@ -113,8 +112,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
             @RpcTimeout Time timeout);
 
     /**
-     * 批量发布/升级中间结果分区。
-     * Batch release/promote intermediate result partitions.
+     * 批量发布/升级中间结果分区。 Batch release/promote intermediate result partitions.
      *
      * @param jobId id of the job that the partitions belong to
      * @param partitionToRelease partition ids to release
@@ -128,7 +126,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 释放属于任何给定数据集的所有群集分区
      *
-     * Releases all cluster partitions belong to any of the given data sets.
+     * <p>Releases all cluster partitions belong to any of the given data sets.
      *
      * @param dataSetsToRelease data sets for which all cluster partitions should be released
      * @param timeout for the partitions release operation
@@ -140,10 +138,10 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 触发给定任务的checkpoint。
      *
-     * checkpoint由checkpointID和checkpoint时间戳标识。
-     * 
-     * Trigger the checkpoint for the given task.
-     * The checkpoint is identified by the checkpoint ID and the checkpoint timestamp.
+     * <p>checkpoint由checkpointID和checkpoint时间戳标识。
+     *
+     * <p>Trigger the checkpoint for the given task. The checkpoint is identified by the checkpoint
+     * ID and the checkpoint timestamp.
      *
      * @param executionAttemptID identifying the task
      * @param checkpointID unique id for the checkpoint
@@ -160,10 +158,10 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 确认给定任务的checkpoint。
      *
-     * checkpoint由checkpointID和checkpoint时间戳标识。
-     * 
-     * Confirm a checkpoint for the given task.
-     * The checkpoint is identified by the checkpoint ID and the checkpoint timestamp.
+     * <p>checkpoint由checkpointID和checkpoint时间戳标识。
+     *
+     * <p>Confirm a checkpoint for the given task. The checkpoint is identified by the checkpoint ID
+     * and the checkpoint timestamp.
      *
      * @param executionAttemptID identifying the task
      * @param checkpointId unique id for the checkpoint
@@ -237,8 +235,8 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
             final AllocationID allocationId, final Throwable cause, @RpcTimeout final Time timeout);
 
     /**
-     * 请求将指定type的文件上载到集群的{@link BlobServer}。
-     * Requests the file upload of the specified type to the cluster's {@link BlobServer}.
+     * 请求将指定type的文件上载到集群的{@link BlobServer}。 Requests the file upload of the specified type to the
+     * cluster's {@link BlobServer}.
      *
      * @param fileType to upload
      * @param timeout for the asynchronous operation
@@ -248,8 +246,8 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
             FileType fileType, @RpcTimeout Time timeout);
 
     /**
-     * 请求将指定名称的文件上载到集群的{@link BlobServer}。
-     * Requests the file upload of the specified name to the cluster's {@link BlobServer}.
+     * 请求将指定名称的文件上载到集群的{@link BlobServer}。 Requests the file upload of the specified name to the
+     * cluster's {@link BlobServer}.
      *
      * @param fileName to upload
      * @param timeout for the asynchronous operation
@@ -261,7 +259,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 返回TaskManager上度量查询服务的网关。
      *
-     * Returns the gateway of Metric Query Service on the TaskManager.
+     * <p>Returns the gateway of Metric Query Service on the TaskManager.
      *
      * @return Future gateway of Metric Query Service on the TaskManager.
      */
@@ -271,7 +269,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 检查是否可以释放任务执行器。如果有未使用的结果分区，则不能释放它。
      *
-     * Checks whether the task executor can be released. It cannot be released if there're
+     * <p>Checks whether the task executor can be released. It cannot be released if there're
      * unconsumed result partitions.
      *
      * @return Future flag indicating whether the task executor can be released.
@@ -281,7 +279,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
     /**
      * 请求TaskManager上的历史日志文件名。
      *
-     * Requests for the historical log file names on the TaskManager.
+     * <p>Requests for the historical log file names on the TaskManager.
      *
      * @return A Tuple2 Array with all log file names with its length.
      */
@@ -289,6 +287,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
 
     /**
      * 向Task发送Operator Event
+     *
      * @param task
      * @param operator
      * @param evt
@@ -299,8 +298,7 @@ public interface TaskExecutorGateway extends RpcGateway, TaskExecutorOperatorEve
             ExecutionAttemptID task, OperatorID operator, SerializedValue<OperatorEvent> evt);
 
     /**
-     * 请求TaskManager 的thread dump  信息
-     * Requests the thread dump from this TaskManager.
+     * 请求TaskManager 的thread dump 信息 Requests the thread dump from this TaskManager.
      *
      * @param timeout timeout for the asynchronous operation
      * @return the {@link ThreadDumpInfo} for this TaskManager.

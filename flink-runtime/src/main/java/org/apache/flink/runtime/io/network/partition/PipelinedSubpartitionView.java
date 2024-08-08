@@ -29,22 +29,16 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /** View over a pipelined in-memory only subpartition. */
 public class PipelinedSubpartitionView implements ResultSubpartitionView {
 
-    /**
-     * 标识这个视图归属于哪个  PipelinedSubpartition
-     * The subpartition this view belongs to. */
+    /** 标识这个视图归属于哪个 PipelinedSubpartition The subpartition this view belongs to. */
     private final PipelinedSubpartition parent;
 
     /**
-     * 当有数据的时候通过BufferAvailabilityListener的实现通知
-     * LocalInputChannel
-     * 或者
+     * 当有数据的时候通过BufferAvailabilityListener的实现通知 LocalInputChannel 或者
      * CreditBasedSequenceNumberingViewReader(RemoteInputChannel)有数据到来,可以消费数据
      */
     private final BufferAvailabilityListener availabilityListener;
 
-    /**
-     * 这个视图是否被释放
-     * Flag indicating whether this view has been released. */
+    /** 这个视图是否被释放 Flag indicating whether this view has been released. */
     final AtomicBoolean isReleased;
 
     public PipelinedSubpartitionView(
@@ -63,13 +57,13 @@ public class PipelinedSubpartitionView implements ResultSubpartitionView {
 
     @Override
     public void notifyDataAvailable() {
-        //回调接口,通知inputchannel有数据到来
+        // 回调接口,通知inputchannel有数据到来
         availabilityListener.notifyDataAvailable();
     }
 
     @Override
     public void notifyPriorityEvent(int priorityBufferNumber) {
-        //回调接口,通知inputchannel有事件到来
+        // 回调接口,通知inputchannel有事件到来
         availabilityListener.notifyPriorityEvent(priorityBufferNumber);
     }
 

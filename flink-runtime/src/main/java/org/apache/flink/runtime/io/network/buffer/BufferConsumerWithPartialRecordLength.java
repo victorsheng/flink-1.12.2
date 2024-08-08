@@ -55,7 +55,7 @@ public class BufferConsumerWithPartialRecordLength {
 
     public BufferConsumerWithPartialRecordLength(
             BufferConsumer bufferConsumer, int partialRecordLength) {
-        //设置消费者
+        // 设置消费者
         this.bufferConsumer = checkNotNull(bufferConsumer);
         // 设置 已经处理的数据长度 ??
         this.partialRecordLength = partialRecordLength;

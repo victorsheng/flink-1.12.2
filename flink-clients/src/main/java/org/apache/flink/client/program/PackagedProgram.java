@@ -222,10 +222,6 @@ public class PackagedProgram implements AutoCloseable {
         //    0 = "--port"
         //    1 = "9999"
 
-
-
-
-
         callMainMethod(mainClass, args);
     }
 
@@ -331,7 +327,9 @@ public class PackagedProgram implements AutoCloseable {
             throw new ProgramInvocationException(
                     "The class " + entryClass.getName() + " must be public.");
         }
-        // public static void org.apache.flink.streaming.examples.socket.SocketWindowWordCount.main(java.lang.String[]) throws java.lang.Exception
+        // public static void
+        // org.apache.flink.streaming.examples.socket.SocketWindowWordCount.main(java.lang.String[])
+        // throws java.lang.Exception
         try {
             mainMethod = entryClass.getMethod("main", String[].class);
         } catch (NoSuchMethodException e) {

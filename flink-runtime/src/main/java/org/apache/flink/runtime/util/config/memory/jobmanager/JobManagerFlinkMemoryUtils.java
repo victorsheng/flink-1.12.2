@@ -113,11 +113,9 @@ public class JobManagerFlinkMemoryUtils implements FlinkMemoryUtils<JobManagerFl
     public JobManagerFlinkMemory deriveFromTotalFlinkMemory(
             Configuration config, MemorySize totalFlinkMemorySize) {
 
-
         MemorySize offHeapMemorySize =
                 ProcessMemoryUtils.getMemorySizeFromConfig(
                         config, JobManagerOptions.OFF_HEAP_MEMORY);
-
 
         if (totalFlinkMemorySize.compareTo(offHeapMemorySize) < 1) {
             throw new IllegalConfigurationException(
@@ -125,7 +123,6 @@ public class JobManagerFlinkMemoryUtils implements FlinkMemoryUtils<JobManagerFl
                     totalFlinkMemorySize.toHumanReadableString(),
                     offHeapMemorySize.toHumanReadableString());
         }
-
 
         MemorySize derivedJvmHeapMemorySize = totalFlinkMemorySize.subtract(offHeapMemorySize);
 

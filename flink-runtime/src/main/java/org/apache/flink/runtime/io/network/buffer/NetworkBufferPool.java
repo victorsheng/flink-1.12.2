@@ -50,13 +50,11 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
- *
  * NetworkBufferPool是供网络层使用的，固定大小的缓存池。
  *
- * 每个task并非直接从NetworkBufferPool获取内存，而是使用从NetworkBufferPool创建出的LocalBufferPool来分配内存。
+ * <p>每个task并非直接从NetworkBufferPool获取内存，而是使用从NetworkBufferPool创建出的LocalBufferPool来分配内存。
  *
-
- * The NetworkBufferPool is a fixed size pool of {@link MemorySegment} instances for the network
+ * <p>The NetworkBufferPool is a fixed size pool of {@link MemorySegment} instances for the network
  * stack.
  *
  * <p>The NetworkBufferPool creates {@link LocalBufferPool}s from which the individual tasks draw
@@ -398,9 +396,9 @@ public class NetworkBufferPool
                 numRequiredBuffers, maxUsedBuffers, numSubpartitions, maxBuffersPerChannel);
     }
 
-
     // numRequiredBuffers：必须要有的buffer数量
-    // maxUsedBuffers：使用的buffer数量不能超过这个值 :  默认值 8 .  控制参数: taskmanager.network.memory.floating-buffers-per-gate
+    // maxUsedBuffers：使用的buffer数量不能超过这个值 :  默认值 8 .  控制参数:
+    // taskmanager.network.memory.floating-buffers-per-gate
     // bufferPoolOwner：bufferPool所有者，用于回收内存时通知owner
     // numSubpartitions 子分区的数量
     private BufferPool internalCreateBufferPool(
@@ -495,7 +493,7 @@ public class NetworkBufferPool
     }
 
     // numberOfSegmentsToRequest : MemorySegment为批量申请，该变量决定一批次申请的MemorySegment的数量
-    //Must be called from synchronized block
+    // Must be called from synchronized block
     private void tryRedistributeBuffers(int numberOfSegmentsToRequest) throws IOException {
         assert Thread.holdsLock(factoryLock);
 
@@ -608,7 +606,8 @@ public class NetworkBufferPool
             // 计算每个pool可重分配（增加）的内存数量
             // totalPartsUsed / totalCapacity可以计算出已分配的内存占据总可用内存的比例
             // 因为增加totalPartsUsed在实际分配内存之前，所以这个比例包含了即将分配内存的这个LocalBufferPool的占比
-            // memorySegmentsToDistribute * totalPartsUsed / totalCapacity可计算出已分配的内存数量（包含即将分配buffer的这个LocalBufferPool）
+            // memorySegmentsToDistribute * totalPartsUsed /
+            // totalCapacity可计算出已分配的内存数量（包含即将分配buffer的这个LocalBufferPool）
             // 这个结果再减去numDistributedMemorySegment（已分配内存数量），最终得到需要分配给此bufferPool的内存数量
             final int mySize =
                     MathUtils.checkedDownCast(

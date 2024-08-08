@@ -36,11 +36,11 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * InputGate 消费 单个生成的中间结果的一个或多个分区。
  *
- * 每个中间结果在其产生的并行子任务上被划分；
+ * <p>每个中间结果在其产生的并行子任务上被划分；
  *
- * 这些分区中的每一个都被进一步划分为一个或多个子分区。
+ * <p>这些分区中的每一个都被进一步划分为一个或多个子分区。
  *
- * 例如，考虑一个map reduce程序，其中map操作符生成数据，reduce操作符使用生成的数据。
+ * <p>例如，考虑一个map reduce程序，其中map操作符生成数据，reduce操作符使用生成的数据。
  *
  * <pre>{@code
  * +-----+              +---------------------+              +--------+
@@ -48,8 +48,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * +-----+              +---------------------+              +--------+
  * }</pre>
  *
- * 当并行部署这样一个程序时，中间结果将被划分到它产生的并行子任务上；
- * 这些分区中的每一个都被进一步划分为一个或多个子分区。
+ * 当并行部署这样一个程序时，中间结果将被划分到它产生的并行子任务上； 这些分区中的每一个都被进一步划分为一个或多个子分区。
  *
  * <pre>{@code
  *                            Intermediate result
@@ -68,16 +67,13 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *               +-----------------------------------------+
  * }</pre>
  *
- * 在上述示例中，两个map子任务并行生成中间结果，从而产生两个分区（分区1和分区2）。
- * 每个分区进一步划分为两个子分区 —— 每个并行reduce子任务一个子分区。
- * 如图所示，每个reduce任务都有一个连接到它的输入gate。
- * 这将提供它的输入，它将由中间结果的每个分区的一个子分区组成。
+ * 在上述示例中，两个map子任务并行生成中间结果，从而产生两个分区（分区1和分区2）。 每个分区进一步划分为两个子分区 —— 每个并行reduce子任务一个子分区。
+ * 如图所示，每个reduce任务都有一个连接到它的输入gate。 这将提供它的输入，它将由中间结果的每个分区的一个子分区组成。
  *
+ * <p>An input gate consumes one or more partitions of a single produced intermediate result.
  *
- * An input gate consumes one or more partitions of a single produced intermediate result.
- *
- * <p>Each intermediate result is partitioned over its producing parallel subtasks;
- * each of these partitions is furthermore partitioned into one or more subpartitions.
+ * <p>Each intermediate result is partitioned over its producing parallel subtasks; each of these
+ * partitions is furthermore partitioned into one or more subpartitions.
  *
  * <p>As an example, consider a map-reduce program, where the map operator produces data and the
  * reduce operator consumes the produced data.
@@ -91,7 +87,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * <p>When deploying such a program in parallel, the intermediate result will be partitioned over
  * its producing parallel subtasks;
  *
- * each of these partitions is furthermore partitioned into one or more subpartitions.
+ * <p>each of these partitions is furthermore partitioned into one or more subpartitions.
  *
  * <pre>{@code
  *                            Intermediate result
@@ -110,15 +106,16 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  *               +-----------------------------------------+
  * }</pre>
  *
- * <p>In the above example,  two map subtasks produce the intermediate result in parallel, resulting in two partitions (Partition 1 and 2).
+ * <p>In the above example, two map subtasks produce the intermediate result in parallel, resulting
+ * in two partitions (Partition 1 and 2).
  *
- * Each of these partitions is further partitioned into two  subpartitions -- one for each parallel reduce subtask.
+ * <p>Each of these partitions is further partitioned into two subpartitions -- one for each
+ * parallel reduce subtask.
  *
- * As shown in the Figure, each reduce task will have an input gate attached to it.
+ * <p>As shown in the Figure, each reduce task will have an input gate attached to it.
  *
- * This will provide its input, which will consist of one subpartition from each partition of the intermediate result.
- *
- *
+ * <p>This will provide its input, which will consist of one subpartition from each partition of the
+ * intermediate result.
  */
 public abstract class InputGate
         implements PullingAsyncDataInput<BufferOrEvent>, AutoCloseable, ChannelStateHolder {
@@ -147,14 +144,11 @@ public abstract class InputGate
     public abstract boolean isFinished();
 
     /**
-     *
      * 正在阻止等待下一个{@link BufferOrEvent}的调用。
      *
-     * Note:
-     *      在得到下一个缓冲区之前，应该保证上一个返回的缓冲区已经被回收。
+     * <p>Note: 在得到下一个缓冲区之前，应该保证上一个返回的缓冲区已经被回收。
      *
-     *
-     * Blocking call waiting for next {@link BufferOrEvent}.
+     * <p>Blocking call waiting for next {@link BufferOrEvent}.
      *
      * <p>Note: It should be guaranteed that the previous returned buffer has been recycled before
      * getting next one.
@@ -166,10 +160,9 @@ public abstract class InputGate
     /**
      * 轮询{@link BufferOrEvent}。
      *
-     * 注意：
-     *      在轮询下一个缓冲区之前，应该保证上一个返回的缓冲区已经被回收。
+     * <p>注意： 在轮询下一个缓冲区之前，应该保证上一个返回的缓冲区已经被回收。
      *
-     * Poll the {@link BufferOrEvent}.
+     * <p>Poll the {@link BufferOrEvent}.
      *
      * <p>Note: It should be guaranteed that the previous returned buffer has been recycled before
      * polling next one.
@@ -183,27 +176,22 @@ public abstract class InputGate
     public abstract void sendTaskEvent(TaskEvent event) throws IOException;
 
     /**
-     * @return a future that is completed if there are more records available.
-     *      If there are more  records available immediately, {@link #AVAILABLE} should be returned.
-     *     Previously returned  not completed futures should become completed once there are more records available.
+     * @return a future that is completed if there are more records available. If there are more
+     *     records available immediately, {@link #AVAILABLE} should be returned. Previously returned
+     *     not completed futures should become completed once there are more records available.
      */
     @Override
     public CompletableFuture<?> getAvailableFuture() {
         return availabilityHelper.getAvailableFuture();
     }
 
-    //请求消费 ResultPartition
+    // 请求消费 ResultPartition
     public abstract void resumeConsumption(InputChannelInfo channelInfo) throws IOException;
 
-    /**
-     * 返回次gate的channel
-     * Returns the channel of this gate. */
+    /** 返回次gate的channel Returns the channel of this gate. */
     public abstract InputChannel getChannel(int channelIndex);
 
-    /**
-     * 返回这个gate 的 channel 信息
-     * Returns the channel infos of this gate.
-     * */
+    /** 返回这个gate 的 channel 信息 Returns the channel infos of this gate. */
     public List<InputChannelInfo> getChannelInfos() {
         return IntStream.range(0, getNumberOfInputChannels())
                 .mapToObj(index -> getChannel(index).getChannelInfo())
@@ -211,14 +199,11 @@ public abstract class InputGate
     }
 
     /**
-     * 当优先级事件已排队时通知。
-     * 如果从任务线程查询这个future，
-     * 可以保证优先级事件可用并通过  {@link #getNext()} 检索。
-     * 
-     * 
-     * Notifies when a priority event has been enqueued.
-     * If this future is queried from task thread,
-     * it is guaranteed that a priority event is available and retrieved through {@link #getNext()}.
+     * 当优先级事件已排队时通知。 如果从任务线程查询这个future， 可以保证优先级事件可用并通过 {@link #getNext()} 检索。
+     *
+     * <p>Notifies when a priority event has been enqueued. If this future is queried from task
+     * thread, it is guaranteed that a priority event is available and retrieved through {@link
+     * #getNext()}.
      */
     public CompletableFuture<?> getPriorityEventAvailableFuture() {
         return priorityAvailabilityHelper.getAvailableFuture();
@@ -253,13 +238,15 @@ public abstract class InputGate
         }
     }
 
-    /** 
-     * 设置gate，可能很重的重量，阻塞操作相比，只是创建。
-     * Setup gate, potentially heavy-weight, blocking operation comparing to just creation. */
+    /**
+     * 设置gate，可能很重的重量，阻塞操作相比，只是创建。 Setup gate, potentially heavy-weight, blocking operation
+     * comparing to just creation.
+     */
     public abstract void setup() throws IOException;
 
     /**
      * 请求消费 ResultPartition
+     *
      * @throws IOException
      */
     public abstract void requestPartitions() throws IOException;

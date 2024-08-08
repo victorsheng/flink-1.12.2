@@ -47,11 +47,10 @@ public interface TransformationTranslator<OUT, T extends Transformation<OUT>> {
     Collection<Integer> translateForBatch(final T transformation, final Context context);
 
     /**
+     * 找SimpleTransformationTranslator#translateForStreaming
      *
-     *  找SimpleTransformationTranslator#translateForStreaming
-     *
-     * Translates a given {@link Transformation} to its runtime implementation for STREAMING-style
-     * execution.
+     * <p>Translates a given {@link Transformation} to its runtime implementation for
+     * STREAMING-style execution.
      *
      * @param transformation The transformation to be translated.
      * @param context The translation context.

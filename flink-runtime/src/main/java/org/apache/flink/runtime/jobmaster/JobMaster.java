@@ -622,9 +622,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
 
         return CompletableFuture.completedFuture(
                 // [重要] 提供slots
-                slotPool.offerSlots(taskManagerLocation, rpcTaskManagerGateway, slots)
-
-        );
+                slotPool.offerSlots(taskManagerLocation, rpcTaskManagerGateway, slots));
     }
 
     @Override
@@ -1028,8 +1026,6 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
             final JobManagerJobMetricGroup newJobManagerJobMetricGroup =
                     jobMetricGroupFactory.create(jobGraph);
 
-
-
             final SchedulerNG newScheduler =
                     createScheduler(executionDeploymentTracker, newJobManagerJobMetricGroup);
 
@@ -1329,7 +1325,6 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId>
         protected RetryingRegistration<
                         ResourceManagerId, ResourceManagerGateway, JobMasterRegistrationSuccess>
                 generateRegistration() {
-
 
             // 直接返回 RetryingRegistration
             return new RetryingRegistration<

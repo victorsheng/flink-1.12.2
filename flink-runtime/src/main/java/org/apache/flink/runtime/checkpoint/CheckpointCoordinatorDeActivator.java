@@ -40,7 +40,6 @@ public class CheckpointCoordinatorDeActivator implements JobStatusListener {
     public void jobStatusChanges(
             JobID jobId, JobStatus newJobStatus, long timestamp, Throwable error) {
 
-
         // 当状态变为 RUNNING 时，CheckpointCoordinatorDeActivator会得到通知，
         // 并且通过 CheckpointCoordinator.
         //

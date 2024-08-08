@@ -173,11 +173,9 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
             // Yarn 的ResourceManager的client : 启动
             resourceManagerClient.start();
 
-
             // 注册 操作
             final RegisterApplicationMasterResponse registerApplicationMasterResponse =
                     registerApplicationMaster();
-
 
             getContainersFromPreviousAttempts(registerApplicationMasterResponse);
             taskExecutorProcessSpecContainerResourcePriorityAdapter =
@@ -189,8 +187,6 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
         } catch (Exception e) {
             throw new ResourceManagerException("Could not start resource manager client.", e);
         }
-
-
 
         // 构建 Yarn 的 NodeManger client , 进行初始化&启动
         nodeManagerClient =
@@ -339,7 +335,6 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
         final Queue<CompletableFuture<YarnWorkerNode>> pendingRequestResourceFutures =
                 requestResourceFutures.getOrDefault(taskExecutorProcessSpec, new LinkedList<>());
 
-
         // log info
         // Received 1 containers with priority 1, 1 pending container requests.
         log.info(
@@ -370,8 +365,8 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
             }
 
             // 请求启动 TaskExecutor
-            startTaskExecutorInContainerAsync(  container, taskExecutorProcessSpec, resourceId, requestResourceFuture);
-
+            startTaskExecutorInContainerAsync(
+                    container, taskExecutorProcessSpec, resourceId, requestResourceFuture);
 
             // 移除 申请container 的请求...
             removeContainerRequest(pendingRequest);
@@ -385,7 +380,7 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
             numExcess++;
         }
 
-        //Accepted
+        // Accepted
         //      1
         // requested containers,
         // returned
@@ -532,12 +527,14 @@ public class YarnResourceManagerDriver extends AbstractResourceManagerDriver<Yar
         //      jobmanager.memory.off-heap.size=134217728b,
         //      execution.target=yarn-per-job,
         //      jobmanager.memory.process.size=1600m,
-        //      web.tmpdir=/var/folders/37/9746t_yx10v2g49vkwtzjw_80000gn/T/flink-web-95c0d2ad-b600-4c39-9af0-3d60c3b11ead,
+        //
+        // web.tmpdir=/var/folders/37/9746t_yx10v2g49vkwtzjw_80000gn/T/flink-web-95c0d2ad-b600-4c39-9af0-3d60c3b11ead,
         //      internal.taskmanager.resource-id.metadata=192.168.8.188:57958,
         //      jobmanager.rpc.port=62257, execution.attached=true,
         //      internal.cluster.execution-mode=NORMAL,
         //      execution.shutdown-on-attached-exit=false,
-        //      pipeline.jars=file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar,
+        //
+        // pipeline.jars=file:/opt/tools/flink-1.12.2/examples/streaming/SocketWindowWordCount.jar,
         //      rest.address=192.168.8.188,
         //      jobmanager.memory.jvm-metaspace.size=268435456b,
         //      $internal.deployment.config-dir=/opt/tools/flink-1.12.2/conf,

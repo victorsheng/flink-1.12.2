@@ -36,7 +36,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkElementIndex;
 import static org.apache.flink.util.Preconditions.checkNotNull;
@@ -45,14 +44,12 @@ import static org.apache.flink.util.Preconditions.checkState;
 /**
  * 一种{@link ResultPartition}，它将缓冲区直接写入{@link ResultSubpartition}。
  *
- * 这与将记录写入联合结构（子分区在写入阶段完成后从中提取数据）的实现（例如基于排序的分区）不同
+ * <p>这与将记录写入联合结构（子分区在写入阶段完成后从中提取数据）的实现（例如基于排序的分区）不同
  *
+ * <p>为了避免混淆：在读取端，所有子分区都返回要通过网络传输的缓冲区（和backlog）。
  *
- * 为了避免混淆：在读取端，所有子分区都返回要通过网络传输的缓冲区（和backlog）。
- *
- *
- * A {@link ResultPartition} which writes buffers directly to {@link ResultSubpartition}s. This is
- * in contrast to implementations where records are written to a joint structure, from which the
+ * <p>A {@link ResultPartition} which writes buffers directly to {@link ResultSubpartition}s. This
+ * is in contrast to implementations where records are written to a joint structure, from which the
  * subpartitions draw the data after the write phase is finished, for example the sort-based
  * partitioning.
  *
@@ -65,20 +62,14 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
     // ResultSubpartition 的数量由下游消费 Task 数和 DistributionPattern 来决定。
     // 例如，如果是 FORWARD，则下游只有一个消费者；如果是 SHUFFLE，则下游消费者的数量和下游算子的并行度一样
 
-    /**
-     *
-     *
-     * The subpartitions of this partition. At least one.
-     * */
+    /** The subpartitions of this partition. At least one. */
     protected final ResultSubpartition[] subpartitions;
 
     /**
-     *
      * 对于非广播模式，每个子分区都维护一个单独的BufferBuilder，该BufferBuilder可能为空
      *
-     *
-     * For non-broadcast mode, each subpartition maintains a separate BufferBuilder which might be
-     * null.
+     * <p>For non-broadcast mode, each subpartition maintains a separate BufferBuilder which might
+     * be null.
      */
     private final BufferBuilder[] unicastBufferBuilders;
 
@@ -161,7 +152,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         }
     }
 
-    //将序列化结果写入buffer
+    // 将序列化结果写入buffer
     @Override
     public void emitRecord(ByteBuffer record, int targetSubpartition) throws IOException {
 
@@ -173,11 +164,10 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         // 3. 如果buffer被写满，修改buffer状态为finished，申请新的buffer继续写入
         // 4. buffer写满同时元素也被完全写入，需要跳出循环 ???
 
-
-        //写入数据
+        // 写入数据
         BufferBuilder buffer = appendUnicastDataForNewRecord(record, targetSubpartition);
 
-        //当前这条记录没有写完，申请新的 buffer 写入
+        // 当前这条记录没有写完，申请新的 buffer 写入
         while (record.hasRemaining()) {
 
             // 这里很重要，当一个buffer被写满的时候需要标记该buffer的状态为finished
@@ -185,7 +175,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
             // 只允许buffer队列中最后一个buffer的状态为没有finished
 
             // full buffer, partial record
-            //buffer 写满了，调用 finishUnicastBufferBuilder 方法
+            // buffer 写满了，调用 finishUnicastBufferBuilder 方法
             finishUnicastBufferBuilder(targetSubpartition);
 
             buffer = appendUnicastDataForRecordContinuation(record, targetSubpartition);
@@ -193,7 +183,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
 
         if (buffer.isFull()) {
             // full buffer, full record
-            //buffer 写满了，调用 finishUnicastBufferBuilder 方法
+            // buffer 写满了，调用 finishUnicastBufferBuilder 方法
             finishUnicastBufferBuilder(targetSubpartition);
         }
 
@@ -311,7 +301,6 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         // 请求一个新的 BufferBuilder
         final BufferBuilder buffer = requestNewUnicastBufferBuilder(targetSubpartition);
 
-
         // 注意，如果是partialRecordBytes！=0，
         // 部分长度和数据必须先 “appendAndCommit”，然后才能创建 consumer。
 
@@ -325,13 +314,11 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         // Otherwise it would be confused with the case the buffer starting with a complete record.
         // !! The next two lines can not change order.
 
-
         // 提交...
         final int partialRecordBytes = buffer.appendAndCommit(remainingRecordBytes);
 
         // 设置消费者
         subpartitions[targetSubpartition].add(
-
                 buffer.createBufferConsumerFromBeginning(), partialRecordBytes);
 
         return buffer;
@@ -381,7 +368,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         ensureUnicastMode();
         // 请求新的BufferBuilder
 
-        //请求新的 BufferBuilder，用于写入数据 如果当前没有可用的 buffer，会阻塞
+        // 请求新的 BufferBuilder，用于写入数据 如果当前没有可用的 buffer，会阻塞
         final BufferBuilder bufferBuilder = requestNewBufferBuilderFromPool(targetSubpartition);
 
         // 设置值
@@ -401,7 +388,6 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
 
     private BufferBuilder requestNewBufferBuilderFromPool(int targetSubpartition)
             throws IOException {
-
 
         // 从 LocalBufferPool 申请BufferBuilder
         BufferBuilder bufferBuilder = bufferPool.requestBufferBuilder(targetSubpartition);
@@ -425,7 +411,7 @@ public abstract class BufferWritingResultPartition extends ResultPartition {
         if (bufferBuilder != null) {
             // 数据容量增加
             numBytesOut.inc(bufferBuilder.finish());
-            //条数 +1
+            // 条数 +1
             numBuffersOut.inc();
 
             // 设置为null ??

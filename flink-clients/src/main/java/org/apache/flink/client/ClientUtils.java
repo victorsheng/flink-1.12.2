@@ -84,7 +84,7 @@ public enum ClientUtils {
             Configuration configuration,
             PackagedProgram program,
             boolean enforceSingleJobExecution, // false
-            boolean suppressSysout)  // false
+            boolean suppressSysout) // false
             throws ProgramInvocationException {
         checkNotNull(executorServiceLoader);
 
@@ -97,11 +97,10 @@ public enum ClientUtils {
         try {
             // 设置类加载器为用户指定的类加载器..
             Thread.currentThread().setContextClassLoader(userCodeClassLoader);
-            //log info  :  Starting program (detached: false)
+            // log info  :  Starting program (detached: false)
             LOG.info(
                     "Starting program (detached: {})",
                     !configuration.getBoolean(DeploymentOptions.ATTACHED));
-
 
             // 构造ContextEnvironment , 并执行initializeContextEnvironment 方法
             ContextEnvironment.setAsContext(

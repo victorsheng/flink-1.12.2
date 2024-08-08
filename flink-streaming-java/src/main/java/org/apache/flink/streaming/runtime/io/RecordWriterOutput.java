@@ -112,12 +112,15 @@ public class RecordWriterOutput<OUT> implements WatermarkGaugeExposingOutput<Str
 
             //    recordWriter = {ChannelSelectorRecordWriter@7308}
             //        channelSelector = {RebalancePartitioner@7311} "REBALANCE"
-            //        targetPartition = {PipelinedResultPartition@7312} "PipelinedResultPartition f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0 [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+            //        targetPartition = {PipelinedResultPartition@7312} "PipelinedResultPartition
+            // f3e53e3fbc3eab68b25ea79f80873233#0@9bd406565dca544a85576fd06acc0fc0
+            // [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
             //        numberOfChannels = 4
             //        serializer = {DataOutputSerializer@7313} "[pos=9 cap=128]"
             //        rng = {XORShiftRandom@7314}
             //        flushAlways = false
-            //        outputFlusher = {RecordWriter$OutputFlusher@6594} "Thread[OutputFlusher for Source: Socket Stream,5,Flink Task Threads]"
+            //        outputFlusher = {RecordWriter$OutputFlusher@6594} "Thread[OutputFlusher for
+            // Source: Socket Stream,5,Flink Task Threads]"
             //        flusherException = null
             //        volatileFlusherException = null
             //        volatileFlusherExceptionCheckSkipCount = 6

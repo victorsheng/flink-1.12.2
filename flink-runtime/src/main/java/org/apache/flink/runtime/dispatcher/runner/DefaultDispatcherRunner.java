@@ -103,10 +103,11 @@ public final class DefaultDispatcherRunner implements DispatcherRunner, LeaderCo
     @Override
     public void grantLeadership(UUID leaderSessionID) {
 
-        runActionIfRunning(() -> {
-            // 构建 & 启动
-            startNewDispatcherLeaderProcess(leaderSessionID);
-        });
+        runActionIfRunning(
+                () -> {
+                    // 构建 & 启动
+                    startNewDispatcherLeaderProcess(leaderSessionID);
+                });
     }
 
     private void startNewDispatcherLeaderProcess(UUID leaderSessionID) {

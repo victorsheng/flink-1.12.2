@@ -42,9 +42,9 @@ import java.util.Collection;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
- * HadoopModule包含了Flink的SecurityConfiguration和Hadoop的配置信息
- * Responsible for installing a Hadoop login user.
- * */
+ * HadoopModule包含了Flink的SecurityConfiguration和Hadoop的配置信息 Responsible for installing a Hadoop login
+ * user.
+ */
 public class HadoopModule implements SecurityModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(HadoopModule.class);
@@ -64,12 +64,9 @@ public class HadoopModule implements SecurityModule {
         return securityConfig;
     }
 
-
     // install方法使用Hadoop提供的UserGroupInformation进行认证操作。
     @Override
     public void install() throws SecurityInstallException {
-
-
 
         // UGI设置hadoop conf
         UserGroupInformation.setConfiguration(hadoopConfiguration);

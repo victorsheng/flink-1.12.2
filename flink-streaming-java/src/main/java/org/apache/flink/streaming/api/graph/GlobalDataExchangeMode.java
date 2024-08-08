@@ -45,10 +45,7 @@ public enum GlobalDataExchangeMode {
      */
     POINTWISE_EDGES_PIPELINED,
 
-    /**
-     *
-     * Set all job edges {@link ResultPartitionType#PIPELINED_BOUNDED}.
-     * */
+    /** Set all job edges {@link ResultPartitionType#PIPELINED_BOUNDED}. */
     ALL_EDGES_PIPELINED,
 
     /** Set all job edges {@link ResultPartitionType#PIPELINED_APPROXIMATE}. */

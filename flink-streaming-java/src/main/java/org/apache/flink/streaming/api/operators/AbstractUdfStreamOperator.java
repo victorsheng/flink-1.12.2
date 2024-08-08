@@ -37,14 +37,12 @@ import org.apache.flink.streaming.util.functions.StreamingFunctionUtils;
 import static java.util.Objects.requireNonNull;
 
 /**
+ * 具有用户定义function的 operators的基础类. 作为operator生命周期的一部分，此类处理用户定义函数的opening和closing。
  *
+ * <p>This is used as the base class for operators that have a user-defined function.
  *
- * 具有用户定义function的 operators的基础类.
- * 作为operator生命周期的一部分，此类处理用户定义函数的opening和closing。
- *
- * This is used as the base class for operators that have a user-defined function.
- *
- * This class handles the opening and closing of the user-defined functions, as part of the operator life cycle.
+ * <p>This class handles the opening and closing of the user-defined functions, as part of the
+ * operator life cycle.
  *
  * @param <OUT> The output type of the operator
  * @param <F> The type of the user function
@@ -91,10 +89,10 @@ public abstract class AbstractUdfStreamOperator<OUT, F extends Function>
     @Override
     public void snapshotState(StateSnapshotContext context) throws Exception {
 
-        //先调用父类方法，写入timer
+        // 先调用父类方法，写入timer
         super.snapshotState(context);
 
-        //通过反射调用用户函数中的快照操作
+        // 通过反射调用用户函数中的快照操作
         StreamingFunctionUtils.snapshotFunctionState(
                 context, getOperatorStateBackend(), userFunction);
     }

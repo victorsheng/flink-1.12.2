@@ -116,23 +116,17 @@ import java.util.concurrent.ExecutionException;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /**
- *
- *
  * StreamExecutionEnvironment类表示运行一个Flink任务所需的环境
  *
- * The StreamExecutionEnvironment is the context in which a streaming program is executed.
+ * <p>The StreamExecutionEnvironment is the context in which a streaming program is executed.
  *
+ * <p>- LocalStreamEnvironment : 在当前JVM环境中运行 A {@link LocalStreamEnvironment} will cause execution
+ * in the current JVM,
  *
- * - LocalStreamEnvironment : 在当前JVM环境中运行
- * A {@link LocalStreamEnvironment} will cause execution in the current JVM,
+ * <p>- RemoteStreamEnvironment : 将导致在远程设置上执行 a {@link RemoteStreamEnvironment} will cause execution
+ * on a remote setup.
  *
- * - RemoteStreamEnvironment : 将导致在远程设置上执行
- * a {@link RemoteStreamEnvironment} will cause execution on a remote setup.
- *
- *
-
- *
- * 这个环境提供了Job执行的方法(例如设置并行度/检查点参数) 以及 与外界的交互 (数据访问/获取)
+ * <p>这个环境提供了Job执行的方法(例如设置并行度/检查点参数) 以及 与外界的交互 (数据访问/获取)
  *
  * <p>The environment provides methods to control the job execution (such as setting the parallelism
  * or the fault tolerance/checkpointing parameters) and to interact with the outside world (data
@@ -169,15 +163,11 @@ public class StreamExecutionEnvironment {
     private final ExecutionConfig config = new ExecutionConfig();
 
     /**
-     * 设置控制checkpointing的行为
-     * Settings that control the checkpointing behavior.
+     * 设置控制checkpointing的行为 Settings that control the checkpointing behavior.
      *
-     * 该配置包含checkpoint模式（默认EXACTLY_ONCE），
-     * checkpoint超时时限，触发间隔，
-     * 并发checkpoint数量，
+     * <p>该配置包含checkpoint模式（默认EXACTLY_ONCE）， checkpoint超时时限，触发间隔， 并发checkpoint数量，
      * 清理持久化的checkpoint文件（任务取消时删除还是保留对应checkpoint），失败处理策略等等配置。
-     *
-     * */
+     */
     private final CheckpointConfig checkpointCfg = new CheckpointConfig();
 
     // 保存了该任务所有的StreamTransformation实例的集合
@@ -198,7 +188,6 @@ public class StreamExecutionEnvironment {
     // 同时还有一个String类型的uid，由用户指定并且在任务重启前后保持一致。
     //
     protected final List<Transformation<?>> transformations = new ArrayList<>();
-
 
     // 通过设置bufferTimeout可以控制输出缓存flush的间隔，用来平衡延迟和吞吐量。
     private long bufferTimeout = StreamingJobGraphGenerator.UNDEFINED_NETWORK_BUFFER_TIMEOUT;
@@ -272,10 +261,11 @@ public class StreamExecutionEnvironment {
         // DefaultExecutorServiceLoader
         this.executorServiceLoader = checkNotNull(executorServiceLoader);
 
-
-        //    configuration = {Configuration@3263} "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
+        //    configuration = {Configuration@3263}
+        // "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
         //        confData = {HashMap@3287}  size = 22
-        //            "env.java.opts.client" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
+        //            "env.java.opts.client" ->
+        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
         //            "jobmanager.webapp.authentication.type" -> "simple"
         //            "taskmanager.memory.process.size" -> "1728m"
         //            "jobmanager.execution.failover-strategy" -> "region"
@@ -284,10 +274,12 @@ public class StreamExecutionEnvironment {
         //            "jobmanager.memory.process.size" -> "1600m"
         //            "security.kerberos.login.use-ticket-cache" -> "true"
         //            "jobmanager.rpc.port" -> "6123"
-        //            "jobmanager.webapp.authentication.kerberos.keytab" -> "/opt/keytab/HTTP.keytab"
+        //            "jobmanager.webapp.authentication.kerberos.keytab" ->
+        // "/opt/keytab/HTTP.keytab"
         //            "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
         //            "sun.security.krb5.debug" -> "true"
-        //            "jobmanager.webapp.authentication.kerberos.principal" -> "HTTP/henghe-030@HENGHE.COM"
+        //            "jobmanager.webapp.authentication.kerberos.principal" ->
+        // "HTTP/henghe-030@HENGHE.COM"
         //            "execution.savepoint.ignore-unclaimed-state" -> {Boolean@3196} false
         //            "execution.attached" -> {Boolean@3198} true
         //            "execution.shutdown-on-attached-exit" -> {Boolean@3196} false
@@ -303,7 +295,7 @@ public class StreamExecutionEnvironment {
         this.userClassloader =
                 userClassloader == null ? getClass().getClassLoader() : userClassloader;
 
-        //job或operator的配置可在以下位置指定：
+        // job或operator的配置可在以下位置指定：
         // 1.在operator 级别使用，例如使用 SingleOutputStreamOperator.setParallelism().
         // 2.通过编程方式，例如环境设置重启策略（）方法
         // 3.在这里传递的配置中
@@ -337,9 +329,9 @@ public class StreamExecutionEnvironment {
 
     /** Gets the config object. */
     /**
-     * 负责设置默认的任务并发度（当一个function没有显式指定时适用），
-     * 失败重试次数及间隔，数据传递模式（batch或pipelined），
+     * 负责设置默认的任务并发度（当一个function没有显式指定时适用）， 失败重试次数及间隔，数据传递模式（batch或pipelined），
      * 开启UDF代码分析模式，注册序列化方式等等配置。
+     *
      * @return
      */
     public ExecutionConfig getConfig() {
@@ -923,8 +915,6 @@ public class StreamExecutionEnvironment {
                 .getOptional(PipelineOptions.NAME)
                 .ifPresent(jobName -> this.getConfiguration().set(PipelineOptions.NAME, jobName));
 
-
-
         //    executionMode = {ExecutionMode@3338} "PIPELINED"
         //    parallelism = 1
         //    maxParallelism = -1
@@ -940,7 +930,9 @@ public class StreamExecutionEnvironment {
         //    latencyTrackingInterval = 0
         //    isLatencyTrackingConfigured = false
         //    executionRetryDelay = 10000
-        //    restartStrategyConfiguration = {RestartStrategies$FallbackRestartStrategyConfiguration@3340} "Cluster level default restart strategy"
+        //    restartStrategyConfiguration =
+        // {RestartStrategies$FallbackRestartStrategyConfiguration@3340} "Cluster level default
+        // restart strategy"
         //    taskCancellationIntervalMillis = -1
         //    taskCancellationTimeoutMillis = -1
         //    useSnapshotCompression = false
@@ -954,10 +946,8 @@ public class StreamExecutionEnvironment {
         //    registeredPojoTypes = {LinkedHashSet@3348}  size = 0
         config.configure(configuration, classLoader);
 
-
-
-
-        //    "env.java.opts.client" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
+        //    "env.java.opts.client" ->
+        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
         //    "jobmanager.webapp.authentication.type" -> "simple"
         //    "taskmanager.memory.process.size" -> "1728m"
         //    "jobmanager.execution.failover-strategy" -> "region"
@@ -1538,14 +1528,11 @@ public class StreamExecutionEnvironment {
     }
 
     /**
+     * 创建一个新的数据流，其中包含从套接字无限接收的字符串。 接收到的字符串由系统的默认字符集解码。 套接字服务器连接终止时，可以启动重试。
      *
-     * 创建一个新的数据流，其中包含从套接字无限接收的字符串。
-     * 接收到的字符串由系统的默认字符集解码。
-     * 套接字服务器连接终止时，可以启动重试。
+     * <p>请注意，套接字本身不报告中止，因此只有在套接字正常终止时才会启动重试。
      *
-     * 请注意，套接字本身不报告中止，因此只有在套接字正常终止时才会启动重试。
-     *
-     * Creates a new data stream that contains the strings received infinitely from a socket.
+     * <p>Creates a new data stream that contains the strings received infinitely from a socket.
      * Received strings are decoded by the system's default character set. On the termination of the
      * socket server connection retries can be initiated.
      *
@@ -1778,13 +1765,11 @@ public class StreamExecutionEnvironment {
     }
 
     /**
+     * 添加具有自定义类型信息的数据源，从而打开{@link DataStream}。 只有在非常特殊的情况下，用户才需要支持类型信息。 否则使用 {@link
+     * #addSource(org.apache.flink.streaming.api.functions.source.SourceFunction)}
      *
-     * 添加具有自定义类型信息的数据源，从而打开{@link DataStream}。
-     * 只有在非常特殊的情况下，用户才需要支持类型信息。
-     * 否则使用 {@link  #addSource(org.apache.flink.streaming.api.functions.source.SourceFunction)}
-     *
-     * Adds a data source with a custom type information thus opening a {@link DataStream}. Only in
-     * very special cases does the user need to support type information. Otherwise use {@link
+     * <p>Adds a data source with a custom type information thus opening a {@link DataStream}. Only
+     * in very special cases does the user need to support type information. Otherwise use {@link
      * #addSource(org.apache.flink.streaming.api.functions.source.SourceFunction)}
      *
      * @param function the user defined function
@@ -1929,16 +1914,13 @@ public class StreamExecutionEnvironment {
     }
 
     /**
-     * 触发程序执行.
-     * 这个environment将会执行 一个 'sink'操作的所有部分.
-     * 例如，Sink operations 打印结果或将结果转发到消息队列
-     * 程序执行将以生成的默认名称 记录和显示
-     * 默认名称 : `Flink Streaming Job` 可配置
+     * 触发程序执行. 这个environment将会执行 一个 'sink'操作的所有部分. 例如，Sink operations 打印结果或将结果转发到消息队列 程序执行将以生成的默认名称
+     * 记录和显示 默认名称 : `Flink Streaming Job` 可配置
      *
-     * Triggers the program execution.
-     * The environment will execute all parts of the program that have resulted in a "sink" operation.
+     * <p>Triggers the program execution. The environment will execute all parts of the program that
+     * have resulted in a "sink" operation.
      *
-     * Sink operations are for example printing results or forwarding them to a message queue.
+     * <p>Sink operations are for example printing results or forwarding them to a message queue.
      *
      * <p>The program execution will be logged and displayed with a generated default name.
      *
@@ -2101,9 +2083,10 @@ public class StreamExecutionEnvironment {
         try {
             JobClient jobClient = jobClientFuture.get();
 
-            jobListeners.forEach(jobListener -> {
-                jobListener.onJobSubmitted(jobClient, null);
-            });
+            jobListeners.forEach(
+                    jobListener -> {
+                        jobListener.onJobSubmitted(jobClient, null);
+                    });
 
             return jobClient;
         } catch (ExecutionException executionException) {
@@ -2142,11 +2125,10 @@ public class StreamExecutionEnvironment {
     }
 
     /**
-     *
      * getStreamGraph方法会调用StreamGraphGenerator#generate方法
      * 使用StreamExecutionEnvironment及其包含的所有transformations生成计算图。
      *
-     * Getter of the {@link org.apache.flink.streaming.api.graph.StreamGraph StreamGraph} of the
+     * <p>Getter of the {@link org.apache.flink.streaming.api.graph.StreamGraph StreamGraph} of the
      * streaming job with the option to clear previously registered {@link Transformation
      * transformations}. Clearing the transformations allows, for example, to not re-execute the
      * same operations when calling {@link #execute()} multiple times.
@@ -2166,7 +2148,7 @@ public class StreamExecutionEnvironment {
     }
 
     private StreamGraphGenerator getStreamGraphGenerator() {
-        //算子 ???
+        // 算子 ???
         if (transformations.size() <= 0) {
             throw new IllegalStateException(
                     "No operators defined in streaming topology. Cannot execute.");
@@ -2195,12 +2177,11 @@ public class StreamExecutionEnvironment {
     }
 
     /**
-     * ClosureCleaner，开启后可以分析用户代码，将不需要的closure置为null，
-     * 从而在大多数情况下使得闭包或匿名类可以序列化。
+     * ClosureCleaner，开启后可以分析用户代码，将不需要的closure置为null， 从而在大多数情况下使得闭包或匿名类可以序列化。
      * 用户代码必须是可以序列化的，以做到在集群不同节点之间传输任务。
      *
-     * Returns a "closure-cleaned" version of the given function. Cleans only if closure cleaning is
-     * not disabled in the {@link org.apache.flink.api.common.ExecutionConfig}
+     * <p>Returns a "closure-cleaned" version of the given function. Cleans only if closure cleaning
+     * is not disabled in the {@link org.apache.flink.api.common.ExecutionConfig}
      */
     @Internal
     public <F> F clean(F f) {
@@ -2212,7 +2193,8 @@ public class StreamExecutionEnvironment {
     }
 
     /**
-     * Adds an operator to the list of operators that should be executed when calling {@link #execute}.
+     * Adds an operator to the list of operators that should be executed when calling {@link
+     * #execute}.
      *
      * <p>When calling {@link #execute()} only the operators that where previously added to the list
      * are executed.
@@ -2428,38 +2410,38 @@ public class StreamExecutionEnvironment {
     //  Methods to control the context and local environments for execution from packaged programs
     // --------------------------------------------------------------------------------------------
 
-
-
     protected static void initializeContextEnvironment(StreamExecutionEnvironmentFactory ctx) {
 
-
-    //    ctx = {StreamContextEnvironment$lambda@3138}
-    //    arg = {Configuration@3140} "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
-    //        confData = {HashMap@3144}  size = 22
-    //            "env.java.opts.client" -> "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
-    //            "jobmanager.webapp.authentication.type" -> "simple"
-    //            "taskmanager.memory.process.size" -> "1728m"
-    //            "jobmanager.execution.failover-strategy" -> "region"
-    //            "jobmanager.rpc.address" -> "localhost"
-    //            "execution.target" -> "yarn-per-job"
-    //            "jobmanager.memory.process.size" -> "1600m"
-    //            "security.kerberos.login.use-ticket-cache" -> "true"
-    //            "jobmanager.rpc.port" -> "6123"
-    //            "jobmanager.webapp.authentication.kerberos.keytab" -> "/opt/keytab/HTTP.keytab"
-    //            "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
-    //            "sun.security.krb5.debug" -> "true"
-    //            "jobmanager.webapp.authentication.kerberos.principal" -> "HTTP/henghe-030@HENGHE.COM"
-    //            "execution.savepoint.ignore-unclaimed-state" -> {Boolean@3196} false
-    //            "execution.attached" -> {Boolean@3198} true
-    //            "execution.shutdown-on-attached-exit" -> {Boolean@3196} false
-    //            "pipeline.jars" -> {ArrayList@3201}  size = 1
-    //            "parallelism.default" -> "1"
-    //            "taskmanager.numberOfTaskSlots" -> "1"
-    //            "pipeline.classpaths" -> {ArrayList@3207}  size = 0
-    //            "security.kerberos.login.keytab" -> "/opt/keytab/yarn.keytab"
-    //            "$internal.deployment.config-dir" -> "/opt/tools/flink-1.12.0/conf"
-    //
-
+        //    ctx = {StreamContextEnvironment$lambda@3138}
+        //    arg = {Configuration@3140}
+        // "{env.java.opts.client=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666, jobmanager.webapp.authentication.type=simple, taskmanager.memory.process.size=1728m, jobmanager.execution.failover-strategy=region, jobmanager.rpc.address=localhost, execution.target=yarn-per-job, jobmanager.memory.process.size=1600m, security.kerberos.login.use-ticket-cache=true, jobmanager.rpc.port=6123, jobmanager.webapp.authentication.kerberos.keytab=/opt/keytab/HTTP.keytab, security.kerberos.login.principal=yarn/henghe-030@HENGHE.COM, sun.security.krb5.debug=true, jobmanager.webapp.authentication.kerberos.principal=HTTP/henghe-030@HENGHE.COM, execution.savepoint.ignore-unclaimed-state=false, execution.attached=true, execution.shutdown-on-attached-exit=false, pipeline.jars=[file:/opt/tools/flink-1.12.0/examples/streaming/SocketWindowWordCount.jar], parallelism.default=1, taskmanager.numberOfTaskSlots=1, pipeline.classpaths=[], security.kerberos.login.keytab=/opt/keytab/yarn.keytab, $internal.d"
+        //        confData = {HashMap@3144}  size = 22
+        //            "env.java.opts.client" ->
+        // "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5666"
+        //            "jobmanager.webapp.authentication.type" -> "simple"
+        //            "taskmanager.memory.process.size" -> "1728m"
+        //            "jobmanager.execution.failover-strategy" -> "region"
+        //            "jobmanager.rpc.address" -> "localhost"
+        //            "execution.target" -> "yarn-per-job"
+        //            "jobmanager.memory.process.size" -> "1600m"
+        //            "security.kerberos.login.use-ticket-cache" -> "true"
+        //            "jobmanager.rpc.port" -> "6123"
+        //            "jobmanager.webapp.authentication.kerberos.keytab" ->
+        // "/opt/keytab/HTTP.keytab"
+        //            "security.kerberos.login.principal" -> "yarn/henghe-030@HENGHE.COM"
+        //            "sun.security.krb5.debug" -> "true"
+        //            "jobmanager.webapp.authentication.kerberos.principal" ->
+        // "HTTP/henghe-030@HENGHE.COM"
+        //            "execution.savepoint.ignore-unclaimed-state" -> {Boolean@3196} false
+        //            "execution.attached" -> {Boolean@3198} true
+        //            "execution.shutdown-on-attached-exit" -> {Boolean@3196} false
+        //            "pipeline.jars" -> {ArrayList@3201}  size = 1
+        //            "parallelism.default" -> "1"
+        //            "taskmanager.numberOfTaskSlots" -> "1"
+        //            "pipeline.classpaths" -> {ArrayList@3207}  size = 0
+        //            "security.kerberos.login.keytab" -> "/opt/keytab/yarn.keytab"
+        //            "$internal.deployment.config-dir" -> "/opt/tools/flink-1.12.0/conf"
+        //
 
         contextEnvironmentFactory = ctx;
 
@@ -2523,12 +2505,11 @@ public class StreamExecutionEnvironment {
 
         //    source = {SocketTextStreamFunction@3247}
         //    sourceName = "Socket Stream"
-        //    baseSourceClass = {Class@3244} "interface org.apache.flink.streaming.api.functions.source.SourceFunction"
+        //    baseSourceClass = {Class@3244} "interface
+        // org.apache.flink.streaming.api.functions.source.SourceFunction"
         //    typeInfo = null
 
-
         TypeInformation<OUT> resolvedTypeInfo = typeInfo;
-
 
         if (resolvedTypeInfo == null && source instanceof ResultTypeQueryable) {
             resolvedTypeInfo = ((ResultTypeQueryable<OUT>) source).getProducedType();

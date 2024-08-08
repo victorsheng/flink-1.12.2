@@ -102,7 +102,6 @@ public abstract class RegisteredRpcConnection<
         // 构建注册... ,  生成 generateRegistration
         final RetryingRegistration<F, G, S> newRegistration = createNewRegistration();
 
-
         if (REGISTRATION_UPDATER.compareAndSet(this, null, newRegistration)) {
             // 开始注册...
             // 注册成功之后,调用startRegistration

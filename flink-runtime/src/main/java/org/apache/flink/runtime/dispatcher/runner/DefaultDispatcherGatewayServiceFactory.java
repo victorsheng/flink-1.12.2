@@ -50,7 +50,7 @@ class DefaultDispatcherGatewayServiceFactory
         this.partialDispatcherServices = partialDispatcherServices;
     }
 
-    //xxxxx
+    // xxxxx
     @Override
     public AbstractDispatcherLeaderProcess.DispatcherGatewayService create(
             DispatcherId fencingToken,
@@ -60,7 +60,7 @@ class DefaultDispatcherGatewayServiceFactory
         // 定义Dispatcher
         final Dispatcher dispatcher;
         try {
-            //创建Dispatcher
+            // 创建Dispatcher
             dispatcher =
                     dispatcherFactory.createDispatcher(
                             rpcService,

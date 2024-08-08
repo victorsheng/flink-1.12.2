@@ -237,7 +237,6 @@ public class NettyShuffleEnvironment
             SingleInputGate[] inputGates =
                     new SingleInputGate[inputGateDeploymentDescriptors.size()];
 
-
             for (int gateIndex = 0; gateIndex < inputGates.length; gateIndex++) {
                 final InputGateDeploymentDescriptor igdd =
                         inputGateDeploymentDescriptors.get(gateIndex);
@@ -288,7 +287,7 @@ public class NettyShuffleEnvironment
         IntermediateDataSetID intermediateResultPartitionID =
                 partitionInfo.getIntermediateDataSetID();
 
-        //构建InputGateID
+        // 构建InputGateID
         InputGateID id = new InputGateID(intermediateResultPartitionID, consumerID);
         SingleInputGate inputGate = inputGatesById.get(id);
         if (inputGate == null) {

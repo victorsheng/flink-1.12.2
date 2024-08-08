@@ -31,8 +31,8 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 /**
  * An edge in the streaming topology.
  *
- * One edge like this does not necessarily gets converted to a connection between two job vertices
- * (due to chaining/optimization).
+ * <p>One edge like this does not necessarily gets converted to a connection between two job
+ * vertices (due to chaining/optimization).
  */
 @Internal
 public class StreamEdge implements Serializable {
@@ -58,31 +58,20 @@ public class StreamEdge implements Serializable {
     /**
      * 分区相关.
      *
-     * The {@link StreamPartitioner} on this {@link StreamEdge}.
-     * */
+     * <p>The {@link StreamPartitioner} on this {@link StreamEdge}.
+     */
     private StreamPartitioner<?> outputPartitioner;
 
-    /**
-     *  source StreamNode name
-     * The name of the operator in the source vertex.
-     * */
+    /** source StreamNode name The name of the operator in the source vertex. */
     private final String sourceOperatorName;
 
-    /**
-     * target StreamNode name
-     * The name of the operator in the target vertex.
-     * */
+    /** target StreamNode name The name of the operator in the target vertex. */
     private final String targetOperatorName;
 
-
-    /**
-     * PIPELINED
-     */
+    /** PIPELINED */
     private final ShuffleMode shuffleMode;
 
-    /**
-     * 超时相关...
-     */
+    /** 超时相关... */
     private long bufferTimeout;
 
     public StreamEdge(

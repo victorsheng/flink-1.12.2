@@ -110,6 +110,7 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
 
     /**
      * 代理转发
+     *
      * @param proxy
      * @param method
      * @param args
@@ -218,12 +219,12 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
         // 把消息进行封装  RpcInvocation
         //      本地则是 LocalRpcInvocation 类型,
         //      远程则是 RemoteRpcInvocation 类型
-        final RpcInvocation rpcInvocation =  createRpcInvocationMessage(methodName, parameterTypes, args);
+        final RpcInvocation rpcInvocation =
+                createRpcInvocationMessage(methodName, parameterTypes, args);
 
         Class<?> returnType = method.getReturnType();
 
         final Object result;
-
 
         if (Objects.equals(returnType, Void.TYPE)) {
 
@@ -258,7 +259,6 @@ class AkkaInvocationHandler implements InvocationHandler, AkkaBasedEndpoint, Rpc
                     });
 
             if (Objects.equals(returnType, CompletableFuture.class)) {
-
 
                 // 如果类型是CompletableFuture  , 直接返回 (非阻塞)
                 result = completableFuture;

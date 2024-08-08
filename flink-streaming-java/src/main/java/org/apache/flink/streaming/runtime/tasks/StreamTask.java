@@ -104,26 +104,22 @@ import java.util.concurrent.ThreadFactory;
 import static org.apache.flink.runtime.concurrent.FutureUtils.assertNoException;
 
 /**
- * 所有流式处理任务的基类。
- * task是由TaskManager部署和执行的本地处理单元。
- * 每个任务运行一个或多个{@link StreamOperator}，这些{@link StreamOperator}构成任务的操作符 chained 。
- *  chained 接在一起的运算符在同一线程中同步执行，因此在同一流分区上执行。
+ * 所有流式处理任务的基类。 task是由TaskManager部署和执行的本地处理单元。 每个任务运行一个或多个{@link StreamOperator}，这些{@link
+ * StreamOperator}构成任务的操作符 chained 。 chained 接在一起的运算符在同一线程中同步执行，因此在同一流分区上执行。
  * 这些chained的常见情况是连续的map/flatmap/filter任务。
  *
- * 任务 chained 包含一个“head”operator和多个 chained operator。
+ * <p>任务 chained 包含一个“head”operator和多个 chained operator。
  *
- * StreamTask专门用于 head operator 的类型：
- * 1. one-input : OneInputStreamTask
- * 2. two-input tasks : TwoInputStreamTask
- * 3. sources : SourceStreamTask
- * 4. iteration heads : StreamIterationHead
- * 5. iteration tails : StreamIterationTail
+ * <p>StreamTask专门用于 head operator 的类型： 1. one-input : OneInputStreamTask 2. two-input tasks :
+ * TwoInputStreamTask 3. sources : SourceStreamTask 4. iteration heads : StreamIterationHead 5.
+ * iteration tails : StreamIterationTail
  *
- * Task类处理由head操作符读取的流的设置，以及操作符在操作符 chained 的末端生成的流。
+ * <p>Task类处理由head操作符读取的流的设置，以及操作符在操作符 chained 的末端生成的流。
  *
- * 注意， chained 可能分叉，因此有多个端部。
- * 
- * 任务的生命周期设置如下：
+ * <p>注意， chained 可能分叉，因此有多个端部。
+ *
+ * <p>任务的生命周期设置如下：
+ *
  * <pre>{@code
  * -- setInitialState -> 提供chain中所有operators的状态
  *
@@ -141,29 +137,28 @@ import static org.apache.flink.runtime.concurrent.FutureUtils.assertNoException;
  *       +----> task specific cleanup()
  * }</pre>
  *
- * {@code StreamTask}有一个名为{@code lock}的锁对象。
- * 必须在此锁对象上同步对{@code StreamOperator}上方法的所有调用，以确保没有方法被并发调用。
+ * {@code StreamTask}有一个名为{@code lock}的锁对象。 必须在此锁对象上同步对{@code StreamOperator}上方法的所有调用，以确保没有方法被并发调用。
  *
- * 
- * Base class for all streaming tasks.
+ * <p>Base class for all streaming tasks.
  *
- * A task is the unit of local processing that is deployed and executed by the TaskManagers.
+ * <p>A task is the unit of local processing that is deployed and executed by the TaskManagers.
  *
- * Each task runs one or more {@link StreamOperator}s which form the Task's operator chain.
+ * <p>Each task runs one or more {@link StreamOperator}s which form the Task's operator chain.
  *
- * Operators that are chained together execute synchronously in the same thread and hence on the same stream partition.
+ * <p>Operators that are chained together execute synchronously in the same thread and hence on the
+ * same stream partition.
  *
- * A common case for these chains are successive map/flatmap/filter tasks.
+ * <p>A common case for these chains are successive map/flatmap/filter tasks.
  *
  * <p>The task chain contains one "head" operator and multiple chained operators.
  *
- * The StreamTask is specialized for the type of the head operator:
- *  one-input and two-input tasks, as well as for sources, iteration heads and iteration tails.
+ * <p>The StreamTask is specialized for the type of the head operator: one-input and two-input
+ * tasks, as well as for sources, iteration heads and iteration tails.
  *
  * <p>The Task class deals with the setup of the streams read by the head operator, and the streams
  * produced by the operators at the ends of the operator chain.
  *
- * Note that the chain may fork and thus have multiple ends.
+ * <p>Note that the chain may fork and thus have multiple ends.
  *
  * <p>The life cycle of the task is set up as follows:
  *
@@ -184,8 +179,9 @@ import static org.apache.flink.runtime.concurrent.FutureUtils.assertNoException;
  *       +----> task specific cleanup()
  * }</pre>
  *
- * <p>The {@code StreamTask} has a lock object called {@code lock}.
- * All calls to methods on a {@code  StreamOperator} must be synchronized on this lock object to ensure that no methods are called concurrently.
+ * <p>The {@code StreamTask} has a lock object called {@code lock}. All calls to methods on a {@code
+ * StreamOperator} must be synchronized on this lock object to ensure that no methods are called
+ * concurrently.
  *
  * @param <OUT>
  * @param <OP>
@@ -206,12 +202,9 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
      * 任务之外的所有操作{@link #mailboxProcessor mailbox} , 比如 （i.e. 另一个线程执行）
      * 必须通过此执行器执行，以确保没有使一致检查点无效的并发方法调用。
      *
-     *
-     *
-     * All actions outside of the task {@link #mailboxProcessor mailbox}
-     * (i.e. performed by another thread)
-     * must be executed through this executor to ensure that we don't have concurrent method
-     * calls that void consistent checkpoints.
+     * <p>All actions outside of the task {@link #mailboxProcessor mailbox} (i.e. performed by
+     * another thread) must be executed through this executor to ensure that we don't have
+     * concurrent method calls that void consistent checkpoints.
      *
      * <p>CheckpointLock is superseded by {@link MailboxExecutor}, with {@link
      * StreamTaskActionExecutor.SynchronizedStreamTaskActionExecutor
@@ -219,85 +212,64 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
      */
     private final StreamTaskActionExecutor actionExecutor;
 
-    /**
-     *  输入处理器。在{@link #init()}方法中初始化。
-     *  The input processor. Initialized in {@link #init()} method. */
+    /** 输入处理器。在{@link #init()}方法中初始化。 The input processor. Initialized in {@link #init()} method. */
     @Nullable protected StreamInputProcessor inputProcessor;
 
-    /**
-     * [重要] 使用此任务的输入流的主运算符。
-     * the main operator that consumes the input streams of this task.
-     * */
+    /** [重要] 使用此任务的输入流的主运算符。 the main operator that consumes the input streams of this task. */
     protected OP mainOperator;
 
-    /**
-     * task执行的 OperatorChain
-     * The chain of operators executed by this task. */
+    /** task执行的 OperatorChain The chain of operators executed by this task. */
     protected OperatorChain<OUT, OP> operatorChain;
 
-    /**
-     * streaming task的配置信息.
-     * The configuration of this streaming task. */
+    /** streaming task的配置信息. The configuration of this streaming task. */
     protected final StreamConfig configuration;
 
     /**
      * 我们的状态后端。
      *
-     * 我们使用它来创建检查点流和 keyed 状态后端。
-     * Our state backend. We use this to create checkpoint streams and a keyed state backend. */
+     * <p>我们使用它来创建检查点流和 keyed 状态后端。 Our state backend. We use this to create checkpoint streams and
+     * a keyed state backend.
+     */
     protected final StateBackend stateBackend;
 
-    /**
-     * 子任务 Checkpoint 协调器
-     */
+    /** 子任务 Checkpoint 协调器 */
     private final SubtaskCheckpointCoordinator subtaskCheckpointCoordinator;
 
     /**
-     * 内部{@link TimerService}用于定义当前处理时间（默认值={@code System.currentTimeMillis（）}）
-     * 并为将来要执行的任务注册计时器。
+     * 内部{@link TimerService}用于定义当前处理时间（默认值={@code System.currentTimeMillis（）}） 并为将来要执行的任务注册计时器。
      *
-     * The internal {@link TimerService} used to define the current processing time (default =
+     * <p>The internal {@link TimerService} used to define the current processing time (default =
      * {@code System.currentTimeMillis()}) and register timers for tasks to be executed in the
      * future.
      */
     protected final TimerService timerService;
 
-    /**
-     * 当前活动的后台具体线程
-     * The currently active background materialization threads.
-     * */
+    /** 当前活动的后台具体线程 The currently active background materialization threads. */
     private final CloseableRegistry cancelables = new CloseableRegistry();
 
-    /**
-     * 异常处理相关
-     */
+    /** 异常处理相关 */
     private final StreamTaskAsyncExceptionHandler asyncExceptionHandler;
 
     /**
-     * 将任务标记为“操作中”的标志，在这种情况下，需要将check初始化为true，
-     * 以便invoke（）之前的early cancel（）正常工作。
+     * 将任务标记为“操作中”的标志，在这种情况下，需要将check初始化为true， 以便invoke（）之前的early cancel（）正常工作。
      *
-     * Flag to mark the task "in operation", in which case check needs to be initialized to true, so
-     * that early cancel() before invoke() behaves correctly.
+     * <p>Flag to mark the task "in operation", in which case check needs to be initialized to true,
+     * so that early cancel() before invoke() behaves correctly.
      */
     private volatile boolean isRunning;
 
-    /**
-     * 标识任务被取消.
-     * Flag to mark this task as canceled. */
+    /** 标识任务被取消. Flag to mark this task as canceled. */
     private volatile boolean canceled;
 
     /**
      * 标识任务失败, 比如在invoke方法中发生异常...
      *
-     * Flag to mark this task as failing, i.e. if an exception has occurred inside {@link
+     * <p>Flag to mark this task as failing, i.e. if an exception has occurred inside {@link
      * #invoke()}.
      */
     private volatile boolean failing;
 
-    /**
-     * ???? 干啥的
-     */
+    /** ???? 干啥的 */
     private boolean disposedOperators;
 
     /** Thread pool for async snapshot workers. */
@@ -395,12 +367,15 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //    this.recordWriter = {SingleRecordWriter@7023}
         //        recordWriter = {ChannelSelectorRecordWriter@6810}
         //        channelSelector = {KeyGroupStreamPartitioner@6627} "HASH"
-        //        targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+        //        targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition
+        // db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4
+        // subpartitions, 4 pending consumptions]"
         //        numberOfChannels = 4
         //        serializer = {DataOutputSerializer@6851} "[pos=0 cap=128]"
         //        rng = {XORShiftRandom@6852}
         //        flushAlways = false
-        //        outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for Flat Map,5,Flink Task Threads]"
+        //        outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for Flat
+        // Map,5,Flink Task Threads]"
         //        flusherException = null
         //        volatileFlusherException = null
         //        volatileFlusherExceptionCheckSkipCount = 0
@@ -409,7 +384,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
 
         // 重要~!!
         this.mailboxProcessor = new MailboxProcessor(this::processInput, mailbox, actionExecutor);
-
 
         this.mailboxProcessor.initMetric(environment.getMetricGroup());
         this.mainMailboxExecutor = mailboxProcessor.getMainMailboxExecutor();
@@ -492,15 +466,15 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
     }
 
     /**
-     *
      * 此方法实现任务的默认操作（例如，处理来自输入的一个事件）。 （通常）实现应是非阻塞的。
      *
-     * This method implements the default action of the task (e.g. processing one event from the
+     * <p>This method implements the default action of the task (e.g. processing one event from the
      * input). Implementations should (in general) be non-blocking.
      *
-     *  控制器对象，用于操作和流任务之间的协作交互。
-     * @param controller controller object for collaborative interaction between the action and the stream task.
+     * <p>控制器对象，用于操作和流任务之间的协作交互。
      *
+     * @param controller controller object for collaborative interaction between the action and the
+     *     stream task.
      * @throws Exception on any problems in the action.
      */
     protected void processInput(MailboxDefaultAction.Controller controller) throws Exception {
@@ -637,7 +611,8 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         disposedOperators = false;
 
         // Initializing Source: Socket Stream -> Flat Map (1/1)#0.
-        // Initializing Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction) -> Sink: Print to Std. Out (1/1)#0.
+        // Initializing Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger,
+        // ReduceFunction$1, PassThroughWindowFunction) -> Sink: Print to Std. Out (1/1)#0.
         LOG.debug("Initializing {}.", getName());
 
         operatorChain = new OperatorChain<>(this, recordWriter);
@@ -650,7 +625,19 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //        functionsClosed = false
         //        chainingStrategy = {ChainingStrategy@6755} "HEAD"
         //        container = {SourceStreamTask@6554} "Source: Socket Stream -> Flat Map (1/1)#0"
-        //        config = {StreamConfig@6756} "\n=======================Stream Config=======================\nNumber of non-chained inputs: 0\nNumber of non-chained outputs: 0\nOutput names: []\nPartitioning:\nChained subtasks: [(Source: Socket Stream-1 -> Flat Map-2, typeNumber=0, outputPartitioner=FORWARD, bufferTimeout=-1, outputTag=null)]\nOperator: SimpleUdfStreamOperatorFactory\nState Monitoring: false\n\n\n---------------------\nChained task configs\n---------------------\n{2=\n=======================Stream Config=======================\nNumber of non-chained inputs: 0\nNumber of non-chained outputs: 1\nOutput names: [(Flat Map-2 -> Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4, typeNumber=0, outputPartitioner=HASH, bufferTimeout=-1, outputTag=null)]\nPartitioning:\n\t4: HASH\nChained subtasks: []\nOperator: SimpleUdfStreamOperatorFactory\nState Monitoring: false}"
+        //        config = {StreamConfig@6756} "\n=======================Stream
+        // Config=======================\nNumber of non-chained inputs: 0\nNumber of non-chained
+        // outputs: 0\nOutput names: []\nPartitioning:\nChained subtasks: [(Source: Socket Stream-1
+        // -> Flat Map-2, typeNumber=0, outputPartitioner=FORWARD, bufferTimeout=-1,
+        // outputTag=null)]\nOperator: SimpleUdfStreamOperatorFactory\nState Monitoring:
+        // false\n\n\n---------------------\nChained task
+        // configs\n---------------------\n{2=\n=======================Stream
+        // Config=======================\nNumber of non-chained inputs: 0\nNumber of non-chained
+        // outputs: 1\nOutput names: [(Flat Map-2 -> Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4, typeNumber=0,
+        // outputPartitioner=HASH, bufferTimeout=-1, outputTag=null)]\nPartitioning:\n\t4:
+        // HASH\nChained subtasks: []\nOperator: SimpleUdfStreamOperatorFactory\nState Monitoring:
+        // false}"
         //        output = {CountingOutput@6757}
         //        runtimeContext = {StreamingRuntimeContext@6758}
         //        stateKeySelector1 = null
@@ -663,9 +650,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //        combinedWatermark = -9223372036854775808
         //        input1Watermark = -9223372036854775808
         //        input2Watermark = -9223372036854775808
-
-
-
 
         mainOperator = operatorChain.getMainOperator();
 
@@ -687,7 +671,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         // executed before all operators are opened
         actionExecutor.runThrowing(
                 () -> {
-
                     SequentialChannelStateReader reader =
                             getEnvironment()
                                     .getTaskStateManager()
@@ -790,7 +773,7 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         operatorChain.closeOperators(actionExecutor);
 
         // 确保没有进一步的检查点和通知操作发生。
-        //同时，这可以确保在任何“常规”出口时
+        // 同时，这可以确保在任何“常规”出口时
 
         // make sure no further checkpoint and notification actions happen.
         // at the same time, this makes sure that during any "regular" exit where still
@@ -1151,17 +1134,12 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
     }
 
     /**
-     *
      * 如果Task是Running状态， 那就可以执行检查点， 首先在OperatorChain上执行准备CheckpointBarrier的工作，
-     * 然后向下游所有Task广播CheckpointBarrier， 最后触发自己的检查点。
-     * 这样做可以尽快将CheckpointBarrier广播到下游， 避免影响下游CheckpointBarrier对齐，降低整个检查点执行过程的耗时。
+     * 然后向下游所有Task广播CheckpointBarrier， 最后触发自己的检查点。 这样做可以尽快将CheckpointBarrier广播到下游，
+     * 避免影响下游CheckpointBarrier对齐，降低整个检查点执行过程的耗时。
      *
-     *
-     *
-     * 如果Task是非Running， 那就要向下游发送CancelCheckpointMarker，
-     * 通知下游取消本次检查点， 方法是发送一个CacelCheckpointMarker，
-     * 与CheckpointBarrier相反的操作 .
-     *
+     * <p>如果Task是非Running， 那就要向下游发送CancelCheckpointMarker， 通知下游取消本次检查点，
+     * 方法是发送一个CacelCheckpointMarker， 与CheckpointBarrier相反的操作 .
      *
      * @param checkpointMetaData
      * @param checkpointOptions
@@ -1184,7 +1162,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         if (isRunning) {
             actionExecutor.runThrowing(
                     () -> {
-
                         if (checkpointOptions.getCheckpointType().isSynchronous()) {
                             setSynchronousSavepointId(
                                     checkpointMetaData.getCheckpointId(),
@@ -1421,17 +1398,18 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //    recordWrites = {ArrayList@6540}  size = 1
         //        0 = {ChannelSelectorRecordWriter@6810}
         //            channelSelector = {KeyGroupStreamPartitioner@6627} "HASH"
-        //            targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+        //            targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition
+        // db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4
+        // subpartitions, 4 pending consumptions]"
         //            numberOfChannels = 4
         //            serializer = {DataOutputSerializer@6851} "[pos=0 cap=128]"
         //            rng = {XORShiftRandom@6852}
         //            flushAlways = false
-        //            outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for Flat Map,5,Flink Task Threads]"
+        //            outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for
+        // Flat Map,5,Flink Task Threads]"
         //            flusherException = null
         //            volatileFlusherException = null
         //            volatileFlusherExceptionCheckSkipCount = 0
-
-
 
         List<RecordWriter<SerializationDelegate<StreamRecord<OUT>>>> recordWrites =
                 createRecordWriters(configuration, environment);
@@ -1450,22 +1428,24 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
                     StreamConfig configuration, Environment environment) {
 
         // 构建 RecordWriters
-        List<RecordWriter<SerializationDelegate<StreamRecord<OUT>>>> recordWriters =  new ArrayList<>();
+        List<RecordWriter<SerializationDelegate<StreamRecord<OUT>>>> recordWriters =
+                new ArrayList<>();
 
-
-        //    0 = {StreamEdge@6549} "(Flat Map-2 -> Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4, typeNumber=0, outputPartitioner=HASH, bufferTimeout=100, outputTag=null)"
-        //        edgeId = "Flat Map-2_Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4_0_HASH"
+        //    0 = {StreamEdge@6549} "(Flat Map-2 -> Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4, typeNumber=0,
+        // outputPartitioner=HASH, bufferTimeout=100, outputTag=null)"
+        //        edgeId = "Flat Map-2_Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)-4_0_HASH"
         //        sourceId = 2
         //        targetId = 4
         //        typeNumber = 0
         //        outputTag = null
         //        outputPartitioner = {KeyGroupStreamPartitioner@6552} "HASH"
         //        sourceOperatorName = "Flat Map"
-        //        targetOperatorName = "Window(TumblingProcessingTimeWindows(5000), ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)"
+        //        targetOperatorName = "Window(TumblingProcessingTimeWindows(5000),
+        // ProcessingTimeTrigger, ReduceFunction$1, PassThroughWindowFunction)"
         //        shuffleMode = {ShuffleMode@6555} "UNDEFINED"
         //        bufferTimeout = 100
-
-
 
         List<StreamEdge> outEdgesInOrder =
                 configuration.getOutEdgesInOrder(
@@ -1499,8 +1479,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         try {
             //   outputPartitioner = {KeyGroupStreamPartitioner@6627} "HASH"
 
-
-
             outputPartitioner =
                     InstantiationUtil.clone(
                             (StreamPartitioner<OUT>) edge.getPartitioner(),
@@ -1516,8 +1494,9 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
                 outputIndex,
                 taskName);
 
-
-        //    bufferWriter = {PipelinedResultPartition@6639} "PipelinedResultPartition db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+        //    bufferWriter = {PipelinedResultPartition@6639} "PipelinedResultPartition
+        // db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4
+        // subpartitions, 4 pending consumptions]"
         //        releaseLock = {Object@6643}
         //        consumedSubpartitions = {boolean[4]@6644} [false, false, false, false]
         //        numUnconsumedSubpartitions = 4
@@ -1527,13 +1506,16 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //        idleTimeMsPerSecond = {MeterView@6647}
         //        owningTaskName = "Flat Map (1/4)#0 (eb44184ef213a1ddc71dc739d2f1edee)"
         //        partitionIndex = 0
-        //        partitionId = {ResultPartitionID@6649} "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
+        //        partitionId = {ResultPartitionID@6649}
+        // "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
         //        partitionType = {ResultPartitionType@6650} "PIPELINED_BOUNDED"
         //        partitionManager = {ResultPartitionManager@6651}
         //        numSubpartitions = 4
         //        numTargetKeyGroups = 128
         //        isReleased = {AtomicBoolean@6652} "false"
-        //        bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1, available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10, destroyed: false]"
+        //        bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1,
+        // available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10,
+        // destroyed: false]"
         //        isFinished = false
         //        cause = null
         //        bufferPoolFactory = {ResultPartitionFactory$lambda@6654}
@@ -1553,7 +1535,9 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
 
         //    output = {ChannelSelectorRecordWriter@6810}
         //        channelSelector = {KeyGroupStreamPartitioner@6627} "HASH"
-        //        targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4 subpartitions, 4 pending consumptions]"
+        //        targetPartition = {PipelinedResultPartition@6639} "PipelinedResultPartition
+        // db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee [PIPELINED_BOUNDED, 4
+        // subpartitions, 4 pending consumptions]"
         //        releaseLock = {Object@6643}
         //        consumedSubpartitions = {boolean[4]@6644} [false, false, false, false]
         //        numUnconsumedSubpartitions = 4
@@ -1563,13 +1547,16 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //        idleTimeMsPerSecond = {MeterView@6647}
         //        owningTaskName = "Flat Map (1/4)#0 (eb44184ef213a1ddc71dc739d2f1edee)"
         //        partitionIndex = 0
-        //        partitionId = {ResultPartitionID@6649} "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
+        //        partitionId = {ResultPartitionID@6649}
+        // "db1576884668472b75f882792173d0fa#0@eb44184ef213a1ddc71dc739d2f1edee"
         //        partitionType = {ResultPartitionType@6650} "PIPELINED_BOUNDED"
         //        partitionManager = {ResultPartitionManager@6651}
         //        numSubpartitions = 4
         //        numTargetKeyGroups = 128
         //        isReleased = {AtomicBoolean@6652} "false"
-        //        bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1, available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10, destroyed: false]"
+        //        bufferPool = {LocalBufferPool@6653} "[size: 16, required: 5, requested: 1,
+        // available: 1, max: 16, listeners: 0,subpartitions: 4, maxBuffersPerChannel: 10,
+        // destroyed: false]"
         //        isFinished = false
         //        cause = null
         //        bufferPoolFactory = {ResultPartitionFactory$lambda@6654}
@@ -1580,7 +1567,8 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
         //        serializer = {DataOutputSerializer@6851} "[pos=0 cap=128]"
         //        rng = {XORShiftRandom@6852}
         //        flushAlways = false
-        //        outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for Flat Map,5,Flink Task Threads]"
+        //        outputFlusher = {RecordWriter$OutputFlusher@6811} "Thread[OutputFlusher for Flat
+        // Map,5,Flink Task Threads]"
         //        flusherException = null
         //        volatileFlusherException = null
         //        volatileFlusherExceptionCheckSkipCount = 0
@@ -1591,9 +1579,6 @@ public abstract class StreamTask<OUT, OP extends StreamOperator<OUT>> extends Ab
                         .setTimeout(bufferTimeout)
                         .setTaskName(taskName)
                         .build(bufferWriter);
-
-
-
 
         output.setMetricGroup(environment.getMetricGroup().getIOMetricGroup());
         return output;
